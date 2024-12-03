@@ -1,12 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import '@/styles/globals.css';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { LoginForm } from '@/components/login-form';
 ---
 
 <Layout>
-  <Input type="email" placeholder="Email" />
-  <Input type="password" placeholder="Password" />
-  <Button>Sign in</Button>
+  <div class="flex h-screen w-full items-center justify-center px-4">
+    <LoginForm />
+  </div>
 </Layout>
