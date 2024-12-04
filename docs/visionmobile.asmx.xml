@@ -1,0 +1,1604 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.rco.se/Api/Mobile" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://www.rco.se/Api/Mobile" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://www.rco.se/Api/Mobile">
+      <s:element name="ApiVersion">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="apiMin" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="apiMax" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="deviceType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="appVersion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ApiVersionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ApiVersionResult" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfAnyType">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="anyType" nillable="true" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Selection">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Number" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Type" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="FkConNr" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Units" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Options" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Owner" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Field1" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Field2" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Field3" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Field4" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Filed5" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RaStamp" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RaSecurityField" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="RaSystem" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="AllocStatus" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="BookMaxObjects" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="BookMaxPeriods" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="BookPrimary" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="BookMaxDays" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="FkFolder" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="RaSecurityGroups" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="SymbolId" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="BookableObjects">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="BookObject" type="tns:ZBookObject" />
+          <s:element minOccurs="0" maxOccurs="1" name="MachineStatus" type="tns:ArrayOfMachine" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ZBookObject">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="PkObject" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Options" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Cmis" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="FkObjectType" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Unit" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="FkConNr" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="RaStamp" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RaSecurityField" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="AllocStatus" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="RaSystem" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="RaSecurityGroups" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="FkDEBPriceList" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="BookedByMe" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="GroupStatus" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfMachine">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Machine" nillable="true" type="tns:Machine" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Machine">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="MachineText" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MachineName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="MachineNumber" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ReadyTime" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="StartTime" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="UserData">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Units" type="tns:ArrayOfMobileUnit" />
+          <s:element minOccurs="1" maxOccurs="1" name="WebbAccess" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="ShowBooked" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="HasInformetric" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfMobileUnit">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="MobileUnit" nillable="true" type="tns:MobileUnit" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="MobileUnit">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="PreChoises" type="tns:ArrayOfMobilePreChoise" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Index" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfMobilePreChoise">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="MobilePreChoise" nillable="true" type="tns:MobilePreChoise" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="MobilePreChoise">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Index" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="BookDay">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="BookDate" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="BookDayPassesAmount" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="BookPasses" type="tns:ArrayOfBookDayPass" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfBookDayPass">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="BookDayPass" nillable="true" type="tns:BookDayPass" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="BookDayPass">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="PassIndex" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="StartTime" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EndTime" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="PassAvailability" type="tns:ArrayOfAvailability" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfAvailability">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Availability" nillable="true" type="tns:Availability" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Availability">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="IsFree" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsBookable" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="HasAnythingBooked" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfBookDay">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="BookDay" nillable="true" type="tns:BookDay" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetInformetricUrl">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetInformetricUrlResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetInformetricUrlResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookUnits">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookUnitsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetBookUnitsResult" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConnectToUnit">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+            <s:element minOccurs="1" maxOccurs="1" name="unitindex" type="s:long" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConnectToUnitResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ConnectToUnitResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookPrechoices">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookPrechoicesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetBookPrechoicesResult" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetBookPrechoises">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+            <s:element minOccurs="0" maxOccurs="1" name="prechoiseindex" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetBookPrechoisesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SetBookPrechoisesResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookUserBookingCount">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookUserBookingCountResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetBookUserBookingCountResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookUserBookings">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+            <s:element minOccurs="1" maxOccurs="1" name="bookindex" type="s:long" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookUserBookingsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetBookUserBookingsResult" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DelBookUserBookings">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+            <s:element minOccurs="1" maxOccurs="1" name="bookindex" type="s:long" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DelBookUserBookingsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DelBookUserBookingsResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookingCalendarDays">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+            <s:element minOccurs="0" maxOccurs="1" name="startDate" />
+            <s:element minOccurs="0" maxOccurs="1" name="endDate" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookingCalendarDaysResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetBookingCalendarDaysResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAllTerminalMessageLite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="TrmMessageLite">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="MessageId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="ContentType" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="CreatedDate" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="MessageHeader" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="RelatedMessageId" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="TextMessage" type="tns:ArrayOfString" />
+          <s:element minOccurs="1" maxOccurs="1" name="HasImage" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsHeader" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="RelatedContentType" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfTrmMessageLite">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="TrmMessageLite" nillable="true" type="tns:TrmMessageLite" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetAllTerminalMessageLiteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetAllTerminalMessageLiteResult" type="tns:ArrayOfTrmMessageLite" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTerminalMessageImage">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+            <s:element minOccurs="1" maxOccurs="1" name="messageId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="isHeaderImage" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTerminalMessageImageResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetTerminalMessageImageResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetOneTerminalMessageLite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+            <s:element minOccurs="1" maxOccurs="1" name="messageId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetOneTerminalMessageLiteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetOneTerminalMessageLiteResult" type="tns:TrmMessageLite" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetWebAppAddress">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetWebAppAddressResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetWebAppAddressResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetWebAccess">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginGuid" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetWebAccessResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetWebAccessResult" type="s:long" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSystemDate">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSystemDateResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetSystemDateResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetShowBooked">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetShowBookedResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetShowBookedResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Logout">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LogoutResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LogoutResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Login">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="systemname" />
+            <s:element minOccurs="0" maxOccurs="1" name="username" />
+            <s:element minOccurs="0" maxOccurs="1" name="Password" />
+            <s:element minOccurs="1" maxOccurs="1" name="timeout" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="LoginResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="LoginResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookMachineGroupTypes">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookMachineGroupTypesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetBookMachineGroupTypesResult" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetBookMachineGroupTypes">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+            <s:element minOccurs="0" maxOccurs="1" name="typeindex" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetBookMachineGroupTypesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SetBookMachineGroupTypesResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetNextBookMachineGroups">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetNextBookMachineGroupsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetNextBookMachineGroupsResult" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookMachineGroupsFree">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookMachineGroupsFreeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetBookMachineGroupsFreeResult" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookMachineGroupsCountersLeft">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookMachineGroupsCountersLeftResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetBookMachineGroupsCountersLeftResult" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookRandomMachineGroup">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookRandomMachineGroupResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetBookRandomMachineGroupResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetBookMachineGroup">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+            <s:element minOccurs="0" maxOccurs="1" name="machinegroupindex" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetBookMachineGroupResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SetBookMachineGroupResult" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetBookPass">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+            <s:element minOccurs="0" maxOccurs="1" name="SystemDate" />
+            <s:element minOccurs="0" maxOccurs="1" name="passindex" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SetBookPassResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SetBookPassResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCardgroupNameBookMachineGroupsFree">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCardgroupNameBookMachineGroupsFreeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCardgroupNameBookMachineGroupsFreeResult" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUserData">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUserDataResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetUserDataResult" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSystemName">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetSystemNameResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetSystemNameResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUserBalance">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetUserBalanceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetUserBalanceResult" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookUserInfo">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginguid" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetBookUserInfoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetBookUserInfoResult" type="tns:ArrayOfAnyType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetMachineGroups">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginGuid" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="SelectionObjectsAndObjectStatus">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Selection" type="tns:Selection" />
+          <s:element minOccurs="0" maxOccurs="1" name="BookObjects" type="tns:ArrayOfBookableObjects" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfBookableObjects">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="BookableObjects" nillable="true" type="tns:BookableObjects" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfSelectionObjectsAndObjectStatus">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="SelectionObjectsAndObjectStatus" nillable="true" type="tns:SelectionObjectsAndObjectStatus" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetMachineGroupsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetMachineGroupsResult" type="tns:ArrayOfSelectionObjectsAndObjectStatus" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="ApiVersionSoapIn">
+    <wsdl:part name="parameters" element="tns:ApiVersion" />
+  </wsdl:message>
+  <wsdl:message name="ApiVersionSoapOut">
+    <wsdl:part name="parameters" element="tns:ApiVersionResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetInformetricUrlSoapIn">
+    <wsdl:part name="parameters" element="tns:GetInformetricUrl" />
+  </wsdl:message>
+  <wsdl:message name="GetInformetricUrlSoapOut">
+    <wsdl:part name="parameters" element="tns:GetInformetricUrlResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetBookUnitsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetBookUnits" />
+  </wsdl:message>
+  <wsdl:message name="GetBookUnitsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetBookUnitsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConnectToUnitSoapIn">
+    <wsdl:part name="parameters" element="tns:ConnectToUnit" />
+  </wsdl:message>
+  <wsdl:message name="ConnectToUnitSoapOut">
+    <wsdl:part name="parameters" element="tns:ConnectToUnitResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetBookPrechoicesSoapIn">
+    <wsdl:part name="parameters" element="tns:GetBookPrechoices" />
+  </wsdl:message>
+  <wsdl:message name="GetBookPrechoicesSoapOut">
+    <wsdl:part name="parameters" element="tns:GetBookPrechoicesResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetBookPrechoisesSoapIn">
+    <wsdl:part name="parameters" element="tns:SetBookPrechoises" />
+  </wsdl:message>
+  <wsdl:message name="SetBookPrechoisesSoapOut">
+    <wsdl:part name="parameters" element="tns:SetBookPrechoisesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetBookUserBookingCountSoapIn">
+    <wsdl:part name="parameters" element="tns:GetBookUserBookingCount" />
+  </wsdl:message>
+  <wsdl:message name="GetBookUserBookingCountSoapOut">
+    <wsdl:part name="parameters" element="tns:GetBookUserBookingCountResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetBookUserBookingsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetBookUserBookings" />
+  </wsdl:message>
+  <wsdl:message name="GetBookUserBookingsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetBookUserBookingsResponse" />
+  </wsdl:message>
+  <wsdl:message name="DelBookUserBookingsSoapIn">
+    <wsdl:part name="parameters" element="tns:DelBookUserBookings" />
+  </wsdl:message>
+  <wsdl:message name="DelBookUserBookingsSoapOut">
+    <wsdl:part name="parameters" element="tns:DelBookUserBookingsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetBookingCalendarDaysSoapIn">
+    <wsdl:part name="parameters" element="tns:GetBookingCalendarDays" />
+  </wsdl:message>
+  <wsdl:message name="GetBookingCalendarDaysSoapOut">
+    <wsdl:part name="parameters" element="tns:GetBookingCalendarDaysResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetAllTerminalMessageLiteSoapIn">
+    <wsdl:part name="parameters" element="tns:GetAllTerminalMessageLite" />
+  </wsdl:message>
+  <wsdl:message name="GetAllTerminalMessageLiteSoapOut">
+    <wsdl:part name="parameters" element="tns:GetAllTerminalMessageLiteResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetTerminalMessageImageSoapIn">
+    <wsdl:part name="parameters" element="tns:GetTerminalMessageImage" />
+  </wsdl:message>
+  <wsdl:message name="GetTerminalMessageImageSoapOut">
+    <wsdl:part name="parameters" element="tns:GetTerminalMessageImageResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetOneTerminalMessageLiteSoapIn">
+    <wsdl:part name="parameters" element="tns:GetOneTerminalMessageLite" />
+  </wsdl:message>
+  <wsdl:message name="GetOneTerminalMessageLiteSoapOut">
+    <wsdl:part name="parameters" element="tns:GetOneTerminalMessageLiteResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetWebAppAddressSoapIn">
+    <wsdl:part name="parameters" element="tns:GetWebAppAddress" />
+  </wsdl:message>
+  <wsdl:message name="GetWebAppAddressSoapOut">
+    <wsdl:part name="parameters" element="tns:GetWebAppAddressResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetWebAccessSoapIn">
+    <wsdl:part name="parameters" element="tns:GetWebAccess" />
+  </wsdl:message>
+  <wsdl:message name="GetWebAccessSoapOut">
+    <wsdl:part name="parameters" element="tns:GetWebAccessResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSystemDateSoapIn">
+    <wsdl:part name="parameters" element="tns:GetSystemDate" />
+  </wsdl:message>
+  <wsdl:message name="GetSystemDateSoapOut">
+    <wsdl:part name="parameters" element="tns:GetSystemDateResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetShowBookedSoapIn">
+    <wsdl:part name="parameters" element="tns:GetShowBooked" />
+  </wsdl:message>
+  <wsdl:message name="GetShowBookedSoapOut">
+    <wsdl:part name="parameters" element="tns:GetShowBookedResponse" />
+  </wsdl:message>
+  <wsdl:message name="LogoutSoapIn">
+    <wsdl:part name="parameters" element="tns:Logout" />
+  </wsdl:message>
+  <wsdl:message name="LogoutSoapOut">
+    <wsdl:part name="parameters" element="tns:LogoutResponse" />
+  </wsdl:message>
+  <wsdl:message name="LoginSoapIn">
+    <wsdl:part name="parameters" element="tns:Login" />
+  </wsdl:message>
+  <wsdl:message name="LoginSoapOut">
+    <wsdl:part name="parameters" element="tns:LoginResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetBookMachineGroupTypesSoapIn">
+    <wsdl:part name="parameters" element="tns:GetBookMachineGroupTypes" />
+  </wsdl:message>
+  <wsdl:message name="GetBookMachineGroupTypesSoapOut">
+    <wsdl:part name="parameters" element="tns:GetBookMachineGroupTypesResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetBookMachineGroupTypesSoapIn">
+    <wsdl:part name="parameters" element="tns:SetBookMachineGroupTypes" />
+  </wsdl:message>
+  <wsdl:message name="SetBookMachineGroupTypesSoapOut">
+    <wsdl:part name="parameters" element="tns:SetBookMachineGroupTypesResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetNextBookMachineGroupsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetNextBookMachineGroups" />
+  </wsdl:message>
+  <wsdl:message name="GetNextBookMachineGroupsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetNextBookMachineGroupsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetBookMachineGroupsFreeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetBookMachineGroupsFree" />
+  </wsdl:message>
+  <wsdl:message name="GetBookMachineGroupsFreeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetBookMachineGroupsFreeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetBookMachineGroupsCountersLeftSoapIn">
+    <wsdl:part name="parameters" element="tns:GetBookMachineGroupsCountersLeft" />
+  </wsdl:message>
+  <wsdl:message name="GetBookMachineGroupsCountersLeftSoapOut">
+    <wsdl:part name="parameters" element="tns:GetBookMachineGroupsCountersLeftResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetBookRandomMachineGroupSoapIn">
+    <wsdl:part name="parameters" element="tns:GetBookRandomMachineGroup" />
+  </wsdl:message>
+  <wsdl:message name="GetBookRandomMachineGroupSoapOut">
+    <wsdl:part name="parameters" element="tns:GetBookRandomMachineGroupResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetBookMachineGroupSoapIn">
+    <wsdl:part name="parameters" element="tns:SetBookMachineGroup" />
+  </wsdl:message>
+  <wsdl:message name="SetBookMachineGroupSoapOut">
+    <wsdl:part name="parameters" element="tns:SetBookMachineGroupResponse" />
+  </wsdl:message>
+  <wsdl:message name="SetBookPassSoapIn">
+    <wsdl:part name="parameters" element="tns:SetBookPass" />
+  </wsdl:message>
+  <wsdl:message name="SetBookPassSoapOut">
+    <wsdl:part name="parameters" element="tns:SetBookPassResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCardgroupNameBookMachineGroupsFreeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCardgroupNameBookMachineGroupsFree" />
+  </wsdl:message>
+  <wsdl:message name="GetCardgroupNameBookMachineGroupsFreeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCardgroupNameBookMachineGroupsFreeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetUserDataSoapIn">
+    <wsdl:part name="parameters" element="tns:GetUserData" />
+  </wsdl:message>
+  <wsdl:message name="GetUserDataSoapOut">
+    <wsdl:part name="parameters" element="tns:GetUserDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetSystemNameSoapIn">
+    <wsdl:part name="parameters" element="tns:GetSystemName" />
+  </wsdl:message>
+  <wsdl:message name="GetSystemNameSoapOut">
+    <wsdl:part name="parameters" element="tns:GetSystemNameResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetUserBalanceSoapIn">
+    <wsdl:part name="parameters" element="tns:GetUserBalance" />
+  </wsdl:message>
+  <wsdl:message name="GetUserBalanceSoapOut">
+    <wsdl:part name="parameters" element="tns:GetUserBalanceResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetBookUserInfoSoapIn">
+    <wsdl:part name="parameters" element="tns:GetBookUserInfo" />
+  </wsdl:message>
+  <wsdl:message name="GetBookUserInfoSoapOut">
+    <wsdl:part name="parameters" element="tns:GetBookUserInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetMachineGroupsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetMachineGroups" />
+  </wsdl:message>
+  <wsdl:message name="GetMachineGroupsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetMachineGroupsResponse" />
+  </wsdl:message>
+  <wsdl:portType name="VisionMobileSoap">
+    <wsdl:operation name="ApiVersion">
+      <wsdl:input message="tns:ApiVersionSoapIn" />
+      <wsdl:output message="tns:ApiVersionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetInformetricUrl">
+      <wsdl:input message="tns:GetInformetricUrlSoapIn" />
+      <wsdl:output message="tns:GetInformetricUrlSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBookUnits">
+      <wsdl:input message="tns:GetBookUnitsSoapIn" />
+      <wsdl:output message="tns:GetBookUnitsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConnectToUnit">
+      <wsdl:input message="tns:ConnectToUnitSoapIn" />
+      <wsdl:output message="tns:ConnectToUnitSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBookPrechoices">
+      <wsdl:input message="tns:GetBookPrechoicesSoapIn" />
+      <wsdl:output message="tns:GetBookPrechoicesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetBookPrechoises">
+      <wsdl:input message="tns:SetBookPrechoisesSoapIn" />
+      <wsdl:output message="tns:SetBookPrechoisesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBookUserBookingCount">
+      <wsdl:input message="tns:GetBookUserBookingCountSoapIn" />
+      <wsdl:output message="tns:GetBookUserBookingCountSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBookUserBookings">
+      <wsdl:input message="tns:GetBookUserBookingsSoapIn" />
+      <wsdl:output message="tns:GetBookUserBookingsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="DelBookUserBookings">
+      <wsdl:input message="tns:DelBookUserBookingsSoapIn" />
+      <wsdl:output message="tns:DelBookUserBookingsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBookingCalendarDays">
+      <wsdl:input message="tns:GetBookingCalendarDaysSoapIn" />
+      <wsdl:output message="tns:GetBookingCalendarDaysSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTerminalMessageLite">
+      <wsdl:input message="tns:GetAllTerminalMessageLiteSoapIn" />
+      <wsdl:output message="tns:GetAllTerminalMessageLiteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTerminalMessageImage">
+      <wsdl:input message="tns:GetTerminalMessageImageSoapIn" />
+      <wsdl:output message="tns:GetTerminalMessageImageSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetOneTerminalMessageLite">
+      <wsdl:input message="tns:GetOneTerminalMessageLiteSoapIn" />
+      <wsdl:output message="tns:GetOneTerminalMessageLiteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetWebAppAddress">
+      <wsdl:input message="tns:GetWebAppAddressSoapIn" />
+      <wsdl:output message="tns:GetWebAppAddressSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetWebAccess">
+      <wsdl:input message="tns:GetWebAccessSoapIn" />
+      <wsdl:output message="tns:GetWebAccessSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSystemDate">
+      <wsdl:input message="tns:GetSystemDateSoapIn" />
+      <wsdl:output message="tns:GetSystemDateSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetShowBooked">
+      <wsdl:input message="tns:GetShowBookedSoapIn" />
+      <wsdl:output message="tns:GetShowBookedSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Logout">
+      <wsdl:input message="tns:LogoutSoapIn" />
+      <wsdl:output message="tns:LogoutSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Login">
+      <wsdl:input message="tns:LoginSoapIn" />
+      <wsdl:output message="tns:LoginSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBookMachineGroupTypes">
+      <wsdl:input message="tns:GetBookMachineGroupTypesSoapIn" />
+      <wsdl:output message="tns:GetBookMachineGroupTypesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetBookMachineGroupTypes">
+      <wsdl:input message="tns:SetBookMachineGroupTypesSoapIn" />
+      <wsdl:output message="tns:SetBookMachineGroupTypesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetNextBookMachineGroups">
+      <wsdl:input message="tns:GetNextBookMachineGroupsSoapIn" />
+      <wsdl:output message="tns:GetNextBookMachineGroupsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBookMachineGroupsFree">
+      <wsdl:input message="tns:GetBookMachineGroupsFreeSoapIn" />
+      <wsdl:output message="tns:GetBookMachineGroupsFreeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBookMachineGroupsCountersLeft">
+      <wsdl:input message="tns:GetBookMachineGroupsCountersLeftSoapIn" />
+      <wsdl:output message="tns:GetBookMachineGroupsCountersLeftSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBookRandomMachineGroup">
+      <wsdl:input message="tns:GetBookRandomMachineGroupSoapIn" />
+      <wsdl:output message="tns:GetBookRandomMachineGroupSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetBookMachineGroup">
+      <wsdl:input message="tns:SetBookMachineGroupSoapIn" />
+      <wsdl:output message="tns:SetBookMachineGroupSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SetBookPass">
+      <wsdl:input message="tns:SetBookPassSoapIn" />
+      <wsdl:output message="tns:SetBookPassSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCardgroupNameBookMachineGroupsFree">
+      <wsdl:input message="tns:GetCardgroupNameBookMachineGroupsFreeSoapIn" />
+      <wsdl:output message="tns:GetCardgroupNameBookMachineGroupsFreeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserData">
+      <wsdl:input message="tns:GetUserDataSoapIn" />
+      <wsdl:output message="tns:GetUserDataSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSystemName">
+      <wsdl:input message="tns:GetSystemNameSoapIn" />
+      <wsdl:output message="tns:GetSystemNameSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserBalance">
+      <wsdl:input message="tns:GetUserBalanceSoapIn" />
+      <wsdl:output message="tns:GetUserBalanceSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBookUserInfo">
+      <wsdl:input message="tns:GetBookUserInfoSoapIn" />
+      <wsdl:output message="tns:GetBookUserInfoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMachineGroups">
+      <wsdl:input message="tns:GetMachineGroupsSoapIn" />
+      <wsdl:output message="tns:GetMachineGroupsSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="VisionMobileSoap" type="tns:VisionMobileSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ApiVersion">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/ApiVersion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetInformetricUrl">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetInformetricUrl" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookUnits">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetBookUnits" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConnectToUnit">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/ConnectToUnit" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookPrechoices">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetBookPrechoices" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetBookPrechoises">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/SetBookPrechoises" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookUserBookingCount">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetBookUserBookingCount" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookUserBookings">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetBookUserBookings" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DelBookUserBookings">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/DelBookUserBookings" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookingCalendarDays">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetBookingCalendarDays" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTerminalMessageLite">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetAllTerminalMessageLite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTerminalMessageImage">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetTerminalMessageImage" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOneTerminalMessageLite">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetOneTerminalMessageLite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetWebAppAddress">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetWebAppAddress" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetWebAccess">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetWebAccess" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSystemDate">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetSystemDate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetShowBooked">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetShowBooked" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Logout">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/Logout" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Login">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/Login" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookMachineGroupTypes">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetBookMachineGroupTypes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetBookMachineGroupTypes">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/SetBookMachineGroupTypes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetNextBookMachineGroups">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetNextBookMachineGroups" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookMachineGroupsFree">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetBookMachineGroupsFree" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookMachineGroupsCountersLeft">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetBookMachineGroupsCountersLeft" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookRandomMachineGroup">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetBookRandomMachineGroup" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetBookMachineGroup">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/SetBookMachineGroup" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetBookPass">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/SetBookPass" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCardgroupNameBookMachineGroupsFree">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetCardgroupNameBookMachineGroupsFree" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserData">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetUserData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSystemName">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetSystemName" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserBalance">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetUserBalance" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookUserInfo">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetBookUserInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMachineGroups">
+      <soap:operation soapAction="http://www.rco.se/Api/Mobile/GetMachineGroups" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="VisionMobileSoap12" type="tns:VisionMobileSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ApiVersion">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/ApiVersion" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetInformetricUrl">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetInformetricUrl" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookUnits">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetBookUnits" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConnectToUnit">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/ConnectToUnit" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookPrechoices">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetBookPrechoices" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetBookPrechoises">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/SetBookPrechoises" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookUserBookingCount">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetBookUserBookingCount" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookUserBookings">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetBookUserBookings" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DelBookUserBookings">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/DelBookUserBookings" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookingCalendarDays">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetBookingCalendarDays" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllTerminalMessageLite">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetAllTerminalMessageLite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTerminalMessageImage">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetTerminalMessageImage" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetOneTerminalMessageLite">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetOneTerminalMessageLite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetWebAppAddress">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetWebAppAddress" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetWebAccess">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetWebAccess" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSystemDate">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetSystemDate" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetShowBooked">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetShowBooked" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Logout">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/Logout" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Login">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/Login" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookMachineGroupTypes">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetBookMachineGroupTypes" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetBookMachineGroupTypes">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/SetBookMachineGroupTypes" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetNextBookMachineGroups">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetNextBookMachineGroups" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookMachineGroupsFree">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetBookMachineGroupsFree" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookMachineGroupsCountersLeft">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetBookMachineGroupsCountersLeft" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookRandomMachineGroup">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetBookRandomMachineGroup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetBookMachineGroup">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/SetBookMachineGroup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetBookPass">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/SetBookPass" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCardgroupNameBookMachineGroupsFree">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetCardgroupNameBookMachineGroupsFree" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserData">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetUserData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSystemName">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetSystemName" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserBalance">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetUserBalance" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBookUserInfo">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetBookUserInfo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMachineGroups">
+      <soap12:operation soapAction="http://www.rco.se/Api/Mobile/GetMachineGroups" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="VisionMobile">
+    <wsdl:port name="VisionMobileSoap" binding="tns:VisionMobileSoap">
+      <soap:address location="https://cshub.epr-apps.com/S0144BrfAsen/api/mobile/visionmobile.asmx" />
+    </wsdl:port>
+    <wsdl:port name="VisionMobileSoap12" binding="tns:VisionMobileSoap12">
+      <soap12:address location="https://cshub.epr-apps.com/S0144BrfAsen/api/mobile/visionmobile.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
