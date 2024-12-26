@@ -1,16 +1,16 @@
-// @ts-check
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
 
-import eslint from '@eslint/js';
-import tseslint from 'typescript-eslint';
-/* import astro from 'eslint-plugin-astro'; */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-export default [
-  eslint.configs.recommended,
-  ...tseslint.configs.strict,
-  /*   ...astro.configs.recommended, */
-  {
-    files: ['src/**/*.{js,ts,jsx,tsx,astro}'],
-    ignores: [],
-    rules: {},
-  },
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+});
+
+const eslintConfig = [
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];
+
+export default eslintConfig;
