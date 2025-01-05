@@ -1,22 +1,22 @@
-import { MainNavItem } from "@/types/nav"
+import { MainNavItem } from '@/types/nav';
 
 export interface DocsConfig {
-  mainNav: MainNavItem[]
+  mainNav: MainNavItem[];
 }
 
 export const docsConfig: DocsConfig = {
   mainNav: [
     {
-      title: "Hem",
-      href: "/",
+      title: 'Hem',
+      href: '/',
     },
     {
-      title: "Boka",
-      href: "/book",
+      title: 'Boka',
+      href: '/book',
     },
     {
-      title: "Inställningar",
-      href: "/settings",
+      title: 'Inställningar',
+      href: '/settings',
     },
   ],
-}
+};

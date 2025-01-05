@@ -1,32 +1,27 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
-import Link, { LinkProps } from "next/link"
-import { useRouter } from "next/navigation"
+import * as React from 'react';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import Link, { LinkProps } from 'next/link';
+import { useRouter } from 'next/navigation';
 
-import { docsConfig } from "@/config/docs"
-import { cn } from "@/lib/utils"
-import { useMetaColor } from "@/hooks/use-meta-color"
-import { Button } from "@/components/ui/button"
-import {
-  Drawer,
-  DrawerContent,
-  DrawerTrigger,
-  DrawerTitle
-} from "@/components/ui/drawer"
+import { docsConfig } from '@/config/docs';
+import { cn } from '@/lib/utils';
+import { useMetaColor } from '@/hooks/use-meta-color';
+import { Button } from '@/components/ui/button';
+import { Drawer, DrawerContent, DrawerTrigger, DrawerTitle } from '@/components/ui/drawer';
 
 export function MobileNav() {
-  const [open, setOpen] = React.useState(false)
-  const { setMetaColor, metaColor } = useMetaColor()
+  const [open, setOpen] = React.useState(false);
+  const { setMetaColor, metaColor } = useMetaColor();
 
   const onOpenChange = React.useCallback(
     (open: boolean) => {
-      setOpen(open)
-      setMetaColor(open ? "#09090b" : metaColor)
+      setOpen(open);
+      setMetaColor(open ? '#09090b' : metaColor);
     },
-    [setMetaColor, metaColor]
-  )
+    [setMetaColor, metaColor],
+  );
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
@@ -46,11 +41,7 @@ export function MobileNav() {
             stroke="currentColor"
             className="!size-6"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3.75 9h16.5m-16.5 6.75h16.5"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
           </svg>
           <span className="sr-only">Toggle Menu</span>
         </Button>
@@ -61,47 +52,37 @@ export function MobileNav() {
             {docsConfig.mainNav?.map(
               (item) =>
                 item.href && (
-                  <MobileLink
-                    key={item.href}
-                    href={item.href}
-                    onOpenChange={setOpen}
-                  >
+                  <MobileLink key={item.href} href={item.href} onOpenChange={setOpen}>
                     {item.title}
                   </MobileLink>
-                )
+                ),
             )}
           </div>
         </div>
       </DrawerContent>
     </Drawer>
-  )
+  );
 }
 
 interface MobileLinkProps extends LinkProps {
-  onOpenChange?: (open: boolean) => void
-  children: React.ReactNode
-  className?: string
+  onOpenChange?: (open: boolean) => void;
+  children: React.ReactNode;
+  className?: string;
 }
 
-function MobileLink({
-  href,
-  onOpenChange,
-  className,
-  children,
-  ...props
-}: MobileLinkProps) {
-  const router = useRouter()
+function MobileLink({ href, onOpenChange, className, children, ...props }: MobileLinkProps) {
+  const router = useRouter();
   return (
     <Link
       href={href}
       onClick={() => {
-        router.push(href.toString())
-        onOpenChange?.(false)
+        router.push(href.toString());
+        onOpenChange?.(false);
       }}
-      className={cn("text-base", className)}
+      className={cn('text-base', className)}
       {...props}
     >
       {children}
     </Link>
-  )
+  );
 }

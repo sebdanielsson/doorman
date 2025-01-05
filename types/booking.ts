@@ -1,10 +1,10 @@
 export interface TimeSlot {
-    start: string;
-    end: string;
-    isAvailable: boolean;
+  start: string;
+  end: string;
+  isAvailable: boolean;
 }
 
 export interface DaySchedule {
-    date: Date;
-    slots: TimeSlot[];
+  date: Date;
+  slots: TimeSlot[];
 }

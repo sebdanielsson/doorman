@@ -1,6 +1,6 @@
-import { Separator } from "@/components/ui/separator";
-import { MyBookings } from "@/components/my-bookings";
-import { Announcements } from "@/components/announcements";
+import { Separator } from '@/components/ui/separator';
+import { MyBookings } from '@/components/my-bookings';
+import { Announcements } from '@/components/announcements';
 
 export default function Home() {
   return (
