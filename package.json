@@ -9,7 +9,7 @@
     "lint": "next lint",
     "prettier": "prettier --write .",
     "prettier:check": "prettier . --check",
-    "stylelint": "stylelint --allow-empty-input \"src/**/*.css\""
+    "stylelint": "stylelint --allow-empty-input \"./**/*.css\""
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
