@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/accordion';
 
 // Custom hook for resize observer
-function useResizeObserver(ref: React.RefObject<HTMLElement>) {
+function useResizeObserver(ref: React.RefObject<HTMLDivElement | null>) {
   const [width, setWidth] = useState(0);
 
   useEffect(() => {
