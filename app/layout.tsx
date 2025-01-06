@@ -36,9 +36,7 @@ export default function RootLayout({
         >
           <HeaderWrapper />
           <div className="flex p-4 sm:p-10 min-h-dvh">
-            <div className="flex flex-col w-full gap-6 max-w-5xl mx-auto">
-              {children}
-            </div>
+            <div className="flex flex-col w-full gap-6 max-w-5xl mx-auto">{children}</div>
           </div>
         </ThemeProvider>
       </body>

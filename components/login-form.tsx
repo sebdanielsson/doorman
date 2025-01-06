@@ -6,8 +6,11 @@ import { Label } from '@/components/ui/label';
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   return (
-    <div className={cn('flex flex-col w-full h-full gap-6 items-center justify-center', className)} {...props}>
-      <Card className='max-w-sm'>
+    <div
+      className={cn('flex flex-col w-full h-full gap-6 items-center justify-center', className)}
+      {...props}
+    >
+      <Card className="max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Logga in</CardTitle>
           <CardDescription>
