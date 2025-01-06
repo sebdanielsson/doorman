@@ -71,7 +71,7 @@ export function Booking({ schedule }: BookingProps) {
                   onClick={() => slot.isAvailable && setSelectedSlot({ ...slot, date: day.date })}
                   disabled={!slot.isAvailable}
                 >
-                  <span className="text-[10px] sm:text-base text-stone-700 font-bold dark:text-stone-100">{`${slot.start} - ${slot.end}`}</span>
+                  <span className="text-[10px] sm:text-base text-stone-800 font-bold dark:text-stone-100">{`${slot.start} - ${slot.end}`}</span>
                 </button>
               </SheetTrigger>
               <SheetContent>
