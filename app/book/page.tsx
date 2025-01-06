@@ -75,11 +75,11 @@ const mockSchedule: DaySchedule[] = [
 export default function BookAccountPage() {
   return (
     <div className="space-y-6">
-      <div>
+      <div className="hidden lg:block">
         <h3 className="text-lg font-medium">Tvättstuga</h3>
         <p className="text-sm text-muted-foreground">Boka tid i tvättstugan.</p>
       </div>
-      <Separator />
+      <Separator className="hidden lg:block" />
       <Booking schedule={mockSchedule} />
       <Toaster />
     </div>
