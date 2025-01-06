@@ -14,13 +14,11 @@ export function SiteHeader() {
         <MainNav />
         <MobileNav />
         <div className="flex flex-1 items-center justify-between gap-2 sm:justify-end">
-          <nav className="flex items-center gap-0.5">
-            <Button variant="ghost" size="icon" className="h-8 w-8 px-0">
-              <Link href={siteConfig.links.github} target="_blank" rel="noreferrer">
-                <Icons.gitHub className="h-4 w-4" />
-                <span className="sr-only">GitHub</span>
-              </Link>
-            </Button>
+          <nav className="flex items-center gap-1">
+            <Link href={siteConfig.links.github} target="_blank" rel="noreferrer" className='flex items-center justify-center size-9'>
+              <Icons.gitHub className="h-4 w-4" />
+              <span className="sr-only">GitHub</span>
+            </Link>
             <ModeToggle />
           </nav>
         </div>
