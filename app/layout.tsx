@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import { SiteHeader } from '@/components/site-header';
+import HeaderWrapper from '@/components/header-wrapper';
 import { ThemeProvider } from '@/components/theme-provider';
 
 const geistSans = Geist({
@@ -33,9 +33,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SiteHeader />
-          <div className="p-4 sm:p-10 pb-16">
-            <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto">
+          <HeaderWrapper />
+          <div className="flex p-4 sm:p-10 min-h-dvh">
+            <div className="flex flex-col gap-6 w-full h-full max-w-5xl m-auto">
               {children}
             </div>
           </div>
