@@ -1,8 +1,15 @@
+import { Metadata } from 'next';
+
 import { Separator } from '@/components/ui/separator';
 import { Toaster } from '@/components/ui/toaster';
 import { Booking } from '@/components/booking';
 import { addDays } from 'date-fns';
 import { DaySchedule } from '@/types/booking';
+
+export const metadata: Metadata = {
+  title: 'Boka tvättstuga',
+  description: 'Boka tid i tvättstugan.',
+};
 
 // Mock data
 const mockSchedule: DaySchedule[] = [

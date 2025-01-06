@@ -1,12 +1,5 @@
-import { Metadata } from 'next';
-
 import { Separator } from '@/components/ui/separator';
 import { SidebarNav } from '@/components/sidebar-nav';
-
-export const metadata: Metadata = {
-  title: 'Inställningar',
-  description: 'Hantera inställningar för ditt konto och notifikationer.',
-};
 
 const sidebarNavItems = [
   {

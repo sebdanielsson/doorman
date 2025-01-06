@@ -1,4 +1,11 @@
+import { Metadata } from 'next';
+
 import { Separator } from '@/components/ui/separator';
+
+export const metadata: Metadata = {
+  title: 'Boka bastu',
+  description: 'Boka tid i bastun.',
+};
 
 export default function BookAccountPage() {
   return (

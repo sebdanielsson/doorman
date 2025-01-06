@@ -1,5 +1,11 @@
+import { Metadata } from 'next';
+
 import { Separator } from '@/components/ui/separator';
 import { NotificationsForm } from './notifications-form';
+
+export const metadata: Metadata = {
+  title: 'Notifikationer - Inställningar',
+};
 
 export default function SettingsNotificationsPage() {
   return (
