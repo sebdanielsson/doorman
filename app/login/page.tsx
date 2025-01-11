@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { LoginForm } from '@/components/login-form';
