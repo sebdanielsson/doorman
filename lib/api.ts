@@ -1,9 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'https://cshub.epr-apps.com/S0144BrfAsen/api/mobile/visionmobile.asmx';
-
-export const login = async (systemname: string, username: string, password: string) => {
-  const response = await axios.post(`${API_URL}/Login`, {
+export const login = async (apiUrl: string, systemname: string, username: string, password: string) => {
+  const response = await axios.post(`${apiUrl}/Login`, {
     systemname,
     username,
     password,
@@ -12,8 +10,8 @@ export const login = async (systemname: string, username: string, password: stri
   return response.data;
 };
 
-export const getUser = async (loginguid: string) => {
-  const response = await axios.get(`${API_URL}/GetUserData`, {
+export const getUser = async (apiUrl: string, loginguid: string) => {
+  const response = await axios.get(`${apiUrl}/GetUserData`, {
     params: { loginguid },
   });
   return response.data;
