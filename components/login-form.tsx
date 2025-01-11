@@ -11,7 +11,7 @@ import { login } from '@/lib/api';
 import { getToken, setToken } from '@/lib/auth';
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
-  const [server, setServer] = useState('');
+  const [apiUrl, setApiUrl] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
@@ -26,7 +26,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const response = await login(server, username, password);
+      const response = await login(apiUrl, username, password);
       setToken(response.data.token);
       router.push('/');
     } catch (error) {
@@ -49,13 +49,13 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
         <CardContent>
           <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
             <div className="grid gap-2">
-              <Label htmlFor="server">Server</Label>
+              <Label htmlFor="apiUrl">API Url</Label>
               <Input
-                id="server"
+                id="apiUrl"
                 type="text"
                 placeholder=""
-                value={server}
-                onChange={(e) => setServer(e.target.value)}
+                value={apiUrl}
+                onChange={(e) => setApiUrl(e.target.value)}
                 required
               />
             </div>
