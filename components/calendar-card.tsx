@@ -6,7 +6,7 @@ export function CalendarCard({ month, date }: { month: string; date: number }) {
       <div className="bg-red-600 text-white w-full text-center py-0.5 rounded-t-lg text-xs font-bold leading-none">
         {month}
       </div>
-      <div className="flex-grow flex items-center justify-center bg-white w-full text-black text-xl leading-none rounded-b-lg">
+      <div className="grow flex items-center justify-center bg-white w-full text-black text-xl leading-none rounded-b-lg">
         {date}
       </div>
     </div>
