@@ -56,6 +56,6 @@
     "stylelint-config-html": "^1.1.0",
     "stylelint-config-standard": "^37.0.0",
     "tailwindcss": "^4.0.3",
-    "typescript": "~5.7.3"
+    "typescript": "~5.8.0"
   }
 }
