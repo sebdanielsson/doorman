@@ -50,14 +50,14 @@ export function Booking({ schedule }: BookingProps) {
   const renderDays = () => {
     return schedule.map((day, dayIndex) => (
       <div key={dayIndex} className="mb-4">
-        <div className="text-sm font-semibold mb-1">
+        <div className="mb-1 text-sm font-semibold">
           {new Intl.DateTimeFormat(navigator?.language || 'en-US', {
             weekday: 'short',
             day: 'numeric',
             month: 'long',
           }).format(day.date)}
         </div>
-        <div className="flex h-12 bg-gray-100 rounded-md overflow-hidde gap-0.5 dark:bg-zinc-900">
+        <div className="overflow-hidde flex h-12 gap-0.5 rounded-md bg-gray-100 dark:bg-zinc-900">
           {day.slots.map((slot, slotIndex) => (
             <Sheet key={slotIndex}>
               <SheetTrigger asChild>
@@ -65,13 +65,13 @@ export function Booking({ schedule }: BookingProps) {
                   className={`h-full transition-colors ${
                     slot.isAvailable
                       ? 'bg-green-300 hover:bg-green-400 dark:bg-green-800 dark:hover:bg-green-600'
-                      : 'bg-red-400 cursor-not-allowed dark:bg-red-900'
+                      : 'cursor-not-allowed bg-red-400 dark:bg-red-900'
                   }`}
                   style={{ width: `${calculateSlotWidth(slot, day)}%` }}
                   onClick={() => slot.isAvailable && setSelectedSlot({ ...slot, date: day.date })}
                   disabled={!slot.isAvailable}
                 >
-                  <span className="text-[10px] sm:text-base text-stone-800 font-bold dark:text-stone-100">{`${slot.start} - ${slot.end}`}</span>
+                  <span className="text-[10px] font-bold text-stone-800 sm:text-base dark:text-stone-100">{`${slot.start} - ${slot.end}`}</span>
                 </button>
               </SheetTrigger>
               <SheetContent>

@@ -12,7 +12,7 @@ export default function SettingsAccountPage() {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium">Konto</h3>
-        <p className="text-sm text-muted-foreground">Uppdatera dina kontoinställningar.</p>
+        <p className="text-muted-foreground text-sm">Uppdatera dina kontoinställningar.</p>
       </div>
       <Separator />
       <AccountForm />

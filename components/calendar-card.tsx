@@ -2,11 +2,11 @@ import React from 'react';
 
 export function CalendarCard({ month, date }: { month: string; date: number }) {
   return (
-    <div className="flex flex-col items-center rounded-lg size-12 shadow-xl aspect-square">
-      <div className="bg-red-600 text-white w-full text-center py-0.5 rounded-t-lg text-xs font-bold leading-none">
+    <div className="flex aspect-square size-12 flex-col items-center rounded-lg shadow-xl">
+      <div className="w-full rounded-t-lg bg-red-600 py-0.5 text-center text-xs leading-none font-bold text-white">
         {month}
       </div>
-      <div className="grow flex items-center justify-center bg-white w-full text-black text-xl leading-none rounded-b-lg">
+      <div className="flex w-full grow items-center justify-center rounded-b-lg bg-white text-xl leading-none text-black">
         {date}
       </div>
     </div>

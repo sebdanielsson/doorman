@@ -35,8 +35,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <HeaderWrapper />
-          <div className="flex p-4 sm:p-10 min-h-dvh">
-            <div className="flex flex-col w-full gap-6 max-w-5xl mx-auto">{children}</div>
+          <div className="flex min-h-dvh p-4 sm:p-10">
+            <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">{children}</div>
           </div>
         </ThemeProvider>
       </body>

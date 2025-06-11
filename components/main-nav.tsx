@@ -27,7 +27,7 @@ export function MainNav() {
         <Link
           href="/"
           className={cn(
-            'transition-colors hover:text-foreground/80',
+            'hover:text-foreground/80 transition-colors',
             pathname === '/' ? 'text-foreground' : 'text-foreground/80',
           )}
         >
@@ -36,7 +36,7 @@ export function MainNav() {
         <Link
           href="/book"
           className={cn(
-            'transition-colors hover:text-foreground/80',
+            'hover:text-foreground/80 transition-colors',
             pathname?.startsWith('/book') ? 'text-foreground' : 'text-foreground/80',
           )}
         >
@@ -45,7 +45,7 @@ export function MainNav() {
         <Link
           href="/settings"
           className={cn(
-            'transition-colors hover:text-foreground/80',
+            'hover:text-foreground/80 transition-colors',
             pathname?.startsWith('/settings') ? 'text-foreground' : 'text-foreground/80',
           )}
         >

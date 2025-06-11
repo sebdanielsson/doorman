@@ -77,7 +77,7 @@ export default function BookAccountPage() {
     <div className="space-y-6">
       <div className="hidden lg:block">
         <h3 className="text-lg font-medium">Tvättstuga</h3>
-        <p className="text-sm text-muted-foreground">Boka tid i tvättstugan.</p>
+        <p className="text-muted-foreground text-sm">Boka tid i tvättstugan.</p>
       </div>
       <Separator className="hidden lg:block" />
       <Booking schedule={mockSchedule} />

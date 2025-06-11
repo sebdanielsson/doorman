@@ -8,8 +8,8 @@ import { ModeToggle } from '@/components/mode-toggle';
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-50 px-4 sm:px-10 w-full border-b bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60">
-      <div className="flex justify-between max-w-5xl mx-auto h-14 items-center">
+    <header className="bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-50 w-full border-b px-4 backdrop-blur-sm sm:px-10">
+      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between">
         <MainNav />
         <MobileNav />
         <nav className="flex items-center gap-1">
@@ -17,7 +17,7 @@ export function SiteHeader() {
             href={siteConfig.links.github}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center justify-center size-9"
+            className="flex size-9 items-center justify-center"
           >
             <Icons.gitHub className="h-4 w-4" />
             <span className="sr-only">GitHub</span>
