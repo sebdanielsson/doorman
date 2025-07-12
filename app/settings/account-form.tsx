@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import * as z from 'zod';
 import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,11 +17,10 @@ import { Input } from '@/components/ui/input';
 
 const accountFormSchema = z.object({
   email: z
-    .string()
-    .email({ message: 'Måste vara en giltig e-postadress.' })
-    .nonempty({ message: 'E-post är obligatoriskt.' }),
+    .email({ error: 'Måste vara en giltig e-postadress.' })
+    .nonempty({ error: 'E-post är obligatoriskt.' }),
   phone: z.string().regex(/^07[0-9]{8}$/, {
-    message: 'Måste vara ett giltigt telefonnummer.',
+    error: 'Måste vara ett giltigt telefonnummer.',
   }),
 });
 
