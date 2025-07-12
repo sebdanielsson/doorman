@@ -578,12 +578,10 @@ Below is a list of available operations, their input parameters, and return type
 **Complex Types**:
 
 - **SelectionObjectsAndObjectStatus**
-
   - `Selection` (`Selection`)
   - `BookObjects` (Array of `BookableObjects`)
 
 - **Selection**
-
   - `Number` (int)
   - `Name` (string)
   - `Type` (int)
@@ -602,12 +600,10 @@ Below is a list of available operations, their input parameters, and return type
   - _Additional optional fields: `Field1` to `Field5`, `RaStamp`, `RaSecurityField`, `RaSecurityGroups`_
 
 - **BookableObjects**
-
   - `BookObject` (`ZBookObject`)
   - `MachineStatus` (Array of `Machine`)
 
 - **ZBookObject**
-
   - `PkObject` (int)
   - `Name` (string)
   - `FkObjectType` (int)
@@ -621,7 +617,6 @@ Below is a list of available operations, their input parameters, and return type
   - _Additional optional fields: `Options`, `Cmis`, `RaStamp`, `RaSecurityField`, `RaSecurityGroups`_
 
 - **Machine**
-
   - `MachineText` (string)
   - `MachineName` (string)
   - `MachineNumber` (int)
@@ -662,15 +657,12 @@ Below is a list of available operations, their input parameters, and return type
 **Example Usage**
 
 1. **Login**:
-
    - Call `Login` with `systemname`, `username`, `Password`, and `timeout` to receive a `loginguid`.
 
 2. **Retrieve Bookings**:
-
    - Use `GetBookUserBookings` with `loginguid` and `bookindex` to get user's bookings.
 
 3. **Book a Machine Group**:
-
    - Set the machine group type using `SetBookMachineGroupTypes`.
    - Select a machine group with `SetBookMachineGroup`.
    - Set the booking pass via `SetBookPass`.

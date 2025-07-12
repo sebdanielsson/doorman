@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import * as z from 'zod';
 
 import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -16,15 +16,19 @@ import {
 } from '@/components/ui/form';
 import { Switch } from '@/components/ui/switch';
 
+enum NotificationType {
+  All = 'all',
+  Mentions = 'mentions',
+  None = 'none',
+}
+
 const notificationsFormSchema = z.object({
-  type: z.enum(['all', 'mentions', 'none'], {
-    required_error: 'You need to select a notification type.',
+  type: z.enum(Object.values(NotificationType) as [string, ...string[]], {
+    error: 'You need to select a notification type.',
   }),
   mobile: z.boolean().default(false).optional(),
   communication_emails: z.boolean().default(false).optional(),
-  social_emails: z.boolean().default(false).optional(),
   marketing_emails: z.boolean().default(false).optional(),
-  security_emails: z.boolean(),
 });
 
 type NotificationsFormValues = z.infer<typeof notificationsFormSchema>;
@@ -33,8 +37,6 @@ type NotificationsFormValues = z.infer<typeof notificationsFormSchema>;
 const defaultValues: Partial<NotificationsFormValues> = {
   communication_emails: false,
   marketing_emails: false,
-  social_emails: true,
-  security_emails: true,
 };
 
 export function NotificationsForm() {
