@@ -7,7 +7,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "prettier": "prettier --write .",
     "prettier:check": "prettier . --check",
     "stylelint": "stylelint --allow-empty-input \"./**/*.css\""
