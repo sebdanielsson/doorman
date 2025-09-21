@@ -14,7 +14,7 @@
                xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
                xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
-    <Login xmlns="http://www.rco.se/Api/Mobile/">
+    <Login xmlns="http://www.rco.se/Api/Mobile">
       <systemname xsi:type="xsd:string">string</systemname>
       <username xsi:type="xsd:string">string</username>
       <Password xsi:type="xsd:string">string</Password>
@@ -29,7 +29,7 @@
 - **systemname** (string, auto-derived): Extracted from URL path (e.g., "S0144BrfAsen" from "/S0144BrfAsen/api/mobile/visionmobile.asmx")
 - **username** (string, user-provided): Apartment number (3-digit format)  
 - **Password** (string, required): User password  
-- **timeout** (int, required): Session timeout in minutes
+- **timeout** (int, required): Session timeout in minutes (default: 1200 to match iOS app behavior)
 
 ### Success Response Schema
 
@@ -39,7 +39,7 @@
                xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
                xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
-    <LoginResponse xmlns="http://www.rco.se/Api/Mobile/">
+    <LoginResponse xmlns="http://www.rco.se/Api/Mobile">
       <LoginResult>string</LoginResult>
     </LoginResponse>
   </soap:Body>

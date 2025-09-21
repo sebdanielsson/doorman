@@ -46,11 +46,11 @@
 - [x] T023 Implement automatic redirects for unauthenticated users
 
 ## Phase 3.6: API Proxy & CORS Solution
-- [ ] T025 [P] Create login API proxy in `app/api/auth/login/route.ts` to handle SOAP requests server-side
-- [ ] T026 [P] Create logout API proxy in `app/api/auth/logout/route.ts` for SOAP logout requests
-- [ ] T027 [P] Create auth status API endpoint in `app/api/auth/status/route.ts` for session validation
-- [x] T028 [P] Update auth client in `lib/auth-client.ts` to use Next.js API routes instead of direct SOAP calls (needs API proxy implementation)
-- [ ] T029 [P] Add error handling for API proxy failures and network issues
+- [x] T025 [P] Create login API proxy in `app/api/auth/login/route.ts` to handle SOAP requests server-side
+- [x] T026 [P] Create logout API proxy in `app/api/auth/logout/route.ts` for SOAP logout requests
+- [x] T027 [P] Create auth status API endpoint in `app/api/auth/status/route.ts` for session validation
+- [x] T028 [P] Update auth client in `lib/auth-client.ts` to use Next.js API routes instead of direct SOAP calls
+- [x] T029 [P] Add error handling for API proxy failures and network issues (comprehensive debug logging implemented)
 
 ## Phase 3.7: Polish & Testing
 - [x] T024 [P] Add comprehensive error messaging in `components/auth-error.tsx` (integrated into login form)
