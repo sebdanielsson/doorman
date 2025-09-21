@@ -32,7 +32,7 @@ export interface LogoutRequest {
 }
 
 export interface LogoutResponse {
-  LogoutResult: string;
+  LogoutResult: boolean;
 }
 
 export interface SoapClient {
@@ -47,7 +47,7 @@ export interface SoapEnvelope<T = unknown> {
   };
 }
 
-export interface SoapHeaders {
+export interface SoapHeaders extends Record<string, string> {
   'Content-Type': 'text/xml; charset=utf-8';
   SOAPAction: string;
 }
