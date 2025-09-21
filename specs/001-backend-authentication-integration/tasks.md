@@ -12,9 +12,9 @@
 - Paths assume Next.js App Router structure per project type
 
 ## Phase 3.1: Setup & Types
-- [ ] T001 [P] Create authentication types in `types/auth.ts` based on data-model.md entities
-- [ ] T002 [P] Create SOAP client types in `types/soap.ts` for request/response interfaces
-- [ ] T003 [P] Add authentication dependencies to package.json (js-cookie for cookie handling)
+- [x] T001 [P] Create authentication types in `types/auth.ts` based on data-model.md entities
+- [x] T002 [P] Create SOAP client types in `types/soap.ts` for request/response interfaces
+- [x] T003 [P] Add authentication dependencies to package.json (js-cookie for cookie handling)
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
