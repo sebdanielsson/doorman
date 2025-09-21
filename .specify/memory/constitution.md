@@ -1,8 +1,8 @@
 <!--
 Sync Impact Report:
-Version change: 1.0.0 → 1.1.0
-Modified principles: None renamed
-Added sections: VI. API Documentation Adherence principle
+Version change: 1.1.0 → 1.2.0
+Modified principles: VII. Modern JavaScript Standards (new), updated Development Workflow
+Added sections: VII. Modern JavaScript Standards principle, updated package manager requirement
 Removed sections: None
 Templates requiring updates: ✅ All validated (plan-template.md, spec-template.md, tasks-template.md compatible)
 Follow-up TODOs: None
@@ -26,9 +26,9 @@ All pages MUST load core content within 2 seconds on 3G connections. Components 
 
 ### III. Component-Driven Architecture
 
-Every UI element MUST be built as reusable React components following the established shadcn/ui + Tailwind pattern. Components MUST be independently testable and documented. No direct DOM manipulation outside of React lifecycle.
+Every UI element MUST be built as reusable React components following the established shadcn/ui + Tailwind pattern. Components MUST be independently testable and documented. No direct DOM manipulation outside of React lifecycle. All component logic MUST be written in TypeScript with strict type definitions.
 
-**Rationale**: Maintains design consistency and enables efficient feature development for booking interfaces and forms.
+**Rationale**: Maintains design consistency and enables efficient feature development for booking interfaces and forms. TypeScript ensures compile-time safety and better developer experience.
 
 ### IV. Static-First Deployment
 
@@ -48,16 +48,22 @@ All backend integrations MUST reference the official API documentation in `./doc
 
 **Rationale**: The backend is a SOAP API with specific authentication and operation patterns. Deviating from documented interfaces will cause integration failures and security vulnerabilities.
 
+### VII. Modern JavaScript Standards (NON-NEGOTIABLE)
+
+All code MUST use ES modules (ESM) syntax exclusively. CommonJS imports/exports are prohibited. All new files MUST be TypeScript (.ts/.tsx) with strict mode enabled. JavaScript files (.js/.jsx) are only permitted for legacy configuration that cannot be migrated. Package management MUST use bun for all operations including install, update, and script execution.
+
+**Rationale**: ESM ensures better tree-shaking, static analysis, and future compatibility. TypeScript provides compile-time error detection and improved maintainability. Bun offers faster package management and build performance compared to npm/yarn.
+
 ## Security Requirements
 
 All authentication flows MUST validate SOAP `loginguid` tokens before API requests. Session management MUST implement secure logout across all tabs using the `Logout` SOAP operation. CSRF protection required for all state-changing operations. Content Security Policy (CSP) headers enforced in deployment. SOAP authentication credentials (`systemname`, `username`, `Password`) MUST never be stored in client-side storage.
 
 ## Development Workflow
 
-All PRs MUST pass TypeScript compilation, ESLint, Prettier, and component accessibility testing. New components require Storybook documentation. Breaking changes to booking interfaces require user acceptance testing. Security-related changes require additional review approval.
+All PRs MUST pass TypeScript compilation, ESLint, Prettier, and component accessibility testing. Package management operations MUST use bun exclusively (bun install, bun update, bun run). New components require Storybook documentation. Breaking changes to booking interfaces require user acceptance testing. Security-related changes require additional review approval. All new code MUST be written in TypeScript with strict type checking enabled.
 
 ## Governance
 
 This constitution supersedes all other development practices. All code reviews MUST verify compliance with security and performance principles. Feature complexity MUST be justified against user value for laundry booking workflows. Constitution amendments require documentation and migration plan for existing components.
 
-**Version**: 1.1.0 | **Ratified**: 2025-09-21 | **Last Amended**: 2025-09-21
+**Version**: 1.2.0 | **Ratified**: 2025-09-21 | **Last Amended**: 2025-09-21
