@@ -26,13 +26,13 @@
 
 ## Phase 3.3: Core Authentication Infrastructure (ONLY after tests are failing)
 - [x] T009 [P] Secure storage utility in `lib/auth-storage.ts` with HttpOnly cookies + localStorage fallback
-- [x] T010 [P] SOAP client implementation in `lib/soap-client.ts` with XML templates per contracts
+- [x] T010 [P] SOAP client implementation in `lib/soap-client.ts` with XML templates per contracts and URL parsing for systemname extraction (refactored for API proxy usage)
 - [x] T011 [P] Authentication context in `lib/auth-context.tsx` with React context + custom hooks
-- [x] T012 [P] Form validation schemas in `lib/auth-validation.ts` using Zod per LoginCredentials model
+- [x] T012 [P] Form validation schemas in `lib/auth-validation.ts` using Zod per updated LoginCredentials model (serverUrl, username, password)
 - [x] T013 [P] Error handling utilities in `lib/auth-errors.ts` for SOAP fault parsing
 
 ## Phase 3.4: Component Integration
-- [x] T014 Enhance login form in `components/login-form.tsx` with authentication logic and validation
+- [x] T014 Enhance login form in `components/login-form.tsx` with simplified fields (serverUrl, username, password) and authentication logic
 - [x] T015 [P] Create user display component in `components/user-info.tsx` for authenticated state
 - [x] T016 Update header wrapper in `components/header-wrapper.tsx` to show user info and logout
 - [x] T017 [P] Create loading spinner component in `components/ui/auth-spinner.tsx` for auth states
@@ -45,9 +45,16 @@
 - [x] T022 [P] Add authentication state checks to dashboard in `app/page.tsx`
 - [x] T023 Implement automatic redirects for unauthenticated users
 
-## Phase 3.6: Polish & Testing
+## Phase 3.6: API Proxy & CORS Solution
+- [ ] T025 [P] Create login API proxy in `app/api/auth/login/route.ts` to handle SOAP requests server-side
+- [ ] T026 [P] Create logout API proxy in `app/api/auth/logout/route.ts` for SOAP logout requests
+- [ ] T027 [P] Create auth status API endpoint in `app/api/auth/status/route.ts` for session validation
+- [x] T028 [P] Update auth client in `lib/auth-client.ts` to use Next.js API routes instead of direct SOAP calls (needs API proxy implementation)
+- [ ] T029 [P] Add error handling for API proxy failures and network issues
+
+## Phase 3.7: Polish & Testing
 - [x] T024 [P] Add comprehensive error messaging in `components/auth-error.tsx` (integrated into login form)
-- [ ] T025 [P] Add loading states and accessibility improvements to auth components
+- [ ] T030 [P] Add loading states and accessibility improvements to auth components
 - [ ] T026 [P] Update component stories in Storybook for authentication states
 - [ ] T027 Run quickstart.md manual testing scenarios with .env credentials
 - [ ] T028 Performance testing: <500ms authentication response time
@@ -88,9 +95,10 @@
 2. **From Data Model** (data-model.md):
    - AuthenticationState → T001, T011
    - UserProfile → T001, T015
-   - LoginCredentials → T001, T012
+   - LoginCredentials (updated: serverUrl, username, password) → T001, T012
    - AuthError → T001, T013
    - SoapResponse/SoapFault → T002, T010
+   - URL parsing for systemname extraction → T010
    
 3. **From Research** (research.md):
    - Secure storage decision → T009

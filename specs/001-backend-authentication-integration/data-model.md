@@ -35,16 +35,19 @@
 ### LoginCredentials
 **Purpose**: User input for authentication request
 **Attributes**:
-- `systemname: string` - SOAP system identifier
+- `serverUrl: string` - Full SOAP API endpoint URL
 - `username: string` - Apartment number (3 digits)
 - `password: string` - User password
 - `timeout: number` - Session timeout in minutes
 
 **Validation Rules**:
-- `systemname` required, non-empty string
+- `serverUrl` must be valid HTTPS URL with correct API path structure
 - `username` must match pattern /^\d{3}$/
 - `password` required, minimum 1 character
 - `timeout` must be positive integer
+
+**Derived Values**:
+- `systemname` extracted from URL path (e.g., "S0144BrfAsen" from "/S0144BrfAsen/api/mobile/visionmobile.asmx")
 
 ### AuthError
 **Purpose**: Structured error information for authentication failures

@@ -1,12 +1,10 @@
 /**
  * High-level Authentication Client
- * Coordinates between SOAP client and secure storage
+ * Coordinates between API routes and secure storage
  * Based on data-model.md and research.md architecture
  */
 
 import type { LoginCredentials, AuthUser } from '@/types/auth';
-import type { LoginResponse } from '@/types/soap';
-import { soapClient } from './soap-client';
 import { authStorage } from './auth-storage';
 
 /**
@@ -14,35 +12,57 @@ import { authStorage } from './auth-storage';
  */
 export async function login(credentials: LoginCredentials): Promise<AuthUser> {
   try {
-    // Convert LoginCredentials to LoginRequest format for SOAP
-    const soapCredentials = {
-      systemname: credentials.systemname,
-      username: credentials.username,
-      Password: credentials.password, // Note: Capital P as per SOAP spec
-      timeout: credentials.timeout,
-    };
+    // Make API request to our proxy endpoint
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials),
+    });
 
-    // Make SOAP login request
-    const loginResponse: LoginResponse = await soapClient.login(soapCredentials);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Login API Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorData
+      });
+      
+      // Log debug info if available
+      if (errorData.debug) {
+        console.group('Debug Information');
+        console.log('Server URL:', errorData.debug.serverUrl);
+        console.log('Username:', errorData.debug.username);
+        console.log('Systemname:', errorData.debug.systemname);
+        console.log('SOAP Request:', errorData.debug.soapRequest);
+        console.log('Response Status:', errorData.debug.responseStatus);
+        console.log('Response Body:', errorData.debug.responseBody);
+        console.groupEnd();
+      }
+      
+      throw new Error(errorData.error || 'Login failed');
+    }
+
+    const loginData = await response.json();
     
-    if (!loginResponse.LoginResult) {
-      throw new Error('Invalid login response: missing LoginResult');
+    if (!loginData.success) {
+      throw new Error('Login failed: Invalid response');
     }
 
     // Create user profile from successful login
     const user: AuthUser = {
-      username: credentials.username,
-      loginGuid: loginResponse.LoginResult,
-      systemname: credentials.systemname,
+      username: loginData.username,
+      loginGuid: 'stored-in-cookie', // Token is now in HttpOnly cookie
+      systemname: loginData.systemname,
       isAuthenticated: true,
       loginTime: new Date(),
-      apartmentNumber: credentials.username, // Username is apartment number
-      serverAddress: credentials.systemname,
+      apartmentNumber: loginData.username, // Username is apartment number
+      serverAddress: credentials.serverUrl,
       expiresAt: new Date(Date.now() + authStorage.getTokenExpiryHours() * 60 * 60 * 1000),
     };
 
-    // Store authentication data securely
-    authStorage.storeAuthToken(loginResponse.LoginResult);
+    // Store user data locally (token is handled server-side via cookies)
     authStorage.storeUser(user);
 
     return user;
@@ -60,12 +80,20 @@ export async function login(credentials: LoginCredentials): Promise<AuthUser> {
  */
 export async function logout(): Promise<void> {
   try {
-    const token = authStorage.getAuthToken();
+    const user = getCurrentUser();
     
-    // If we have a valid token, notify the server
-    if (token) {
+    // If we have a user with server info, notify the server via our API
+    if (user?.serverAddress) {
       try {
-        await soapClient.logout(token);
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            serverUrl: user.serverAddress,
+          }),
+        });
       } catch (error) {
         // Log the error but don't prevent local logout
         console.warn('Server logout failed:', error);
@@ -87,20 +115,28 @@ export function getCurrentUser(): AuthUser | null {
 /**
  * Check if user is currently authenticated
  */
-export function isAuthenticated(): boolean {
-  const user = getCurrentUser();
-  const token = authStorage.getAuthToken();
-  
-  return !!(user?.isAuthenticated && token);
+export async function isAuthenticated(): Promise<boolean> {
+  try {
+    const response = await fetch('/api/auth/status');
+    if (!response.ok) {
+      return false;
+    }
+    
+    const data = await response.json();
+    return data.isAuthenticated;
+  } catch (error) {
+    console.error('Failed to check auth status:', error);
+    return false;
+  }
 }
 
 /**
  * Refresh current session if valid
  */
-export function refreshSession(): AuthUser | null {
+export async function refreshSession(): Promise<AuthUser | null> {
   const user = getCurrentUser();
   
-  if (user && isAuthenticated()) {
+  if (user && await isAuthenticated()) {
     // Extend the session expiry
     authStorage.refreshTokenExpiry(user);
     return authStorage.getStoredUser();
@@ -113,7 +149,10 @@ export function refreshSession(): AuthUser | null {
  * Get current auth token
  */
 export function getAuthToken(): string | null {
-  return authStorage.getAuthToken();
+  // Token is now handled server-side via HttpOnly cookies
+  // This function is kept for compatibility but returns null
+  // since we can't access HttpOnly cookies from client-side
+  return null;
 }
 
 /**
@@ -152,11 +191,11 @@ export function getSessionInfo(): {
 /**
  * Initialize auth client (restore session from storage)
  */
-export function initializeAuth(): AuthUser | null {
+export async function initializeAuth(): Promise<AuthUser | null> {
   try {
     const user = getCurrentUser();
     
-    if (user && isAuthenticated()) {
+    if (user && await isAuthenticated()) {
       // Check if session is still valid
       const sessionInfo = getSessionInfo();
       if (sessionInfo?.isExpired) {

@@ -124,11 +124,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const user = await authClient.login(credentials);
-      const token = authStorage.getAuthToken();
-
-      if (!token) {
-        throw new Error('Authentication token not found after login');
-      }
+      
+      // With HttpOnly cookies, the token is stored server-side
+      // We don't need to retrieve it client-side
+      const token = 'stored-in-httponly-cookie'; // Placeholder for HttpOnly cookie
 
       dispatch({
         type: 'LOGIN_SUCCESS',

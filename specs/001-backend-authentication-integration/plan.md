@@ -1,7 +1,7 @@
 
 # Implementation Plan: Backend Authentication Integration
 
-**Branch**: `001-backend-authentication-integration` | **Date**: September 21, 2025 | **Spec**: [./spec.md](./spec.md)
+**Branch**: `001-backend-authentication-integration` | **Date**: 2025-09-21 | **Spec**: [spec.md](./spec.md)
 **Input**: Feature specification from `/specs/001-backend-authentication-integration/spec.md`
 
 ## Execution Flow (/plan command scope)
@@ -34,41 +34,66 @@
 
 ## Summary
 
-Connect the existing login form UI to the VisionMobile SOAP API for authentication. The system will authenticate users using apartment number, password, and server address, store the resulting `loginguid` securely, and display authenticated user information. The implementation must integrate with the existing Next.js/React component architecture while adhering to security-first authentication principles.
+Backend Authentication Integration - Implement login functionality to connect existing UI to backend authentication service and display authenticated user data. Primary requirement is to authenticate users using apartment number, password, and server address against the centralized SOAP backend service, with proper token management and user session handling.
 
 ## Technical Context
 
 **Language/Version**: TypeScript 5.9 with Next.js 15.5.3 and React 19.1.0  
 **Primary Dependencies**: Next.js App Router, Radix UI components, React Hook Form 7.60.0, Zod 4.0.5 for validation, Tailwind CSS 4.1.11  
-**Storage**: Browser-based secure storage (HttpOnly cookies preferred, secure localStorage as fallback)  
-**Testing**: Next.js testing utilities with Jest, React Testing Library for component testing  
-**Target Platform**: Static web application deployable to CDN with client-side SOAP API calls  
-**Project Type**: web - Frontend-only Next.js application consuming external SOAP API  
-**Performance Goals**: < 2 seconds initial load on 3G, < 500ms authentication response time  
-**Constraints**: WCAG 2.1 AA accessibility compliance, HttpOnly cookie storage, SOAP 1.1 protocol adherence  
-**Scale/Scope**: Multi-tenant apartment booking system, 100-500 concurrent users per building
+**Storage**: HttpOnly cookies for authentication tokens, secure browser storage for user session data  
+**Testing**: Jest with testing configuration already established in repository  
+**Target Platform**: Web application (Next.js SSG/SSR hybrid) deployable as static assets  
+**Project Type**: web - determines source structure (app/ directory with Next.js App Router)  
+**Performance Goals**: Core content load within 2 seconds on 3G connections, authentication flow <500ms response time  
+**Constraints**: SOAP API integration required with exact parameter types (xsi:type specifications), HTTPS-only communication, no sensitive data in localStorage, CORS restrictions require server-side proxy via Next.js API routes  
+**Scale/Scope**: Single tenant booking system with authenticated user sessions, SOAP backend integration with proper loginguid token management
+
+**User-Provided Context**: Full API URL must be provided: https://cshub.epr-apps.com/S0144BrfAsen/api/mobile/visionmobile.asmx. Request body must specify types using xsi:type attributes (xsd:string for text fields, xsd:int for timeout). Example systemname should be short identifier like "S0144BrfAsen", not full URL.
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-### Security-First Authentication (NON-NEGOTIABLE) 
-✅ **PASS** - `loginguid` tokens will be stored in HttpOnly cookies, all API calls use HTTPS, session timeout implemented via SOAP API `timeout` parameter
+**Security-First Authentication**: ✅ PASS
+- Authentication tokens will be stored in HttpOnly cookies (secure storage)
+- SOAP authentication uses HTTPS communication
+- Session timeout and renewal mechanisms planned
+- No sensitive data in localStorage (constitution requirement met)
 
-### Performance & Accessibility
-✅ **PASS** - Authentication form follows existing component patterns, loading states for auth requests, WCAG 2.1 AA compliance maintained
+**Performance & Accessibility**: ✅ PASS  
+- Target <2 seconds load time on 3G (aligns with requirement)
+- Will implement WCAG 2.1 AA standards for login form
+- Mobile-first responsive design for authentication UI
+- Authentication flow optimized for <500ms response time
 
-### Component-Driven Architecture  
-✅ **PASS** - Authentication components built using existing shadcn/ui + Tailwind pattern, follows React Hook Form patterns already established
+**Component-Driven Architecture**: ✅ PASS
+- Login form will use existing shadcn/ui + Tailwind pattern
+- TypeScript with strict types for all authentication components
+- React components following established patterns
+- Independent testability for auth components
 
-### Static-First Deployment
-✅ **PASS** - Client-side SOAP API calls, no server-side authentication state, compatible with CDN deployment
+**Static-First Deployment**: ✅ PASS
+- Authentication works with static deployment (server-side proxy API calls)
+- SSR for initial login page load
+- Client-side routing post-authentication
+- SOAP API calls proxied through Next.js API routes (bypasses CORS)
 
-### Progressive Enhancement
-✅ **PASS** - Form works without JavaScript, authentication errors gracefully handled, basic functionality maintained under network issues
+**Progressive Enhancement**: ✅ PASS
+- Login form works without JavaScript (basic form submission)
+- Enhanced features layer on top (real-time validation, loading states)
+- Graceful degradation for network failures during auth
 
-### API Documentation Adherence (NON-NEGOTIABLE)
-✅ **PASS** - SOAP Login/Logout operations follow exact API specification, `loginguid` authentication pattern matches documented flow, parameter names (`systemname`, `username`, `Password`, `timeout`) match specification exactly
+**API Documentation Adherence**: ✅ PASS
+- Following exact SOAP specifications with xsi:type parameters
+- Using documented authentication flow with loginguid tokens
+- No undocumented endpoints or assumptions
+- Referencing existing API documentation in docs/ directory
+
+**Modern JavaScript Standards**: ✅ PASS
+- TypeScript (.tsx) for all new authentication components
+- ESM syntax exclusively
+- Bun package manager already established in project
+- Strict mode TypeScript compilation
 
 ## Project Structure
 
@@ -122,7 +147,7 @@ ios/ or android/
 └── [platform-specific structure]
 ```
 
-**Structure Decision**: [DEFAULT to Option 1 unless Technical Context indicates web/mobile app]
+**Structure Decision**: Option 1 (Single project) - Using Next.js App Router structure already established in repository. Authentication components will integrate with existing app/ directory structure.
 
 ## Phase 0: Outline & Research
 
@@ -187,37 +212,32 @@ ios/ or android/
 
 **Task Generation Strategy**:
 
-Based on the authentication integration requirements, the /tasks command will generate tasks following Test-Driven Development patterns:
-
-- **Authentication Context Tasks**: Create React context, custom hooks, and TypeScript interfaces from data-model.md
-- **SOAP Client Tasks**: Implement XML request/response handling based on contracts/soap-auth.md specifications  
-- **Secure Storage Tasks**: Build HttpOnly cookie implementation with localStorage fallback
-- **Form Integration Tasks**: Connect existing login form to authentication logic using React Hook Form + Zod
-- **Component Update Tasks**: Modify header/navigation to display user information
-- **Error Handling Tasks**: Implement user-friendly error messages for authentication failures
-- **Route Protection Tasks**: Add authentication guards for protected pages like bookings
-- **Contract Test Tasks**: Verify SOAP request/response format compliance
+- Load `.specify/templates/tasks-template.md` as base
+- Generate tasks from Phase 1 design docs (contracts, data model, quickstart)
+- SOAP authentication contract → contract test task [P]
+- Authentication state entity → auth context creation task [P]
+- User session entity → session management task [P] 
+- Login form user story → integration test task
+- Auth guard user story → route protection integration test
+- Implementation tasks to make tests pass
 
 **Ordering Strategy**:
 
-1. **Foundation Layer**: Authentication types, context, and interfaces [P]
-2. **Core Services**: SOAP client implementation and secure storage [P] 
-3. **Integration Layer**: Form validation, error handling, session management
-4. **UI Updates**: Header components, loading states, user display
-5. **Route Protection**: Authentication guards and redirects
-6. **Testing**: Contract tests, integration tests from quickstart.md scenarios
+- TDD order: Tests before implementation
+- Dependency order: Types → Utilities → Components → Integration
+- Mark [P] for parallel execution (independent files)
 
-**Estimated Output**: 20-25 numbered, ordered tasks focusing on authentication infrastructure and UI integration
+**Estimated Output**: 20-25 numbered, ordered tasks in tasks.md covering:
+1. Contract tests for SOAP authentication (2-3 tasks)
+2. Type definitions and validation schemas (2-3 tasks)
+3. SOAP client utilities (2-3 tasks)
+4. Authentication context and hooks (3-4 tasks)
+5. Login form components (3-4 tasks)
+6. Auth guard implementation (2-3 tasks)
+7. Integration tests (3-4 tasks)
+8. Error handling and loading states (2-3 tasks)
 
-**Key Dependencies**:
-- Existing login form component (requires enhancement, not replacement)
-- Current header/navigation structure (requires user info display)
-- SOAP API endpoint accessibility for testing
-- Browser security features (cookies, HTTPS) for secure storage
-
-**IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan
-
-## Phase 3+: Future Implementation
+**IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan## Phase 3+: Future Implementation
 
 *These phases are beyond the scope of the /plan command*
 
@@ -250,9 +270,9 @@ Based on the authentication integration requirements, the /tasks command will ge
 **Gate Status**:
 
 - [x] Initial Constitution Check: PASS
-- [x] Post-Design Constitution Check: PASS (re-evaluated after Phase 1 - no new violations)
+- [x] Post-Design Constitution Check: PASS
 - [x] All NEEDS CLARIFICATION resolved
-- [x] Complexity deviations documented (none required)
+- [x] Complexity deviations documented (none identified)
 
 ---
 *Based on Constitution v1.1.0 - See `/memory/constitution.md`*

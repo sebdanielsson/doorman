@@ -8,14 +8,14 @@ import { z } from 'zod';
 
 // Login credentials validation schema
 export const loginCredentialsSchema = z.object({
-  systemname: z
+  serverUrl: z
     .string()
-    .min(1, 'Server address is required')
-    .max(255, 'Server address is too long')
+    .min(1, 'Server URL is required')
+    .max(255, 'Server URL is too long')
     .url('Please enter a valid server URL')
     .refine(
-      (url) => url.includes('.') && !url.includes('localhost') && !url.includes('127.0.0.1'),
-      'Please enter a valid server address'
+      (url) => url.includes('api/mobile/visionmobile.asmx'),
+      'Server URL must point to a VisionMobile API endpoint'
     ),
   
   username: z
@@ -37,7 +37,7 @@ export const loginCredentialsSchema = z.object({
     .number()
     .int('Timeout must be an integer')
     .min(10, 'Timeout must be at least 10 seconds')
-    .max(300, 'Timeout cannot exceed 5 minutes'),
+    .max(1800, 'Timeout cannot exceed 30 minutes'), // Allow iOS timeout of 1200
 });
 
 // Type inference from schema
@@ -102,7 +102,7 @@ export function validateField(fieldName: keyof LoginCredentialsInput, value: unk
     let schema: z.ZodSchema;
     
     switch (fieldName) {
-      case 'systemname':
+      case 'serverUrl':
         schema = serverAddressSchema;
         break;
       case 'username':
@@ -141,7 +141,7 @@ export function validateField(fieldName: keyof LoginCredentialsInput, value: unk
  */
 export function transformFormData(formData: Record<string, unknown>): LoginCredentialsInput {
   return {
-    systemname: String(formData.systemname || ''),
+    serverUrl: String(formData.serverUrl || ''),
     username: String(formData.username || ''),
     password: String(formData.password || ''),
     timeout: Number(formData.timeout) || 30,
@@ -153,7 +153,7 @@ export function transformFormData(formData: Record<string, unknown>): LoginCrede
  */
 export function getFieldErrorMessage(fieldName: keyof LoginCredentialsInput, error: string): string {
   const fieldDisplayNames = {
-    systemname: 'Server address',
+    serverUrl: 'Server URL',
     username: 'Apartment number', 
     password: 'Password',
     timeout: 'Timeout',
@@ -167,7 +167,7 @@ export function getFieldErrorMessage(fieldName: keyof LoginCredentialsInput, err
   }
   
   if (error.includes('url') || error.includes('URL')) {
-    return 'Please enter a valid server URL (e.g., https://example.com)';
+    return 'Please enter a valid server URL (e.g., https://example.com/api/mobile/visionmobile.asmx)';
   }
   
   if (error.includes('3 digits')) {

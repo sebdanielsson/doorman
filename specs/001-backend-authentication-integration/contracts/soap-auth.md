@@ -4,7 +4,7 @@
 
 **Operation**: Login  
 **SOAP Action**: `http://www.rco.se/Api/Mobile/Login`  
-**Endpoint**: `https://cshub.epr-apps.com/S0144BrfAsen/api/mobile/visionmobile.asmx`
+**Endpoint**: User-provided SOAP endpoint URL (e.g., `https://cshub.epr-apps.com/S0144BrfAsen/api/mobile/visionmobile.asmx`)
 
 ### Request Schema
 
@@ -15,10 +15,10 @@
                xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
     <Login xmlns="http://www.rco.se/Api/Mobile/">
-      <systemname>string</systemname>
-      <username>string</username>
-      <Password>string</Password>
-      <timeout>int</timeout>
+      <systemname xsi:type="xsd:string">string</systemname>
+      <username xsi:type="xsd:string">string</username>
+      <Password xsi:type="xsd:string">string</Password>
+      <timeout xsi:type="xsd:int">int</timeout>
     </Login>
   </soap:Body>
 </soap:Envelope>
@@ -26,8 +26,8 @@
 
 ### Request Parameters
 
-- **systemname** (string, required): SOAP system identifier  
-- **username** (string, required): Apartment number (3-digit format)  
+- **systemname** (string, auto-derived): Extracted from URL path (e.g., "S0144BrfAsen" from "/S0144BrfAsen/api/mobile/visionmobile.asmx")
+- **username** (string, user-provided): Apartment number (3-digit format)  
 - **Password** (string, required): User password  
 - **timeout** (int, required): Session timeout in minutes
 

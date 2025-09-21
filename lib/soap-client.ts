@@ -4,7 +4,6 @@
  */
 
 import type { 
-  LoginRequest, 
   LoginResponse, 
   LogoutRequest, 
   LogoutResponse, 
@@ -12,19 +11,48 @@ import type {
   SoapFault,
   SoapHeaders 
 } from '@/types/soap';
+import type { LoginCredentials } from '@/types/auth';
 
 /**
- * Format login credentials into SOAP XML request
+ * Extract systemname from server URL path
+ * E.g., "https://cshub.epr-apps.com/S0144BrfAsen/api/mobile/visionmobile.asmx" → "S0144BrfAsen"
  */
-export function formatLoginRequest(credentials: LoginRequest): string {
+export function extractSystemnameFromUrl(serverUrl: string): string {
+  try {
+    const url = new URL(serverUrl);
+    const pathSegments = url.pathname.split('/').filter(segment => segment.length > 0);
+    
+    // Find the segment before "api/mobile/visionmobile.asmx"
+    const apiIndex = pathSegments.findIndex(segment => segment === 'api');
+    if (apiIndex > 0) {
+      return pathSegments[apiIndex - 1];
+    }
+    
+    // Fallback: use the first non-empty path segment
+    if (pathSegments.length > 0) {
+      return pathSegments[0];
+    }
+    
+    throw new Error('Unable to extract systemname from URL path');
+  } catch (error) {
+    throw new Error(`Invalid server URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
+
+/**
+ * Format login credentials into SOAP XML request with proper xsi:type specifications
+ */
+export function formatLoginRequest(credentials: LoginCredentials, serverUrl: string): string {
+  const systemname = extractSystemnameFromUrl(serverUrl);
+  
   return `<?xml version="1.0" encoding="utf-8"?>
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
-    <Login xmlns="http://www.rco.se/Api/Mobile/">
-      <systemname>${escapeXml(credentials.systemname)}</systemname>
-      <username>${escapeXml(credentials.username)}</username>
-      <Password>${escapeXml(credentials.Password)}</Password>
-      <timeout>${credentials.timeout}</timeout>
+    <Login xmlns="http://www.rco.se/Api/Mobile">
+      <systemname xsi:type="xsd:string">${escapeXml(systemname)}</systemname>
+      <username xsi:type="xsd:string">${escapeXml(credentials.username)}</username>
+      <Password xsi:type="xsd:string">${escapeXml(credentials.password)}</Password>
+      <timeout xsi:type="xsd:int">${credentials.timeout}</timeout>
     </Login>
   </soap:Body>
 </soap:Envelope>`;
@@ -150,12 +178,12 @@ export function getLogoutHeaders(): SoapHeaders {
 /**
  * Make SOAP login request to server
  */
-export async function login(credentials: LoginRequest): Promise<LoginResponse> {
-  const xml = formatLoginRequest(credentials);
+export async function login(credentials: LoginCredentials): Promise<LoginResponse> {
+  const xml = formatLoginRequest(credentials, credentials.serverUrl);
   const headers = getLoginHeaders();
 
   try {
-    const response = await fetch(process.env.NEXT_PUBLIC_SOAP_ENDPOINT || '', {
+    const response = await fetch(credentials.serverUrl, {
       method: 'POST',
       headers,
       body: xml,
@@ -286,4 +314,5 @@ export const soapClient = {
   formatLoginRequest,
   formatLogoutRequest,
   parseSoapFault,
+  extractSystemnameFromUrl,
 };

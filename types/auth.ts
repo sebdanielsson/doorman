@@ -28,7 +28,7 @@ export type AuthUser = UserProfile & {
 };
 
 export interface LoginCredentials {
-  systemname: string;
+  serverUrl: string;
   username: string;
   password: string;
   timeout: number;

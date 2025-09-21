@@ -17,7 +17,7 @@ This guide demonstrates the complete authentication flow from user login to disp
 **Then**: Login form displays with fields for server, apartment number, and password
 
 **Expected UI Elements**:
-- Server address input field
+- Server URL input field (full SOAP endpoint)
 - Apartment number input (3-digit format)
 - Password input (hidden)
 - Submit button
@@ -30,7 +30,8 @@ This guide demonstrates the complete authentication flow from user login to disp
 
 **Expected Behavior**:
 - Form shows loading state
-- SOAP request sent to VisionMobile API
+- System extracts systemname from server URL path
+- SOAP request sent to user-provided endpoint with proper xsi:type specifications
 - Credentials validated against backend
 - `loginguid` token received and stored securely
 
