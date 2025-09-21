@@ -7,7 +7,7 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
-import type { AuthenticationState, AuthUser, LoginCredentials, AuthError, AuthAction } from '@/types/auth';
+import type { AuthenticationState, LoginCredentials, AuthError, AuthAction } from '@/types/auth';
 import { authClient } from './auth-client';
 import { authStorage } from './auth-storage';
 
@@ -89,29 +89,98 @@ function authReducer(state: AuthenticationState, action: AuthAction): Authentica
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // Initialize authentication state from storage on mount
+  // Initialize authentication state from server on mount
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const token = authStorage.getAuthToken();
-        const user = authStorage.getStoredUser();
+        // Check server-side authentication status first
+        const response = await fetch('/api/auth/status', {
+          credentials: 'include', // Important: include cookies
+        });
 
-        if (token && user) {
-          // Check if token is still valid (not expired)
-          if (user.expiresAt && new Date(user.expiresAt) > new Date()) {
-            dispatch({
-              type: 'LOGIN_SUCCESS',
-              payload: { user, token },
-            });
+        if (response.ok) {
+          const authStatus = await response.json();
+
+          if (authStatus.isAuthenticated && authStatus.user) {
+            // User is authenticated on server, get stored user profile
+            const storedUser = authStorage.getStoredUser();
+
+            if (storedUser && storedUser.expiresAt && new Date(storedUser.expiresAt) > new Date()) {
+              // Use stored profile if it's still valid
+              dispatch({
+                type: 'LOGIN_SUCCESS',
+                payload: { user: storedUser, token: authStatus.user.token || 'httponly-cookie' },
+              });
+            } else {
+              // Recreate user profile from auth status (fallback)
+              // Try to preserve any available user data, but avoid hardcoded "User" fallbacks
+              console.warn('Stored user data expired or missing, attempting to preserve session');
+
+              // If we have any stored user data (even if expired), try to preserve the username
+              const fallbackUsername = storedUser?.username || storedUser?.apartmentNumber;
+
+              if (fallbackUsername && fallbackUsername !== 'User') {
+                const user = {
+                  username: fallbackUsername,
+                  loginGuid: 'stored-in-cookie',
+                  systemname: storedUser?.systemname || 'Unknown',
+                  isAuthenticated: true,
+                  loginTime: new Date(),
+                  apartmentNumber: fallbackUsername, // Username IS the apartment number
+                  serverAddress: storedUser?.serverAddress || '',
+                  expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30 minutes from now
+                };
+
+                authStorage.storeUser(user);
+                dispatch({
+                  type: 'LOGIN_SUCCESS',
+                  payload: { user, token: 'httponly-cookie' },
+                });
+              } else {
+                // No usable user data available, force re-authentication
+                console.warn('No valid user data available, clearing session');
+                authStorage.clearAllAuthData();
+                dispatch({ type: 'LOGOUT' });
+              }
+            }
           } else {
-            // Token expired, clear storage
+            // Not authenticated on server, clear any stale client data
             authStorage.clearAllAuthData();
-            dispatch({ type: 'TOKEN_EXPIRED' });
+            dispatch({ type: 'LOGOUT' });
+          }
+        } else {
+          // Auth status check failed, fall back to client-side check
+          const token = authStorage.getAuthToken();
+          const user = authStorage.getStoredUser();
+
+          if (token && user) {
+            // Check if token is still valid (not expired)
+            if (user.expiresAt && new Date(user.expiresAt) > new Date()) {
+              dispatch({
+                type: 'LOGIN_SUCCESS',
+                payload: { user, token },
+              });
+            } else {
+              // Token expired, clear storage
+              authStorage.clearAllAuthData();
+              dispatch({ type: 'TOKEN_EXPIRED' });
+            }
           }
         }
       } catch (error) {
         console.error('Failed to initialize auth state:', error);
-        authStorage.clearAllAuthData();
+        // On error, fall back to client-side storage check
+        const token = authStorage.getAuthToken();
+        const user = authStorage.getStoredUser();
+
+        if (token && user && user.expiresAt && new Date(user.expiresAt) > new Date()) {
+          dispatch({
+            type: 'LOGIN_SUCCESS',
+            payload: { user, token },
+          });
+        } else {
+          authStorage.clearAllAuthData();
+        }
       }
     };
 
@@ -124,7 +193,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const user = await authClient.login(credentials);
-      
+
       // With HttpOnly cookies, the token is stored server-side
       // We don't need to retrieve it client-side
       const token = 'stored-in-httponly-cookie'; // Placeholder for HttpOnly cookie
@@ -135,13 +204,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
     } catch (error) {
       const authError: AuthError = {
-        type: error instanceof Error && error.message.includes('credentials') 
-          ? 'INVALID_CREDENTIALS' 
-          : error instanceof Error && error.message.includes('network')
-          ? 'NETWORK'
-          : error instanceof Error && error.message.includes('timeout')
-          ? 'TIMEOUT'
-          : 'SERVER_ERROR',
+        type:
+          error instanceof Error && error.message.includes('credentials')
+            ? 'INVALID_CREDENTIALS'
+            : error instanceof Error && error.message.includes('network')
+              ? 'NETWORK'
+              : error instanceof Error && error.message.includes('timeout')
+                ? 'TIMEOUT'
+                : 'SERVER_ERROR',
         message: error instanceof Error ? error.message : 'Login failed',
         retryable: true,
       };
@@ -181,28 +251,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     clearError,
   };
 
-  return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 }
 
 // Custom hook to use authentication context
 export function useAuth() {
   const context = useContext(AuthContext);
-  
+
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
-  
+
   return context;
 }
 
 // Custom hook for authentication guard
 export function useAuthGuard() {
   const { state } = useAuth();
-  
+
   return {
     isAuthenticated: state.isAuthenticated,
     isLoading: state.isLoading,
@@ -218,10 +284,10 @@ export function useAuthGuard() {
 // Custom hook for authenticated user info
 export function useAuthUser() {
   const { state } = useAuth();
-  
+
   if (!state.isAuthenticated || !state.user) {
     return null;
   }
-  
+
   return state.user;
 }

@@ -1,7 +1,7 @@
 /**
  * Contract test for SOAP Login operation
  * Based on contracts/soap-auth.md specifications
- * 
+ *
  * This test validates the SOAP request/response format and ensures
  * the client correctly formats requests and parses responses.
  */
@@ -35,9 +35,9 @@ describe('SOAP Login Contract', () => {
     // This will fail until SOAP client is implemented
     const soapClient = jest.requireActual('@/lib/soap-client') as SoapClient;
     expect(() => soapClient.formatLoginRequest(credentials)).not.toThrow();
-    
+
     const xmlRequest = soapClient.formatLoginRequest(credentials);
-    
+
     // Validate XML structure per contract specification
     expect(xmlRequest).toContain('<?xml version="1.0" encoding="utf-8"?>');
     expect(xmlRequest).toContain('<soap:Envelope');
@@ -64,7 +64,7 @@ describe('SOAP Login Contract', () => {
     expect(() => soapClient.parseLoginResponse(mockSuccessResponse)).not.toThrow();
 
     const parsed: SoapResponse<LoginResponse> = soapClient.parseLoginResponse(mockSuccessResponse);
-    
+
     expect(parsed.success).toBe(true);
     expect(parsed.data?.LoginResult).toBe('mock-login-guid-123');
     expect(parsed.fault).toBeUndefined();
@@ -86,7 +86,7 @@ describe('SOAP Login Contract', () => {
     // This will fail until SOAP client is implemented
     const soapClient = jest.requireActual('@/lib/soap-client') as SoapClient;
     const parsed: SoapResponse<LoginResponse> = soapClient.parseLoginResponse(mockFaultResponse);
-    
+
     expect(parsed.success).toBe(false);
     expect(parsed.data).toBeUndefined();
     expect(parsed.fault).toBeDefined();
@@ -99,7 +99,7 @@ describe('SOAP Login Contract', () => {
     // This will fail until SOAP client is implemented
     const soapClient = jest.requireActual('@/lib/soap-client') as SoapClient;
     const headers = soapClient.getLoginHeaders();
-    
+
     expect(headers['Content-Type']).toBe('text/xml; charset=utf-8');
     expect(headers['SOAPAction']).toBe('"http://www.rco.se/Api/Mobile/Login"');
   });

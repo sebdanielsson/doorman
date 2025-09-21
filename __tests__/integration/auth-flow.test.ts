@@ -63,7 +63,7 @@ describe('Authentication Flow Integration', () => {
     });
     expect(mockAuthStorage.storeAuthToken).toHaveBeenCalledWith('mock-login-guid-123');
     expect(mockAuthStorage.storeUser).toHaveBeenCalled();
-    
+
     // Verify the essential user properties
     expect(user.username).toBe('001');
     expect(user.loginGuid).toBe('mock-login-guid-123');

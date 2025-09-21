@@ -17,7 +17,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login, state, clearError } = useAuth();
   const { shouldRedirect, isLoading: authLoading } = useAuthRedirect('/');
-  
+
   const form = useForm<LoginCredentialsInput>({
     resolver: zodResolver(loginCredentialsSchema),
     defaultValues: {
@@ -38,7 +38,9 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
   // Don't render form if user is already authenticated or should redirect
   if (shouldRedirect || authLoading) {
     return (
-      <div className={cn('flex h-full w-full flex-col items-center justify-center gap-6', className)}>
+      <div
+        className={cn('flex h-full w-full flex-col items-center justify-center gap-6', className)}
+      >
         <div>Redirecting...</div>
       </div>
     );
@@ -47,7 +49,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
   const onSubmit = async (data: LoginCredentialsInput) => {
     setIsSubmitting(true);
     clearError();
-    
+
     try {
       await login({
         serverUrl: data.serverUrl,
@@ -58,7 +60,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
       // Navigation will be handled by useAuthRedirect
     } catch (error) {
       console.error('Login form error:', error);
-      
+
       // In development, log additional debug info
       if (process.env.NODE_ENV === 'development') {
         console.group('Login Debug Information');
@@ -66,9 +68,9 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
         console.log('Error details:', error);
         console.groupEnd();
       }
-      
+
       const authError = createAuthError(error);
-      
+
       // Set field-specific errors if possible
       if (authError.type === 'INVALID_CREDENTIALS') {
         setError('username', { message: 'Invalid apartment number or password' });
@@ -154,7 +156,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
             {/* General Error Display */}
             {/* Error State */}
             {state.error && (
-              <div 
+              <div
                 className="rounded-lg border border-red-200 bg-red-50 p-4"
                 role="alert"
                 aria-live="assertive"
@@ -162,15 +164,24 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
               >
                 <div className="flex">
                   <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
+                    <svg
+                      className="h-5 w-5 text-red-400"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </div>
                   <div className="ml-3">
                     <h4 className="text-sm font-medium text-red-800">
                       {state.error.message || 'Ett fel uppstod'}
                     </h4>
-                    <div className="flex gap-2 mt-3">
+                    <div className="mt-3 flex gap-2">
                       <Button
                         onClick={() => {
                           clearError();
@@ -195,23 +206,33 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                 </div>
               </div>
             )}
-            
+
             {/* Development Debug Info */}
             {process.env.NODE_ENV === 'development' && state.error && (
               <div className="rounded-md bg-gray-50 p-4">
                 <div className="flex">
                   <div className="flex-shrink-0">
                     <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </div>
                   <div className="ml-3">
                     <h4 className="text-sm font-medium text-gray-800">Debug Information</h4>
                     <div className="mt-2 text-sm text-gray-700">
-                      <p><strong>Error Type:</strong> {state.error.type}</p>
-                      <p><strong>Message:</strong> {state.error.message}</p>
+                      <p>
+                        <strong>Error Type:</strong> {state.error.type}
+                      </p>
+                      <p>
+                        <strong>Message:</strong> {state.error.message}
+                      </p>
                       {state.error.details && (
-                        <p><strong>Details:</strong> {state.error.details}</p>
+                        <p>
+                          <strong>Details:</strong> {state.error.details}
+                        </p>
                       )}
                       <p className="mt-2 text-xs text-gray-500">
                         Check browser console for additional debug information
@@ -223,8 +244,8 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
             )}
 
             {/* Submit Button */}
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full"
               disabled={isSubmitting || state.isLoading}
               aria-describedby={state.error ? 'auth-error' : undefined}

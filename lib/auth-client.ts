@@ -26,9 +26,9 @@ export async function login(credentials: LoginCredentials): Promise<AuthUser> {
       console.error('Login API Error:', {
         status: response.status,
         statusText: response.statusText,
-        error: errorData
+        error: errorData,
       });
-      
+
       // Log debug info if available
       if (errorData.debug) {
         console.group('Debug Information');
@@ -40,12 +40,12 @@ export async function login(credentials: LoginCredentials): Promise<AuthUser> {
         console.log('Response Body:', errorData.debug.responseBody);
         console.groupEnd();
       }
-      
+
       throw new Error(errorData.error || 'Login failed');
     }
 
     const loginData = await response.json();
-    
+
     if (!loginData.success) {
       throw new Error('Login failed: Invalid response');
     }
@@ -69,7 +69,7 @@ export async function login(credentials: LoginCredentials): Promise<AuthUser> {
   } catch (error) {
     // Clear any partial auth data on failure
     authStorage.clearAllAuthData();
-    
+
     const errorMessage = error instanceof Error ? error.message : 'Login failed';
     throw new Error(`Authentication failed: ${errorMessage}`);
   }
@@ -81,7 +81,7 @@ export async function login(credentials: LoginCredentials): Promise<AuthUser> {
 export async function logout(): Promise<void> {
   try {
     const user = getCurrentUser();
-    
+
     // If we have a user with server info, notify the server via our API
     if (user?.serverAddress) {
       try {
@@ -121,7 +121,7 @@ export async function isAuthenticated(): Promise<boolean> {
     if (!response.ok) {
       return false;
     }
-    
+
     const data = await response.json();
     return data.isAuthenticated;
   } catch (error) {
@@ -135,13 +135,13 @@ export async function isAuthenticated(): Promise<boolean> {
  */
 export async function refreshSession(): Promise<AuthUser | null> {
   const user = getCurrentUser();
-  
-  if (user && await isAuthenticated()) {
+
+  if (user && (await isAuthenticated())) {
     // Extend the session expiry
     authStorage.refreshTokenExpiry(user);
     return authStorage.getStoredUser();
   }
-  
+
   return null;
 }
 
@@ -171,7 +171,7 @@ export function getSessionInfo(): {
   hoursRemaining: number;
 } | null {
   const user = getCurrentUser();
-  
+
   if (!user?.expiresAt) {
     return null;
   }
@@ -194,8 +194,8 @@ export function getSessionInfo(): {
 export async function initializeAuth(): Promise<AuthUser | null> {
   try {
     const user = getCurrentUser();
-    
-    if (user && await isAuthenticated()) {
+
+    if (user && (await isAuthenticated())) {
       // Check if session is still valid
       const sessionInfo = getSessionInfo();
       if (sessionInfo?.isExpired) {
@@ -203,10 +203,10 @@ export async function initializeAuth(): Promise<AuthUser | null> {
         authStorage.clearAllAuthData();
         return null;
       }
-      
+
       return user;
     }
-    
+
     return null;
   } catch (error) {
     console.error('Failed to initialize auth:', error);

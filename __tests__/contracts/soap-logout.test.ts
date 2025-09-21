@@ -29,9 +29,9 @@ describe('SOAP Logout Contract', () => {
     // This will fail until SOAP client is implemented
     const soapClient = jest.requireActual('@/lib/soap-client') as SoapClient;
     expect(() => soapClient.formatLogoutRequest(request)).not.toThrow();
-    
+
     const xmlRequest = soapClient.formatLogoutRequest(request);
-    
+
     // Validate XML structure per contract specification
     expect(xmlRequest).toContain('<?xml version="1.0" encoding="utf-8"?>');
     expect(xmlRequest).toContain('<soap:Envelope');
@@ -54,8 +54,9 @@ describe('SOAP Logout Contract', () => {
     const soapClient = jest.requireActual('@/lib/soap-client') as SoapClient;
     expect(() => soapClient.parseLogoutResponse(mockSuccessResponse)).not.toThrow();
 
-    const parsed: SoapResponse<LogoutResponse> = soapClient.parseLogoutResponse(mockSuccessResponse);
-    
+    const parsed: SoapResponse<LogoutResponse> =
+      soapClient.parseLogoutResponse(mockSuccessResponse);
+
     expect(parsed.success).toBe(true);
     expect(parsed.data?.LogoutResult).toBe(true);
     expect(parsed.fault).toBeUndefined();
@@ -77,7 +78,7 @@ describe('SOAP Logout Contract', () => {
     // This will fail until SOAP client is implemented
     const soapClient = jest.requireActual('@/lib/soap-client') as SoapClient;
     const parsed: SoapResponse<LogoutResponse> = soapClient.parseLogoutResponse(mockFaultResponse);
-    
+
     expect(parsed.success).toBe(false);
     expect(parsed.data).toBeUndefined();
     expect(parsed.fault).toBeDefined();
@@ -90,7 +91,7 @@ describe('SOAP Logout Contract', () => {
     // This will fail until SOAP client is implemented
     const soapClient = jest.requireActual('@/lib/soap-client') as SoapClient;
     const headers = soapClient.getLogoutHeaders();
-    
+
     expect(headers['Content-Type']).toBe('text/xml; charset=utf-8');
     expect(headers['SOAPAction']).toBe('"http://www.rco.se/Api/Mobile/Logout"');
   });

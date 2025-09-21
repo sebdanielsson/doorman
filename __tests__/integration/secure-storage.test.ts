@@ -22,7 +22,7 @@ describe('Secure Authentication Storage', () => {
     const token = 'mock-login-guid-123';
     authStorage.storeAuthToken(token);
 
-    expect(mockCookies.set).toHaveBeenCalledWith('auth_token', token, {
+    expect(mockCookies.set).toHaveBeenCalledWith('loginGuid', token, {
       httpOnly: false,
       secure: false, // false in development, true in production
       sameSite: 'strict',
@@ -36,7 +36,7 @@ describe('Secure Authentication Storage', () => {
 
     const retrieved = authStorage.getAuthToken();
 
-    expect(mockCookies.get).toHaveBeenCalledWith('auth_token');
+    expect(mockCookies.get).toHaveBeenCalledWith('loginGuid');
     expect(retrieved).toBe(token);
   });
 
@@ -48,7 +48,7 @@ describe('Secure Authentication Storage', () => {
 
   test('should clear auth token from storage', () => {
     authStorage.clearAuthToken();
-    expect(mockCookies.remove).toHaveBeenCalledWith('auth_token', {
+    expect(mockCookies.remove).toHaveBeenCalledWith('loginGuid', {
       secure: false, // false in development, true in production
       sameSite: 'strict',
     });

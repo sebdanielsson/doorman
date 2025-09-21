@@ -35,9 +35,48 @@ export interface LogoutResponse {
   LogoutResult: boolean;
 }
 
+// News/Announcements Types
+export interface TrmMessageLite {
+  MessageId: number; // Unique identifier
+  ContentType: number; // Determines message type/format
+  CreatedDate: string; // ISO date string from SOAP (dateTime)
+  MessageHeader: string; // Title/subject of the announcement
+  RelatedMessageId: number; // Reference to parent/related message
+  TextMessage: string[]; // Array of text content lines
+  HasImage: boolean; // Indicates if image attachment exists
+  IsHeader: boolean; // Indicates if this is a header message
+  RelatedContentType: number; // Content type of related message
+}
+
+export interface GetAllTerminalMessageLiteRequest {
+  loginguid: string;
+}
+
+export interface GetAllTerminalMessageLiteResponse {
+  GetAllTerminalMessageLiteResult: TrmMessageLite[];
+}
+
+export interface GetTerminalMessageImageRequest {
+  loginguid: string;
+  messageId: number;
+  isHeaderImage: boolean;
+}
+
+export interface GetTerminalMessageImageResponse {
+  GetTerminalMessageImageResult: string; // Base64 encoded image
+}
+
 export interface SoapClient {
   login: (credentials: LoginRequest) => Promise<SoapResponse<LoginResponse>>;
   logout: (loginguid: string) => Promise<SoapResponse<LogoutResponse>>;
+  getAllTerminalMessageLite: (
+    loginguid: string,
+  ) => Promise<SoapResponse<GetAllTerminalMessageLiteResponse>>;
+  getTerminalMessageImage: (
+    loginguid: string,
+    messageId: number,
+    isHeaderImage?: boolean,
+  ) => Promise<SoapResponse<GetTerminalMessageImageResponse>>;
   isHealthy: () => Promise<boolean>;
 }
 
@@ -53,7 +92,34 @@ export interface SoapHeaders extends Record<string, string> {
 }
 
 // SOAP operation configurations
-export const SOAP_OPERATIONS = {
+/**
+ * GetTerminalMessageImage request
+ */
+export interface GetTerminalMessageImageRequest {
+  loginguid: string;
+  messageId: number;
+  isHeaderImage: boolean;
+}
+
+/**
+ * GetTerminalMessageImage response
+ */
+export interface GetTerminalMessageImageResponse {
+  GetTerminalMessageImageResult: string; // Base64 encoded image
+}
+
+/**
+ * SOAP Headers configuration for different operations
+ */
+export const SOAP_HEADERS = {
+  GET_ALL_TERMINAL_MESSAGE_LITE: {
+    action: 'http://www.rco.se/Api/Mobile/GetAllTerminalMessageLite',
+    namespace: 'http://www.rco.se/Api/Mobile/',
+  },
+  GET_TERMINAL_MESSAGE_IMAGE: {
+    action: 'http://www.rco.se/Api/Mobile/GetTerminalMessageImage',
+    namespace: 'http://www.rco.se/Api/Mobile/',
+  },
   LOGIN: {
     action: 'http://www.rco.se/Api/Mobile/Login',
     namespace: 'http://www.rco.se/Api/Mobile/',

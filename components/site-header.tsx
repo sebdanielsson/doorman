@@ -21,7 +21,7 @@ export function SiteHeader() {
         <nav className="flex items-center gap-1">
           {/* Show user info when authenticated */}
           {state.isAuthenticated && <UserInfo />}
-          
+
           <Link
             href={siteConfig.links.github}
             target="_blank"

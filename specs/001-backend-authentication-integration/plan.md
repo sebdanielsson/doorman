@@ -1,4 +1,3 @@
-
 # Implementation Plan: Backend Authentication Integration
 
 **Branch**: `001-backend-authentication-integration` | **Date**: 2025-09-21 | **Spec**: [spec.md](./spec.md)
@@ -52,44 +51,51 @@ Backend Authentication Integration - Implement login functionality to connect ex
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 **Security-First Authentication**: ✅ PASS
+
 - Authentication tokens will be stored in HttpOnly cookies (secure storage)
 - SOAP authentication uses HTTPS communication
 - Session timeout and renewal mechanisms planned
 - No sensitive data in localStorage (constitution requirement met)
 
-**Performance & Accessibility**: ✅ PASS  
+**Performance & Accessibility**: ✅ PASS
+
 - Target <2 seconds load time on 3G (aligns with requirement)
 - Will implement WCAG 2.1 AA standards for login form
 - Mobile-first responsive design for authentication UI
 - Authentication flow optimized for <500ms response time
 
 **Component-Driven Architecture**: ✅ PASS
+
 - Login form will use existing shadcn/ui + Tailwind pattern
 - TypeScript with strict types for all authentication components
 - React components following established patterns
 - Independent testability for auth components
 
 **Static-First Deployment**: ✅ PASS
+
 - Authentication works with static deployment (server-side proxy API calls)
 - SSR for initial login page load
 - Client-side routing post-authentication
 - SOAP API calls proxied through Next.js API routes (bypasses CORS)
 
 **Progressive Enhancement**: ✅ PASS
+
 - Login form works without JavaScript (basic form submission)
 - Enhanced features layer on top (real-time validation, loading states)
 - Graceful degradation for network failures during auth
 
 **API Documentation Adherence**: ✅ PASS
+
 - Following exact SOAP specifications with xsi:type parameters
 - Using documented authentication flow with loginguid tokens
 - No undocumented endpoints or assumptions
 - Referencing existing API documentation in docs/ directory
 
 **Modern JavaScript Standards**: ✅ PASS
+
 - TypeScript (.tsx) for all new authentication components
 - ESM syntax exclusively
 - Bun package manager already established in project
@@ -174,7 +180,7 @@ ios/ or android/
 
 ## Phase 1: Design & Contracts
 
-*Prerequisites: research.md complete*
+_Prerequisites: research.md complete_
 
 1. **Extract entities from feature spec** → `data-model.md`:
    - Entity name, fields, relationships
@@ -204,11 +210,11 @@ ios/ or android/
    - Keep under 150 lines for token efficiency
    - Output to repository root
 
-**Output**: data-model.md, /contracts/*, failing tests, quickstart.md, agent-specific file
+**Output**: data-model.md, /contracts/\*, failing tests, quickstart.md, agent-specific file
 
 ## Phase 2: Task Planning Approach
 
-*This section describes what the /tasks command will do - DO NOT execute during /plan*
+_This section describes what the /tasks command will do - DO NOT execute during /plan_
 
 **Task Generation Strategy**:
 
@@ -216,7 +222,7 @@ ios/ or android/
 - Generate tasks from Phase 1 design docs (contracts, data model, quickstart)
 - SOAP authentication contract → contract test task [P]
 - Authentication state entity → auth context creation task [P]
-- User session entity → session management task [P] 
+- User session entity → session management task [P]
 - Login form user story → integration test task
 - Auth guard user story → route protection integration test
 - Implementation tasks to make tests pass
@@ -228,6 +234,7 @@ ios/ or android/
 - Mark [P] for parallel execution (independent files)
 
 **Estimated Output**: 20-25 numbered, ordered tasks in tasks.md covering:
+
 1. Contract tests for SOAP authentication (2-3 tasks)
 2. Type definitions and validation schemas (2-3 tasks)
 3. SOAP client utilities (2-3 tasks)
@@ -239,7 +246,7 @@ ios/ or android/
 
 **IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan## Phase 3+: Future Implementation
 
-*These phases are beyond the scope of the /plan command*
+_These phases are beyond the scope of the /plan command_
 
 **Phase 3**: Task execution (/tasks command creates tasks.md)  
 **Phase 4**: Implementation (execute tasks.md following constitutional principles)  
@@ -247,16 +254,16 @@ ios/ or android/
 
 ## Complexity Tracking
 
-*Fill ONLY if Constitution Check has violations that must be justified*
+_Fill ONLY if Constitution Check has violations that must be justified_
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+| Violation                  | Why Needed         | Simpler Alternative Rejected Because |
+| -------------------------- | ------------------ | ------------------------------------ |
+| [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |
 
 ## Progress Tracking
 
-*This checklist is updated during execution flow*
+_This checklist is updated during execution flow_
 
 **Phase Status**:
 
@@ -275,6 +282,7 @@ ios/ or android/
 - [x] Complexity deviations documented (none identified)
 
 **Implementation Notes**:
+
 - ✅ SOAP namespace format critical: `http://www.rco.se/Api/Mobile` (no trailing slash)
 - ✅ Timeout must be 1200 minutes to match iOS app behavior
 - ✅ HttpOnly cookies successfully implemented for secure token storage
@@ -282,4 +290,5 @@ ios/ or android/
 - ✅ Authentication flow working end-to-end with proper error handling
 
 ---
-*Based on Constitution v1.1.0 - See `/memory/constitution.md`*
+
+_Based on Constitution v1.1.0 - See `/memory/constitution.md`_

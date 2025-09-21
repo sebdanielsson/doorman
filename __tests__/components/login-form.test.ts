@@ -22,7 +22,7 @@ jest.mock('@testing-library/react', () => ({
 describe('Login Form Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     mockUseForm.mockReturnValue({
       register: jest.fn(),
       handleSubmit: jest.fn(),

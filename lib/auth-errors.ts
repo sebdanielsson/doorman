@@ -36,12 +36,7 @@ const ERROR_MESSAGE_PATTERNS = {
     'access denied',
     'unauthorized',
   ],
-  timeout: [
-    'timeout',
-    'request timed out',
-    'operation timed out',
-    'deadline exceeded',
-  ],
+  timeout: ['timeout', 'request timed out', 'operation timed out', 'deadline exceeded'],
   server: [
     'internal server error',
     'server error',
@@ -56,7 +51,7 @@ const ERROR_MESSAGE_PATTERNS = {
  */
 export function parseSoapFault(fault: SoapFault): AuthError {
   const errorType = SOAP_ERROR_MAPPINGS[fault.faultCode] || 'SERVER_ERROR';
-  
+
   return {
     type: errorType,
     message: fault.faultString || 'Authentication service error',
@@ -71,7 +66,7 @@ export function parseSoapFault(fault: SoapFault): AuthError {
 export function createAuthError(error: Error | unknown): AuthError {
   const message = error instanceof Error ? error.message : 'Unknown authentication error';
   const errorType = categorizeError(message);
-  
+
   return {
     type: errorType,
     message: getUserFriendlyMessage(errorType, message),
@@ -86,7 +81,8 @@ export function createAuthError(error: Error | unknown): AuthError {
 export function createNetworkError(originalError?: Error): AuthError {
   return {
     type: 'NETWORK',
-    message: 'Unable to connect to the authentication server. Please check your internet connection and try again.',
+    message:
+      'Unable to connect to the authentication server. Please check your internet connection and try again.',
     details: originalError?.message,
     retryable: true,
   };
@@ -96,10 +92,10 @@ export function createNetworkError(originalError?: Error): AuthError {
  * Create AuthError for timeout scenarios
  */
 export function createTimeoutError(timeoutSeconds?: number): AuthError {
-  const timeoutMessage = timeoutSeconds 
+  const timeoutMessage = timeoutSeconds
     ? `Authentication request timed out after ${timeoutSeconds} seconds.`
     : 'Authentication request timed out.';
-    
+
   return {
     type: 'TIMEOUT',
     message: `${timeoutMessage} Please try again.`,
@@ -124,9 +120,9 @@ export function createInvalidCredentialsError(details?: string): AuthError {
  */
 function categorizeError(message: string): AuthError['type'] {
   const lowerMessage = message.toLowerCase();
-  
+
   for (const [type, patterns] of Object.entries(ERROR_MESSAGE_PATTERNS)) {
-    if (patterns.some(pattern => lowerMessage.includes(pattern))) {
+    if (patterns.some((pattern) => lowerMessage.includes(pattern))) {
       switch (type) {
         case 'network':
           return 'NETWORK';
@@ -139,7 +135,7 @@ function categorizeError(message: string): AuthError['type'] {
       }
     }
   }
-  
+
   return 'SERVER_ERROR';
 }
 
@@ -167,16 +163,16 @@ function getUserFriendlyMessage(errorType: AuthError['type'], originalMessage: s
   switch (errorType) {
     case 'NETWORK':
       return 'Unable to connect to the server. Please check your internet connection and try again.';
-    
+
     case 'INVALID_CREDENTIALS':
       return 'Invalid apartment number or password. Please check your credentials and try again.';
-    
+
     case 'TIMEOUT':
       return 'The request took too long to complete. Please try again.';
-    
+
     case 'SERVER_ERROR':
       return 'The authentication server is currently experiencing issues. Please try again later.';
-    
+
     default:
       return originalMessage || 'An unexpected error occurred during authentication.';
   }
@@ -203,16 +199,16 @@ export function getErrorAction(error: AuthError): string {
   switch (error.type) {
     case 'NETWORK':
       return 'Check your internet connection and try again';
-    
+
     case 'INVALID_CREDENTIALS':
       return 'Please verify your apartment number and password';
-    
+
     case 'TIMEOUT':
       return 'Try again with a slower internet connection';
-    
+
     case 'SERVER_ERROR':
       return 'Wait a moment and try again';
-    
+
     default:
       return 'Try again or contact support if the problem persists';
   }

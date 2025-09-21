@@ -14,10 +14,10 @@ interface AuthGuardProps {
   fallback?: React.ReactNode;
 }
 
-export function AuthGuard({ 
-  children, 
+export function AuthGuard({
+  children,
   redirectTo = '/login',
-  fallback = <div className="flex items-center justify-center min-h-[50vh]">Loading...</div>
+  fallback = <div className="flex min-h-[50vh] items-center justify-center">Loading...</div>,
 }: AuthGuardProps) {
   const { isAuthenticated, isLoading } = useAuthGuard({ redirectTo });
 
