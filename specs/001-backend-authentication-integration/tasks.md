@@ -18,35 +18,35 @@
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
-- [ ] T004 [P] Contract test SOAP Login request/response in `__tests__/contracts/soap-login.test.ts`
-- [ ] T005 [P] Contract test SOAP Logout request/response in `__tests__/contracts/soap-logout.test.ts`
-- [ ] T006 [P] Integration test authentication flow in `__tests__/integration/auth-flow.test.ts`
-- [ ] T007 [P] Integration test secure storage in `__tests__/integration/secure-storage.test.ts`
-- [ ] T008 [P] Component test login form validation in `__tests__/components/login-form.test.tsx`
+- [x] T004 [P] Contract test SOAP Login request/response in `__tests__/contracts/soap-login.test.ts`
+- [x] T005 [P] Contract test SOAP Logout request/response in `__tests__/contracts/soap-logout.test.ts`
+- [x] T006 [P] Integration test authentication flow in `__tests__/integration/auth-flow.test.ts`
+- [x] T007 [P] Integration test secure storage in `__tests__/integration/secure-storage.test.ts`
+- [x] T008 [P] Component test login form validation in `__tests__/components/login-form.test.tsx`
 
 ## Phase 3.3: Core Authentication Infrastructure (ONLY after tests are failing)
-- [ ] T009 [P] Secure storage utility in `lib/secure-storage.ts` with HttpOnly cookies + localStorage fallback
-- [ ] T010 [P] SOAP client implementation in `lib/soap-client.ts` with XML templates per contracts
-- [ ] T011 [P] Authentication context in `lib/auth-context.tsx` with React context + custom hooks
-- [ ] T012 [P] Form validation schemas in `lib/auth-validation.ts` using Zod per LoginCredentials model
-- [ ] T013 [P] Error handling utilities in `lib/auth-errors.ts` for SOAP fault parsing
+- [x] T009 [P] Secure storage utility in `lib/auth-storage.ts` with HttpOnly cookies + localStorage fallback
+- [x] T010 [P] SOAP client implementation in `lib/soap-client.ts` with XML templates per contracts
+- [x] T011 [P] Authentication context in `lib/auth-context.tsx` with React context + custom hooks
+- [x] T012 [P] Form validation schemas in `lib/auth-validation.ts` using Zod per LoginCredentials model
+- [x] T013 [P] Error handling utilities in `lib/auth-errors.ts` for SOAP fault parsing
 
 ## Phase 3.4: Component Integration
-- [ ] T014 Enhance login form in `components/login-form.tsx` with authentication logic and validation
-- [ ] T015 [P] Create user display component in `components/user-info.tsx` for authenticated state
-- [ ] T016 Update header wrapper in `components/header-wrapper.tsx` to show user info and logout
-- [ ] T017 [P] Create loading spinner component in `components/ui/auth-spinner.tsx` for auth states
-- [ ] T018 [P] Create authentication guard hook in `hooks/use-auth-guard.ts` for protected routes
+- [x] T014 Enhance login form in `components/login-form.tsx` with authentication logic and validation
+- [x] T015 [P] Create user display component in `components/user-info.tsx` for authenticated state
+- [x] T016 Update header wrapper in `components/header-wrapper.tsx` to show user info and logout
+- [x] T017 [P] Create loading spinner component in `components/ui/auth-spinner.tsx` for auth states
+- [x] T018 [P] Create authentication guard hook in `hooks/use-auth-guard.ts` for protected routes
 
 ## Phase 3.5: Page Integration & Routing
-- [ ] T019 Wrap app layout in `app/layout.tsx` with AuthContext provider
-- [ ] T020 Update login page in `app/login/page.tsx` with enhanced authentication flow
-- [ ] T021 [P] Add authentication guards to booking pages in `app/book/*/page.tsx`
-- [ ] T022 [P] Add authentication state checks to dashboard in `app/page.tsx`
-- [ ] T023 Implement automatic redirects for unauthenticated users
+- [x] T019 Wrap app layout in `app/layout.tsx` with AuthContext provider
+- [x] T020 Update login page in `app/login/page.tsx` with enhanced authentication flow
+- [x] T021 [P] Add authentication guards to booking pages in `app/book/*/page.tsx`
+- [x] T022 [P] Add authentication state checks to dashboard in `app/page.tsx`
+- [x] T023 Implement automatic redirects for unauthenticated users
 
 ## Phase 3.6: Polish & Testing
-- [ ] T024 [P] Add comprehensive error messaging in `components/auth-error.tsx`
+- [x] T024 [P] Add comprehensive error messaging in `components/auth-error.tsx` (integrated into login form)
 - [ ] T025 [P] Add loading states and accessibility improvements to auth components
 - [ ] T026 [P] Update component stories in Storybook for authentication states
 - [ ] T027 Run quickstart.md manual testing scenarios with .env credentials

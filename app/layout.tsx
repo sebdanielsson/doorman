@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import HeaderWrapper from '@/components/header-wrapper';
 import { ThemeProvider } from '@/components/theme-provider';
+import { AuthProvider } from '@/lib/auth-context';
 import { siteConfig } from '@/config/site';
 
 const geistSans = Geist({
@@ -28,17 +29,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <HeaderWrapper />
-          <div className="flex min-h-dvh p-4 sm:p-10">
-            <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">{children}</div>
-          </div>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <HeaderWrapper />
+            <div className="flex min-h-dvh p-4 sm:p-10">
+              <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">{children}</div>
+            </div>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );
