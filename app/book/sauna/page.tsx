@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { Separator } from '@/components/ui/separator';
 import { Toaster } from '@/components/ui/toaster';
 import { Booking } from '@/components/booking';
+import AuthGuard from '@/components/auth-guard';
 import { addDays } from 'date-fns';
 import { DaySchedule } from '@/types/booking';
 
@@ -74,14 +75,16 @@ const mockSchedule: DaySchedule[] = [
 
 export default function BookAccountPage() {
   return (
-    <div className="space-y-6">
-      <div className="hidden lg:block">
-        <h3 className="text-lg font-medium">Bastu</h3>
-        <p className="text-muted-foreground text-sm">Boka tid i bastun.</p>
+    <AuthGuard>
+      <div className="space-y-6">
+        <div className="hidden lg:block">
+          <h3 className="text-lg font-medium">Bastu</h3>
+          <p className="text-muted-foreground text-sm">Boka tid i bastun.</p>
+        </div>
+        <Separator className="hidden lg:block" />
+        <Booking schedule={mockSchedule} />
+        <Toaster />
       </div>
-      <Separator className="hidden lg:block" />
-      <Booking schedule={mockSchedule} />
-      <Toaster />
-    </div>
+    </AuthGuard>
   );
 }
