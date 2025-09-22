@@ -1,10 +1,9 @@
 'use client';
 
-import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
 import { MyBookings } from '@/components/my-bookings';
 import { Announcements } from '@/components/announcements';
+import { LoginForm } from '@/components/login-form';
 import { useAuth } from '@/lib/auth-context';
 
 export default function Home() {
@@ -13,16 +12,11 @@ export default function Home() {
   // Show login prompt if not authenticated
   if (!state.isAuthenticated && !state.isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Välkommen till Doorman</h1>
-          <p className="text-muted-foreground text-lg">
-            Logga in för att komma åt bokningar och funktioner
-          </p>
+      <div className="flex min-h-screen w-full flex-col items-center justify-center gap-6">
+        <div className="w-full max-w-md space-y-6">
+          <h1 className="text-center text-3xl font-bold tracking-tight">Välkommen till Doorman</h1>
+          <LoginForm />
         </div>
-        <Button asChild size="lg">
-          <Link href="/login">Logga in</Link>
-        </Button>
       </div>
     );
   }
@@ -30,8 +24,8 @@ export default function Home() {
   // Show loading state
   if (state.isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="text-center space-y-2">
+      <div className="flex flex-col items-center justify-center">
+        <div className="space-y-2 text-center">
           <h1 className="text-2xl font-medium">Laddar...</h1>
         </div>
       </div>
@@ -45,7 +39,7 @@ export default function Home() {
         <h2 className="text-2xl font-bold tracking-tight">
           Start
           {state.user && (
-            <span className="text-lg font-normal text-muted-foreground ml-2">
+            <span className="text-muted-foreground ml-2 text-lg font-normal">
               - Lägenhet {state.user.apartmentNumber}
             </span>
           )}

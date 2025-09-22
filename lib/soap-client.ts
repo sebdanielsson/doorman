@@ -3,13 +3,16 @@
  * Based on contracts/soap-auth.md and research.md decisions
  */
 
-import type { 
-  LoginResponse, 
-  LogoutRequest, 
-  LogoutResponse, 
-  SoapResponse, 
+import type {
+  LoginResponse,
+  LogoutRequest,
+  LogoutResponse,
+  SoapResponse,
   SoapFault,
-  SoapHeaders 
+  SoapHeaders,
+  TrmMessageLite,
+  GetAllTerminalMessageLiteResponse,
+  GetTerminalMessageImageResponse,
 } from '@/types/soap';
 import type { LoginCredentials } from '@/types/auth';
 
@@ -20,22 +23,24 @@ import type { LoginCredentials } from '@/types/auth';
 export function extractSystemnameFromUrl(serverUrl: string): string {
   try {
     const url = new URL(serverUrl);
-    const pathSegments = url.pathname.split('/').filter(segment => segment.length > 0);
-    
+    const pathSegments = url.pathname.split('/').filter((segment) => segment.length > 0);
+
     // Find the segment before "api/mobile/visionmobile.asmx"
-    const apiIndex = pathSegments.findIndex(segment => segment === 'api');
+    const apiIndex = pathSegments.findIndex((segment) => segment === 'api');
     if (apiIndex > 0) {
       return pathSegments[apiIndex - 1];
     }
-    
+
     // Fallback: use the first non-empty path segment
     if (pathSegments.length > 0) {
       return pathSegments[0];
     }
-    
+
     throw new Error('Unable to extract systemname from URL path');
   } catch (error) {
-    throw new Error(`Invalid server URL: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(
+      `Invalid server URL: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    );
   }
 }
 
@@ -44,7 +49,7 @@ export function extractSystemnameFromUrl(serverUrl: string): string {
  */
 export function formatLoginRequest(credentials: LoginCredentials, serverUrl: string): string {
   const systemname = extractSystemnameFromUrl(serverUrl);
-  
+
   return `<?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
@@ -56,6 +61,176 @@ export function formatLoginRequest(credentials: LoginCredentials, serverUrl: str
     </Login>
   </soap:Body>
 </soap:Envelope>`;
+}
+
+/**
+ * Format GetAllTerminalMessageLite request into SOAP XML
+ */
+export function formatGetAllTerminalMessageLiteRequest(loginguid: string): string {
+  if (!loginguid || loginguid.trim() === '') {
+    throw new Error('loginguid is required');
+  }
+
+  return `<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <GetAllTerminalMessageLite xmlns="http://www.rco.se/Api/Mobile">
+      <loginguid xsi:type="xsd:string">${escapeXml(loginguid)}</loginguid>
+    </GetAllTerminalMessageLite>
+  </soap:Body>
+</soap:Envelope>`;
+}
+
+/**
+ * Parse GetAllTerminalMessageLite SOAP response XML
+ */
+export function parseGetAllTerminalMessageLiteResponse(
+  xml: string,
+): SoapResponse<GetAllTerminalMessageLiteResponse> {
+  try {
+    const fault = parseSoapFault(xml);
+    if (fault) {
+      return {
+        success: false,
+        fault,
+        rawResponse: xml,
+      };
+    }
+
+    // Extract the result array from the response
+    const messages: TrmMessageLite[] = [];
+
+    // Find all TrmMessageLite elements in the response
+    const messageMatches = xml.matchAll(/<TrmMessageLite>[\s\S]*?<\/TrmMessageLite>/g);
+
+    for (const match of messageMatches) {
+      const messageXml = match[0];
+
+      try {
+        const messageId = extractXmlValue(messageXml, 'MessageId');
+        const contentType = extractXmlValue(messageXml, 'ContentType');
+        const createdDate = extractXmlValue(messageXml, 'CreatedDate');
+        const messageHeader = extractXmlValue(messageXml, 'MessageHeader');
+        const relatedMessageId = extractXmlValue(messageXml, 'RelatedMessageId');
+        const hasImage = extractXmlValue(messageXml, 'HasImage');
+        const isHeader = extractXmlValue(messageXml, 'IsHeader');
+        const relatedContentType = extractXmlValue(messageXml, 'RelatedContentType');
+
+        // Extract TextMessage array
+        const textMessageMatches = messageXml.matchAll(/<string>([^<]*)<\/string>/g);
+        const textMessages: string[] = [];
+        for (const textMatch of textMessageMatches) {
+          textMessages.push(textMatch[1] || '');
+        }
+
+        const message: TrmMessageLite = {
+          MessageId: parseInt(messageId, 10),
+          ContentType: parseInt(contentType, 10),
+          CreatedDate: createdDate,
+          MessageHeader: messageHeader,
+          RelatedMessageId: parseInt(relatedMessageId, 10),
+          TextMessage: textMessages,
+          HasImage: hasImage === 'true',
+          IsHeader: isHeader === 'true',
+          RelatedContentType: parseInt(relatedContentType, 10),
+        };
+
+        messages.push(message);
+      } catch (parseError) {
+        console.error('Failed to parse message element:', parseError);
+        // Continue parsing other messages
+      }
+    }
+
+    return {
+      success: true,
+      data: {
+        GetAllTerminalMessageLiteResult: messages,
+      },
+      rawResponse: xml,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      fault: {
+        faultCode: 'Client',
+        faultString: 'Failed to parse GetAllTerminalMessageLite response',
+        detail: error instanceof Error ? error.message : 'Unknown error',
+      },
+      rawResponse: xml,
+    };
+  }
+}
+
+/**
+ * Get headers for GetAllTerminalMessageLite SOAP request
+ */
+export function getGetAllTerminalMessageLiteHeaders(): SoapHeaders {
+  return {
+    'Content-Type': 'text/xml; charset=utf-8',
+    SOAPAction: '"http://www.rco.se/Api/Mobile/GetAllTerminalMessageLite"',
+  };
+}
+
+/**
+ * Make GetAllTerminalMessageLite SOAP request
+ */
+export async function getAllTerminalMessageLite(
+  loginguid: string,
+  serverUrl?: string,
+): Promise<SoapResponse<GetAllTerminalMessageLiteResponse>> {
+  if (!loginguid || loginguid.trim() === '') {
+    throw new Error('loginguid is required');
+  }
+
+  const endpoint = serverUrl || process.env.NEXT_PUBLIC_SOAP_ENDPOINT || '';
+  if (!endpoint) {
+    throw new Error('SOAP endpoint is required');
+  }
+
+  try {
+    const xml = formatGetAllTerminalMessageLiteRequest(loginguid);
+    const headers = getGetAllTerminalMessageLiteHeaders();
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers,
+      body: xml,
+    });
+
+    if (!response.ok) {
+      return {
+        success: false,
+        fault: {
+          faultCode: 'HTTP',
+          faultString: `HTTP ${response.status}: ${response.statusText}`,
+        },
+        rawResponse: await response.text(),
+      };
+    }
+
+    const responseXml = await response.text();
+    return parseGetAllTerminalMessageLiteResponse(responseXml);
+  } catch (error) {
+    return {
+      success: false,
+      fault: {
+        faultCode: 'Client',
+        faultString: 'Network error',
+        detail: error instanceof Error ? error.message : 'Unknown error',
+      },
+      rawResponse: '',
+    };
+  }
+}
+
+/**
+ * Extract XML element value safely
+ */
+function extractXmlValue(xml: string, elementName: string): string {
+  const regex = new RegExp(`<${elementName}>([^<]*)<\/${elementName}>`, 'i');
+  const match = xml.match(regex);
+  return match ? match[1] : '';
 }
 
 /**
@@ -161,7 +336,7 @@ export function parseLogoutResponse(xml: string): SoapResponse<LogoutResponse> {
 export function getLoginHeaders(): SoapHeaders {
   return {
     'Content-Type': 'text/xml; charset=utf-8',
-    'SOAPAction': '"http://www.rco.se/Api/Mobile/Login"',
+    SOAPAction: '"http://www.rco.se/Api/Mobile/Login"',
   };
 }
 
@@ -171,7 +346,7 @@ export function getLoginHeaders(): SoapHeaders {
 export function getLogoutHeaders(): SoapHeaders {
   return {
     'Content-Type': 'text/xml; charset=utf-8',
-    'SOAPAction': '"http://www.rco.se/Api/Mobile/Logout"',
+    SOAPAction: '"http://www.rco.se/Api/Mobile/Logout"',
   };
 }
 
@@ -204,7 +379,7 @@ export async function login(credentials: LoginCredentials): Promise<LoginRespons
     return parsed.data;
   } catch (error) {
     throw new Error(
-      `SOAP Login failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `SOAP Login failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
@@ -239,7 +414,7 @@ export async function logout(loginguid: string): Promise<LogoutResponse> {
     return parsed.data;
   } catch (error) {
     throw new Error(
-      `SOAP Logout failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `SOAP Logout failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
     );
   }
 }
@@ -251,11 +426,195 @@ export async function isHealthy(): Promise<boolean> {
   try {
     const response = await fetch(process.env.NEXT_PUBLIC_SOAP_ENDPOINT || '', {
       method: 'GET',
-      headers: { 'Accept': 'text/html' },
+      headers: { Accept: 'text/html' },
     });
     return response.ok;
   } catch {
     return false;
+  }
+}
+
+/**
+ * Format GetTerminalMessageImage request XML
+ */
+export function formatGetTerminalMessageImageRequest(
+  loginguid: string,
+  messageId: number,
+  isHeaderImage: boolean,
+): string {
+  // Convert boolean to int to match iOS format (0 = false, 1 = true)
+  const isHeaderImageInt = isHeaderImage ? 1 : 0;
+
+  return `<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <GetTerminalMessageImage xmlns="http://www.rco.se/Api/Mobile">
+      <messageId xsi:type="xsd:int">${messageId}</messageId>
+      <loginguid xsi:type="xsd:string">${escapeXml(loginguid)}</loginguid>
+      <isHeaderImage xsi:type="xsd:int">${isHeaderImageInt}</isHeaderImage>
+    </GetTerminalMessageImage>
+  </soap:Body>
+</soap:Envelope>`;
+}
+
+/**
+ * Get SOAP headers for GetTerminalMessageImage operation
+ */
+export function getGetTerminalMessageImageHeaders(): SoapHeaders {
+  return {
+    'Content-Type': 'text/xml; charset=utf-8',
+    SOAPAction: '"http://www.rco.se/Api/Mobile/GetTerminalMessageImage"',
+  };
+}
+
+/**
+ * Parse GetTerminalMessageImage response XML
+ */
+export function parseGetTerminalMessageImageResponse(
+  xml: string,
+): SoapResponse<GetTerminalMessageImageResponse> {
+  try {
+    const fault = parseSoapFault(xml);
+    if (fault) {
+      return {
+        success: false,
+        fault,
+        rawResponse: xml,
+      };
+    }
+
+    // Extract GetTerminalMessageImageResult - try multiple patterns
+    let imageResultMatch = xml.match(
+      /<GetTerminalMessageImageResult>([^<]*)<\/GetTerminalMessageImageResult>/,
+    );
+
+    // If the first pattern doesn't work, try with CDATA or different namespace
+    if (!imageResultMatch) {
+      imageResultMatch = xml.match(
+        /<GetTerminalMessageImageResult><!\[CDATA\[([^\]]*)\]\]><\/GetTerminalMessageImageResult>/,
+      );
+    }
+
+    // Try with namespace prefix
+    if (!imageResultMatch) {
+      imageResultMatch = xml.match(
+        /<\w+:GetTerminalMessageImageResult[^>]*>([^<]*)<\/\w+:GetTerminalMessageImageResult>/,
+      );
+    }
+
+    // Debug: Log the raw XML if we can't parse it
+    if (!imageResultMatch) {
+      console.log('DEBUG - Failed to parse image response XML:', xml);
+      // Check if the result element exists but is empty
+      if (xml.includes('GetTerminalMessageImageResult')) {
+        console.log(
+          'DEBUG - GetTerminalMessageImageResult element found but empty or unmatched pattern',
+        );
+        return {
+          success: true,
+          data: {
+            GetTerminalMessageImageResult: '',
+          },
+          rawResponse: xml,
+        };
+      }
+
+      // Check if this is an empty response (no image available)
+      if (
+        xml.includes('<GetTerminalMessageImageResponse') &&
+        xml.includes('xmlns="http://www.rco.se/Api/Mobile"') &&
+        xml.includes('/>')
+      ) {
+        console.log(
+          'DEBUG - Empty GetTerminalMessageImageResponse - no image available for this message',
+        );
+        return {
+          success: false,
+          fault: {
+            faultCode: 'NoImage',
+            faultString: 'No image available',
+            detail: 'This message does not have an associated image',
+          },
+          rawResponse: xml,
+        };
+      }
+
+      throw new Error('Invalid GetTerminalMessageImage response format - no result element found');
+    }
+
+    const imageData = imageResultMatch[1] || '';
+    console.log('DEBUG - Extracted image data length:', imageData.length);
+
+    return {
+      success: true,
+      data: {
+        GetTerminalMessageImageResult: imageData,
+      },
+      rawResponse: xml,
+    };
+  } catch (error) {
+    console.log('DEBUG - Parse error:', error);
+    return {
+      success: false,
+      fault: {
+        faultCode: 'Client',
+        faultString: 'Failed to parse response',
+        detail: error instanceof Error ? error.message : 'Unknown error',
+      },
+      rawResponse: xml,
+    };
+  }
+}
+
+/**
+ * Get terminal message image from SOAP service
+ */
+export async function getTerminalMessageImage(
+  soapEndpoint: string,
+  loginguid: string,
+  messageId: number,
+  isHeaderImage: boolean = false,
+): Promise<SoapResponse<GetTerminalMessageImageResponse>> {
+  try {
+    const requestXml = formatGetTerminalMessageImageRequest(loginguid, messageId, isHeaderImage);
+    const headers = {
+      ...getGetTerminalMessageImageHeaders(),
+      'User-Agent': 'Mobile iOS client', // Match iOS app behavior
+      'Accept-Encoding': '',
+      'Cache-Control': 'no-cache',
+    };
+
+    const response = await fetch(soapEndpoint, {
+      method: 'POST',
+      headers,
+      body: requestXml,
+    });
+
+    const xml = await response.text();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        fault: {
+          faultCode: `HTTP_${response.status}`,
+          faultString: response.statusText,
+          detail: xml,
+        },
+        rawResponse: xml,
+      };
+    }
+
+    return parseGetTerminalMessageImageResponse(xml);
+  } catch (error) {
+    return {
+      success: false,
+      fault: {
+        faultCode: 'Network',
+        faultString: 'Network error',
+        detail: error instanceof Error ? error.message : 'Unknown network error',
+      },
+      rawResponse: '',
+    };
   }
 }
 
@@ -306,13 +665,21 @@ function parseSoapFault(xml: string): SoapFault | null {
 export const soapClient = {
   login,
   logout,
+  getAllTerminalMessageLite,
+  getTerminalMessageImage,
   isHealthy,
   parseLoginResponse,
   parseLogoutResponse,
+  parseGetAllTerminalMessageLiteResponse,
+  parseGetTerminalMessageImageResponse,
   getLoginHeaders,
   getLogoutHeaders,
+  getGetAllTerminalMessageLiteHeaders,
+  getGetTerminalMessageImageHeaders,
   formatLoginRequest,
   formatLogoutRequest,
+  formatGetAllTerminalMessageLiteRequest,
+  formatGetTerminalMessageImageRequest,
   parseSoapFault,
   extractSystemnameFromUrl,
 };

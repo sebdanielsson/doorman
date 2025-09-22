@@ -15,24 +15,24 @@ export const loginCredentialsSchema = z.object({
     .url('Please enter a valid server URL')
     .refine(
       (url) => url.includes('api/mobile/visionmobile.asmx'),
-      'Server URL must point to a VisionMobile API endpoint'
+      'Server URL must point to a VisionMobile API endpoint',
     ),
-  
+
   username: z
     .string()
     .min(1, 'Apartment number is required')
     .regex(/^\d{3}$/, 'Apartment number must be exactly 3 digits')
     .refine(
       (val) => parseInt(val) >= 1 && parseInt(val) <= 999,
-      'Apartment number must be between 001 and 999'
+      'Apartment number must be between 001 and 999',
     ),
-  
+
   password: z
     .string()
     .min(1, 'Password is required')
     .min(4, 'Password must be at least 4 characters')
     .max(50, 'Password is too long'),
-  
+
   timeout: z
     .number()
     .int('Timeout must be an integer')
@@ -72,7 +72,7 @@ export interface ValidationResult {
 export function validateLoginCredentials(input: unknown): ValidationResult {
   try {
     const result = loginCredentialsSchema.safeParse(input);
-    
+
     if (result.success) {
       return {
         success: true,
@@ -97,10 +97,13 @@ export function validateLoginCredentials(input: unknown): ValidationResult {
 /**
  * Validate individual field for real-time feedback
  */
-export function validateField(fieldName: keyof LoginCredentialsInput, value: unknown): ValidationResult {
+export function validateField(
+  fieldName: keyof LoginCredentialsInput,
+  value: unknown,
+): ValidationResult {
   try {
     let schema: z.ZodSchema;
-    
+
     switch (fieldName) {
       case 'serverUrl':
         schema = serverAddressSchema;
@@ -117,9 +120,9 @@ export function validateField(fieldName: keyof LoginCredentialsInput, value: unk
       default:
         return { success: false, error: 'Unknown field' };
     }
-    
+
     const result = schema.safeParse(value);
-    
+
     if (result.success) {
       return { success: true };
     } else {
@@ -151,32 +154,35 @@ export function transformFormData(formData: Record<string, unknown>): LoginCrede
 /**
  * Get user-friendly validation error messages
  */
-export function getFieldErrorMessage(fieldName: keyof LoginCredentialsInput, error: string): string {
+export function getFieldErrorMessage(
+  fieldName: keyof LoginCredentialsInput,
+  error: string,
+): string {
   const fieldDisplayNames = {
     serverUrl: 'Server URL',
-    username: 'Apartment number', 
+    username: 'Apartment number',
     password: 'Password',
     timeout: 'Timeout',
   };
-  
+
   const displayName = fieldDisplayNames[fieldName];
-  
+
   // Return more specific error messages for common validation failures
   if (error.includes('required')) {
     return `${displayName} is required`;
   }
-  
+
   if (error.includes('url') || error.includes('URL')) {
     return 'Please enter a valid server URL (e.g., https://example.com/api/mobile/visionmobile.asmx)';
   }
-  
+
   if (error.includes('3 digits')) {
     return 'Apartment number must be exactly 3 digits (e.g., 001, 042, 123)';
   }
-  
+
   if (error.includes('4 characters')) {
     return 'Password must be at least 4 characters long';
   }
-  
+
   return error;
 }

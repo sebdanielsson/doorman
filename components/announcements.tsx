@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import {
   Pagination,
   PaginationContent,
@@ -16,6 +17,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { Skeleton } from '@/components/ui/skeleton';
+import { AttachmentDisplay } from '@/components/attachment-display';
+import { DetailLink } from '@/components/detail-link';
+import type {
+  AnnouncementItem,
+  AnnouncementsApiResponse,
+  AttachmentInfo,
+} from '@/types/announcements';
 
 // Custom hook for resize observer
 function useResizeObserver(ref: React.RefObject<HTMLDivElement | null>) {
@@ -56,159 +65,194 @@ function getVisiblePages(currentPage: number, totalPages: number, maxVisible: nu
   return Array.from({ length: end - start + 1 }, (_, i) => start + i);
 }
 
-const announcementsList = [
-  {
-    id: '1',
-    title: 'Announcement 1',
-    date: '2022-01-01',
-  },
-  {
-    id: '2',
-    title: 'Announcement 2',
-    date: '2022-01-02',
-  },
-  {
-    id: '3',
-    title: 'Announcement 3',
-    date: '2022-01-03',
-  },
-  {
-    id: '4',
-    title: 'Announcement 4',
-    date: '2022-01-04',
-  },
-  {
-    id: '5',
-    title: 'Announcement 5',
-    date: '2022-01-05',
-  },
-  {
-    id: '6',
-    title: 'Announcement 6',
-    date: '2022-01-06',
-  },
-  {
-    id: '7',
-    title: 'Announcement 7',
-    date: '2022-01-07',
-  },
-  {
-    id: '8',
-    title: 'Announcement 8',
-    date: '2022-01-08',
-  },
-  {
-    id: '9',
-    title: 'Announcement 9',
-    date: '2022-01-09',
-  },
-  {
-    id: '10',
-    title: 'Announcement 10',
-    date: '2022-01-10',
-  },
-  {
-    id: '11',
-    title: 'Announcement 11',
-    date: '2022-01-11',
-  },
-  {
-    id: '12',
-    title: 'Announcement 12',
-    date: '2022-01-12',
-  },
-  {
-    id: '13',
-    title: 'Announcement 13',
-    date: '2022-01-13',
-  },
-  {
-    id: '14',
-    title: 'Announcement 14',
-    date: '2022-01-14',
-  },
-  {
-    id: '15',
-    title: 'Announcement 15',
-    date: '2022-01-15',
-  },
-  {
-    id: '16',
-    title: 'Announcement 16',
-    date: '2022-01-16',
-  },
-  {
-    id: '17',
-    title: 'Announcement 17',
-    date: '2022-01-17',
-  },
-  {
-    id: '18',
-    title: 'Announcement 18',
-    date: '2022-01-18',
-  },
-  {
-    id: '19',
-    title: 'Announcement 19',
-    date: '2022-01-19',
-  },
-  {
-    id: '20',
-    title: 'Announcement 20',
-    date: '2022-01-20',
-  },
-  {
-    id: '21',
-    title: 'Announcement 21',
-    date: '2022-01-21',
-  },
-  {
-    id: '22',
-    title: 'Announcement 22',
-    date: '2022-01-22',
-  },
-  {
-    id: '23',
-    title: 'Announcement 23',
-    date: '2022-01-23',
-  },
-  {
-    id: '24',
-    title: 'Announcement 24',
-    date: '2022-01-24',
-  },
-  {
-    id: '25',
-    title: 'Monthly Maintenance Schedule',
-    date: '2022-01-25',
-  },
-  {
-    id: '26',
-    title: 'Community Meeting Notice',
-    date: '2022-01-26',
-  },
-  {
-    id: '27',
-    title: 'New Recycling Guidelines',
-    date: '2022-01-27',
-  },
-  {
-    id: '28',
-    title: 'Parking Policy Update',
-    date: '2022-01-28',
-  },
-  {
-    id: '29',
-    title: 'Upcoming Renovations',
-    date: '2022-01-29',
-  },
-];
+// Component to display header image in accordion trigger
+function HeaderImage({ announcementId, title }: { announcementId: number; title: string }) {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [cacheKey] = useState(Date.now() + Math.random());
+
+  if (imageError) {
+    return null;
+  }
+
+  return (
+    <div className="mr-3 flex-shrink-0">
+      {!imageLoaded && (
+        <div className="h-12 w-12 animate-pulse rounded border bg-gray-200 dark:bg-gray-700" />
+      )}
+      {/* Use regular img tag instead of Next.js Image for more lenient validation */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={`/api/announcements/${announcementId}/header-image?t=${cacheKey}&force=1`}
+        alt={`Header image for ${title}`}
+        width={48}
+        height={48}
+        className={`h-12 w-12 rounded border object-cover ${imageLoaded ? 'block' : 'hidden'}`}
+        onError={() => {
+          console.log(`Header image failed to load for announcement ${announcementId}`);
+          setImageError(true);
+        }}
+        onLoad={() => {
+          console.log(`Header image loaded for announcement ${announcementId}`);
+          setImageLoaded(true);
+        }}
+      />
+    </div>
+  );
+}
+
+// Component to detect and render PDF or image content appropriately
+function PDFOrImageViewer({
+  url,
+  title,
+  announcementId,
+}: {
+  url: string;
+  title: string;
+  announcementId: number;
+}) {
+  const [contentType, setContentType] = useState<'unknown' | 'image' | 'pdf'>('unknown');
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    // Detect content type by making a HEAD request
+    const detectContentType = async () => {
+      try {
+        const response = await fetch(url, { method: 'HEAD' });
+        const contentTypeHeader = response.headers.get('content-type');
+
+        if (contentTypeHeader?.includes('pdf')) {
+          setContentType('pdf');
+        } else if (contentTypeHeader?.startsWith('image/')) {
+          setContentType('image');
+        } else {
+          // Fallback: try to load as image first
+          setContentType('image');
+        }
+      } catch (error) {
+        console.log(`Failed to detect content type for announcement ${announcementId}:`, error);
+        // Default to trying image first
+        setContentType('image');
+      }
+    };
+
+    detectContentType();
+  }, [url, announcementId]);
+
+  // If we detected it's a PDF or image failed to load, show PDF viewer
+  if (contentType === 'pdf' || imageError) {
+    return (
+      <div className="overflow-hidden rounded-lg border bg-white shadow-sm">
+        <div className="flex items-center gap-2 border-b bg-gray-50 p-4">
+          <span className="text-lg">📄</span>
+          <span className="font-medium text-gray-700">Bifogad fil</span>
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-auto rounded bg-red-600 px-3 py-1 text-sm text-white transition-colors hover:bg-red-700"
+          >
+            Öppna i ny flik
+          </a>
+        </div>
+        <div className="bg-white">
+          <object
+            data={url}
+            type="application/pdf"
+            className="h-96 w-full bg-white"
+            title={`Attachment for ${title}`}
+          >
+            <div className="p-4 text-center">
+              <p className="mb-2 text-gray-600">PDF kan inte visas i denna webbläsare.</p>
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block rounded bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700"
+              >
+                Öppna PDF i ny flik
+              </a>
+            </div>
+          </object>
+        </div>
+      </div>
+    );
+  }
+
+  // If we detected it's an image or haven't detected yet, try to show as image
+  if (contentType === 'image' || contentType === 'unknown') {
+    return (
+      <Image
+        src={url}
+        alt={`Image for ${title}`}
+        className="h-auto max-w-full rounded"
+        width={600}
+        height={400}
+        onError={() => {
+          console.log(
+            `Image failed to load for announcement ${announcementId}, switching to PDF viewer`,
+          );
+          setImageError(true);
+        }}
+      />
+    );
+  }
+
+  return null;
+}
 
 export function Announcements() {
+  const [announcements, setAnnouncements] = useState<AnnouncementItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 5;
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 5;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const containerWidth = useResizeObserver(containerRef);
+
+  // Fetch announcements from API
+  const fetchAnnouncements = async (page: number) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/announcements?page=${page}&pageSize=${itemsPerPage}`);
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          setError('Please log in to view announcements');
+          return;
+        }
+        throw new Error(`Failed to fetch announcements: ${response.status}`);
+      }
+
+      const data: AnnouncementsApiResponse = await response.json();
+
+      if (!data.success || !data.data) {
+        throw new Error(data.error || 'Failed to load announcements');
+      }
+
+      setAnnouncements(data.data.announcements);
+      setTotalPages(data.data.pagination.totalPages);
+      setTotalItems(data.data.pagination.totalItems);
+    } catch (err) {
+      console.error('Error fetching announcements:', err);
+      setError(
+        err instanceof Error ? err.message : 'An error occurred while loading announcements',
+      );
+      setAnnouncements([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch announcements on component mount and when page changes
+  useEffect(() => {
+    fetchAnnouncements(currentPage);
+  }, [currentPage]);
 
   // Calculate the number of visible pages based on container width
   const maxVisible = Math.max(3, Math.floor((containerWidth - 200) / 40)); // 200px for prev/next, 40px per page link
@@ -217,105 +261,265 @@ export function Announcements() {
   const showStartEllipsis = visiblePages[0] > 2;
   const showEndEllipsis = visiblePages[visiblePages.length - 1] < totalPages - 1;
 
-  // Calculate the current announcements based on current page
-  const startIndex = (currentPage - 1) * totalPages;
-  const currentAnnouncements = announcementsList.slice(startIndex, startIndex + totalPages);
+  // Handle page changes
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages && page !== currentPage) {
+      setCurrentPage(page);
+    }
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex flex-col gap-4">
+        <Accordion type="single" collapsible className="w-full">
+          {Array.from({ length: itemsPerPage }).map((_, i) => {
+            const titleWidths = ['w-60', 'w-48', 'w-72', 'w-56', 'w-64'];
+            const subtitleWidths = ['w-40'];
+            return (
+              <AccordionItem key={i} value={`loading-${i}`} className="hover:no-underline">
+                <AccordionTrigger>
+                  <div>
+                    <div className="mb-1">
+                      <Skeleton className={`h-5 ${titleWidths[i % titleWidths.length]}`} />
+                    </div>
+                    <Skeleton className={`h-3 ${subtitleWidths[i % subtitleWidths.length]}`} />
+                  </div>
+                </AccordionTrigger>
+              </AccordionItem>
+            );
+          })}
+        </Accordion>
+
+        {/* Pagination skeleton (matches spacing of real pagination) */}
+        <div>
+          <div className="mt-2 flex items-center justify-center gap-2">
+            <Skeleton className="h-8 w-8" />
+            <Skeleton className="h-8 w-8" />
+            <Skeleton className="h-8 w-8" />
+            <Skeleton className="h-8 w-8" />
+            <Skeleton className="h-8 w-8" />
+          </div>
+          <div className="mt-2 flex justify-center">
+            <Skeleton className="h-4 w-56" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="rounded-md border border-red-200 bg-red-50 p-4">
+          <p className="text-sm text-red-700">{error}</p>
+          <button
+            onClick={() => fetchAnnouncements(currentPage)}
+            className="mt-2 text-sm text-red-600 underline hover:text-red-800"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state
+  if (announcements.length === 0) {
+    return (
+      <div className="flex flex-col gap-4">
+        <p className="text-center text-gray-500">No announcements available</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">
       <Accordion type="single" collapsible className="w-full">
-        {currentAnnouncements.map((announcement) => (
+        {announcements.map((announcement) => (
           <AccordionItem
             key={announcement.id}
-            value={announcement.id}
+            value={announcement.id.toString()}
             className="hover:no-underline"
           >
             <AccordionTrigger>
-              <div>
-                <h4 className="text-base font-semibold">{announcement.title}</h4>
-                <p className="text-sm font-normal text-gray-500">{announcement.date}</p>
+              <div className="flex w-full items-center">
+                {announcement.hasImage && announcement.isHeader && (
+                  <HeaderImage announcementId={announcement.id} title={announcement.title} />
+                )}
+                <div className="flex-1">
+                  <h4 className="text-left text-base font-semibold">{announcement.title}</h4>
+                  <p className="text-left text-sm font-normal text-gray-500">
+                    {new Date(announcement.createdDate).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
             </AccordionTrigger>
             <AccordionContent>
-              <p>Please don&apos;t take a dump in the sauna.</p>
+              <div
+                className="text-sm leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: announcement.sanitizedContent }}
+              />
+
+              {/* Display image if announcement has one - with fallback for auth errors */}
+              {announcement.hasImage && (
+                <div className="mt-4">
+                  <Image
+                    src={`/api/announcements/${announcement.id}/image`}
+                    alt={`Bild för ${announcement.title}`}
+                    width={600}
+                    height={400}
+                    className="h-auto max-w-full rounded-lg border"
+                    onError={(e) => {
+                      // Hide the image container if it fails to load (likely auth error)
+                      const container = (e.target as HTMLElement).closest('div');
+                      if (container) {
+                        container.style.display = 'none';
+                      }
+                      console.warn(
+                        `Failed to load image for announcement ${announcement.id} - likely authentication or missing image`,
+                      );
+                    }}
+                    onLoad={() => {
+                      console.log(`Successfully loaded image for announcement ${announcement.id}`);
+                    }}
+                    // Add unoptimized to handle potential server issues
+                    unoptimized
+                  />
+                </div>
+              )}
+
+              {/* Display attachments if any */}
+              {announcement.attachments && announcement.attachments.length > 0 && (
+                <AttachmentDisplay
+                  attachments={announcement.attachments}
+                  onAttachmentClick={(attachment: AttachmentInfo) => {
+                    // Handle attachment click - could open file, show message, etc.
+                    console.log('Attachment clicked:', attachment);
+                    // For now, just show an alert since we don't have direct file access
+                    alert(
+                      `Bifogad fil: ${attachment.filename || attachment.displayText}\n\nFilen är inte direkt tillgänglig för nedladdning från denna gränssnitt.`,
+                    );
+                  }}
+                />
+              )}
+
+              {/* Display detail link if present */}
+              {announcement.hasDetailLink && (
+                <DetailLink
+                  onDetailClick={() => {
+                    // Handle detail link click
+                    console.log('Detail link clicked for announcement:', announcement.id);
+                    alert(
+                      'Detaljvy är inte implementerad än. Kontakta administratören för mer information.',
+                    );
+                  }}
+                  disabled={true} // Currently disabled since we don't have the detail view implemented
+                />
+              )}
+
+              {announcement.hasImage && announcement.imageUrl && (
+                <div className="mt-2">
+                  <PDFOrImageViewer
+                    url={announcement.imageUrl}
+                    title={announcement.title}
+                    announcementId={announcement.id}
+                  />
+                </div>
+              )}
+
+              {announcement.hasImage && !announcement.imageUrl && (
+                <div className="mt-2 rounded bg-gray-100 p-4 text-sm text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                  📎 Detta meddelande innehåller en bifogad fil som inte kunde laddas.
+                </div>
+              )}
             </AccordionContent>
           </AccordionItem>
         ))}
       </Accordion>
-      <div ref={containerRef}>
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentPage((prev) => Math.max(prev - 1, 1));
-                }}
-              />
-            </PaginationItem>
-            {visiblePages[0] > 1 && (
+
+      {totalPages > 1 && (
+        <div ref={containerRef}>
+          <Pagination>
+            <PaginationContent>
               <PaginationItem>
-                <PaginationLink
+                <PaginationPrevious
                   href="#"
                   onClick={(e) => {
                     e.preventDefault();
-                    setCurrentPage(1);
+                    handlePageChange(currentPage - 1);
                   }}
-                >
-                  1
-                </PaginationLink>
+                  className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                />
               </PaginationItem>
-            )}
-            {showStartEllipsis && (
+              {visiblePages[0] > 1 && (
+                <PaginationItem>
+                  <PaginationLink
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handlePageChange(1);
+                    }}
+                  >
+                    1
+                  </PaginationLink>
+                </PaginationItem>
+              )}
+              {showStartEllipsis && (
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              )}
+              {visiblePages.map((page) => (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    href="#"
+                    isActive={currentPage === page}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handlePageChange(page);
+                    }}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              {showEndEllipsis && (
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              )}
+              {visiblePages[visiblePages.length - 1] < totalPages && (
+                <PaginationItem>
+                  <PaginationLink
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handlePageChange(totalPages);
+                    }}
+                  >
+                    {totalPages}
+                  </PaginationLink>
+                </PaginationItem>
+              )}
               <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-            {visiblePages.map((page) => (
-              <PaginationItem key={page}>
-                <PaginationLink
+                <PaginationNext
                   href="#"
-                  isActive={currentPage === page}
                   onClick={(e) => {
                     e.preventDefault();
-                    setCurrentPage(page);
+                    handlePageChange(currentPage + 1);
                   }}
-                >
-                  {page}
-                </PaginationLink>
+                  className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                />
               </PaginationItem>
-            ))}
-            {showEndEllipsis && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-            {visiblePages[visiblePages.length - 1] < totalPages && (
-              <PaginationItem>
-                <PaginationLink
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setCurrentPage(totalPages);
-                  }}
-                >
-                  {totalPages}
-                </PaginationLink>
-              </PaginationItem>
-            )}
-            <PaginationItem>
-              <PaginationNext
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-                }}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
+            </PaginationContent>
+          </Pagination>
+          <p className="mt-2 text-center text-sm text-gray-500">
+            Showing {announcements.length} of {totalItems} announcements
+          </p>
+        </div>
+      )}
     </div>
   );
 }

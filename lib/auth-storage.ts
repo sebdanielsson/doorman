@@ -8,7 +8,7 @@ import Cookies from 'js-cookie';
 import type { AuthUser } from '@/types/auth';
 
 // Cookie configuration constants
-const AUTH_TOKEN_KEY = 'auth_token';
+const AUTH_TOKEN_KEY = 'loginGuid';
 const USER_PROFILE_KEY = 'user_profile';
 const TOKEN_EXPIRY_HOURS = 24; // 24 hours default session
 
@@ -82,7 +82,7 @@ export function getStoredUser(): AuthUser | null {
     }
 
     const user: AuthUser = JSON.parse(userData);
-    
+
     // Check if token has expired
     if (user.expiresAt && new Date() > new Date(user.expiresAt)) {
       // Clear expired data

@@ -16,7 +16,7 @@ export function MainNav() {
         <Image
           className="dark:invert"
           src="/doorman.svg"
-          alt="Next.js logo"
+          alt="Laundry machine icon"
           width={24}
           height={24}
           priority
@@ -27,8 +27,8 @@ export function MainNav() {
         <Link
           href="/"
           className={cn(
-            'hover:text-foreground/80 transition-colors',
-            pathname === '/' ? 'text-foreground' : 'text-foreground/80',
+            'hover:text-foreground/100 transition-colors',
+            pathname === '/' ? 'font-bold' : 'text-foreground/80',
           )}
         >
           Start
@@ -36,8 +36,8 @@ export function MainNav() {
         <Link
           href="/book"
           className={cn(
-            'hover:text-foreground/80 transition-colors',
-            pathname?.startsWith('/book') ? 'text-foreground' : 'text-foreground/80',
+            'hover:text-foreground/100 transition-colors',
+            pathname?.startsWith('/book') ? 'font-bold' : 'text-foreground/80',
           )}
         >
           Boka
@@ -45,8 +45,8 @@ export function MainNav() {
         <Link
           href="/settings"
           className={cn(
-            'hover:text-foreground/80 transition-colors',
-            pathname?.startsWith('/settings') ? 'text-foreground' : 'text-foreground/80',
+            'hover:text-foreground/100 transition-colors',
+            pathname?.startsWith('/settings') ? 'font-bold' : 'text-foreground/80',
           )}
         >
           Inställningar
