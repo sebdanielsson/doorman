@@ -3,10 +3,7 @@ const config = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   roots: ['<rootDir>/__tests__'],
-  testMatch: [
-    '**/__tests__/**/*.test.{js,jsx,ts,tsx}',
-    '**/?(*.)+(spec|test).{js,jsx,ts,tsx}'
-  ],
+  testMatch: ['**/__tests__/**/*.test.{js,jsx,ts,tsx}', '**/?(*.)+(spec|test).{js,jsx,ts,tsx}'],
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',
   },

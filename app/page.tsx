@@ -5,6 +5,7 @@ import { MyBookings } from '@/components/my-bookings';
 import { Announcements } from '@/components/announcements';
 import { LoginForm } from '@/components/login-form';
 import { useAuth } from '@/lib/auth-context';
+import { Spinner } from '@/components/ui/shadcn-io/spinner';
 
 export default function Home() {
   const { state } = useAuth();
@@ -12,7 +13,7 @@ export default function Home() {
   // Show login prompt if not authenticated
   if (!state.isAuthenticated && !state.isLoading) {
     return (
-      <div className="flex min-h-screen w-full flex-col items-center justify-center gap-6">
+      <div className="flex w-full flex-col items-center justify-center gap-6">
         <div className="w-full max-w-md space-y-6">
           <h1 className="text-center text-3xl font-bold tracking-tight">Välkommen till Doorman</h1>
           <LoginForm />
@@ -26,7 +27,7 @@ export default function Home() {
     return (
       <div className="flex flex-col items-center justify-center">
         <div className="space-y-2 text-center">
-          <h1 className="text-2xl font-medium">Laddar...</h1>
+          <Spinner variant="ellipsis" className="h-16" />
         </div>
       </div>
     );
