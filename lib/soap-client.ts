@@ -773,7 +773,10 @@ export function parseGetTerminalMessageImageResponse(
     }
 
     const imageData = imageResultMatch[1] || '';
-    console.log('DEBUG - Extracted image data length:', imageData.length);
+    console.debug(
+      'parseGetTerminalMessageImageResponse - Extracted image data length:',
+      imageData.length,
+    );
 
     return {
       success: true,
@@ -806,6 +809,7 @@ export async function getTerminalMessageImage(
   isHeaderImage: boolean = false,
 ): Promise<SoapResponse<GetTerminalMessageImageResponse>> {
   try {
+    console.debug('getTerminalMessageImage - POST', { soapEndpoint, messageId, isHeaderImage });
     const requestXml = formatGetTerminalMessageImageRequest(loginguid, messageId, isHeaderImage);
     const headers = {
       ...getGetTerminalMessageImageHeaders(),
@@ -821,6 +825,8 @@ export async function getTerminalMessageImage(
     });
 
     const xml = await response.text();
+
+    console.debug('getTerminalMessageImage - response xml length:', xml.length);
 
     if (!response.ok) {
       return {

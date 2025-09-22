@@ -28,13 +28,14 @@ function processImageResponse(soapResponse: {
   }
 
   try {
-    const imageBuffer = Buffer.from(imageData, 'base64');
+    const trimmed = imageData.trim();
+    const imageBuffer = Buffer.from(trimmed, 'base64');
 
     // Determine content type from base64 signature or buffer content
     let contentType = 'application/octet-stream'; // default
 
-    // Check for PDF
-    if (imageData.startsWith('JVBERi0') || imageBuffer.toString('ascii', 0, 4) === '%PDF') {
+    // Check for PDF (base64 may have whitespace/newlines so use trimmed)
+    if (trimmed.startsWith('JVBERi0') || imageBuffer.toString('ascii', 0, 4) === '%PDF') {
       contentType = 'application/pdf';
     }
     // Check for images
@@ -49,6 +50,8 @@ function processImageResponse(soapResponse: {
     else if (imageData.startsWith('UEsDB') || imageBuffer.toString('ascii', 0, 2) === 'PK') {
       contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
     }
+
+    console.debug('processImageResponse - detected', { contentType, length: imageBuffer.length });
 
     return new NextResponse(imageBuffer.buffer as ArrayBuffer, {
       headers: {

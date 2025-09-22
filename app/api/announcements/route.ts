@@ -103,17 +103,41 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
           if (relatedResp.success && relatedResp.data?.GetOneTerminalMessageLiteResult) {
             const related = relatedResp.data.GetOneTerminalMessageLiteResult;
-            // Merge related text into main message TextMessage array
             const mergedText = [...(msg.TextMessage || [])];
             if (related.TextMessage && related.TextMessage.length > 0) {
               mergedText.push(...related.TextMessage);
             }
-            console.debug(
-              'Announcements API - merged text length for',
-              msg.MessageId,
-              mergedText.length,
-            );
-            enrichedMessages.push({ ...msg, TextMessage: mergedText });
+
+            // If the related message contains an image (PDF or similar), ensure the main message
+            // exposes an imageUrl so the frontend can render it. Prefer related message id for the image route.
+            const mergedMsg: TrmMessageLite = { ...msg, TextMessage: mergedText };
+            if (related.HasImage) {
+              console.debug('Announcements API - attaching imageUrl from related message', {
+                messageId: msg.MessageId,
+                relatedId: related.MessageId,
+              });
+              mergedMsg.HasImage = true;
+
+              // Create an enriched object that includes an optional imageUrl
+              const mergedWithImage = {
+                ...mergedMsg,
+                imageUrl: `/api/announcements/${related.MessageId}/image`,
+              } as TrmMessageLite & { imageUrl?: string };
+
+              console.debug(
+                'Announcements API - merged text length for',
+                msg.MessageId,
+                mergedText.length,
+              );
+              enrichedMessages.push(mergedWithImage as unknown as TrmMessageLite);
+            } else {
+              console.debug(
+                'Announcements API - merged text length for',
+                msg.MessageId,
+                mergedText.length,
+              );
+              enrichedMessages.push(mergedMsg);
+            }
             continue;
           }
         } catch (err) {
