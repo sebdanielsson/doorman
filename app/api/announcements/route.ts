@@ -76,7 +76,56 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // 4. Transform and filter SOAP data
     const rawMessages = soapResponse.data?.GetAllTerminalMessageLiteResult || [];
-    const filteredMessages = filterTextOnlyMessages(rawMessages);
+
+    // For messages that reference a related message (RelatedMessageId !== 0)
+    // and have no TextMessage content, fetch the related message to include its text.
+    const enrichedMessages: TrmMessageLite[] = [];
+
+    for (const msg of rawMessages) {
+      // If there is a related message id and the main message lacks text, attempt to fetch related
+      if ((msg.RelatedMessageId || 0) !== 0 && (!msg.TextMessage || msg.TextMessage.length === 0)) {
+        try {
+          console.debug('Announcements API - fetching related message', {
+            messageId: msg.MessageId,
+            relatedId: msg.RelatedMessageId,
+          });
+          const relatedResp = await soapClient.getOneTerminalMessageLite(
+            loginGuid,
+            msg.RelatedMessageId,
+            soapEndpoint,
+          );
+
+          console.debug('Announcements API - relatedResp', {
+            success: relatedResp.success,
+            hasData: Boolean(relatedResp.data && relatedResp.data.GetOneTerminalMessageLiteResult),
+            fault: relatedResp.fault?.faultString,
+          });
+
+          if (relatedResp.success && relatedResp.data?.GetOneTerminalMessageLiteResult) {
+            const related = relatedResp.data.GetOneTerminalMessageLiteResult;
+            // Merge related text into main message TextMessage array
+            const mergedText = [...(msg.TextMessage || [])];
+            if (related.TextMessage && related.TextMessage.length > 0) {
+              mergedText.push(...related.TextMessage);
+            }
+            console.debug(
+              'Announcements API - merged text length for',
+              msg.MessageId,
+              mergedText.length,
+            );
+            enrichedMessages.push({ ...msg, TextMessage: mergedText });
+            continue;
+          }
+        } catch (err) {
+          console.error('Failed to fetch related terminal message', err);
+          // Fall through to push original message
+        }
+      }
+
+      enrichedMessages.push(msg);
+    }
+
+    const filteredMessages = filterTextOnlyMessages(enrichedMessages);
     const transformedAnnouncements = filteredMessages.map(transformSoapMessage);
 
     // 5. Apply pagination

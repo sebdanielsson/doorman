@@ -133,10 +133,6 @@ export async function GET(
       isHeaderImage = false;
     }
 
-    console.log(
-      `DEBUG - Fetching image for message ${messageId}, isHeaderImage: ${isHeaderImage}, requested: ${requestedHeaderImage}`,
-    );
-
     // 4. Fetch image from SOAP service
     const soapResponse = await soapClient.getTerminalMessageImage(
       soapEndpoint,
@@ -145,10 +141,7 @@ export async function GET(
       isHeaderImage,
     );
 
-    console.log(`DEBUG - SOAP response success: ${soapResponse.success}`);
     if (!soapResponse.success) {
-      console.log(`DEBUG - SOAP fault:`, soapResponse.fault);
-
       // If regular image failed and we didn't explicitly request header, try header image as fallback
       if (!isHeaderImage && !requestedHeaderImage) {
         console.log(`DEBUG - Regular image failed, trying header image for message ${messageId}`);
@@ -160,7 +153,6 @@ export async function GET(
         );
 
         if (headerImageResponse.success) {
-          console.log(`DEBUG - Header image succeeded for message ${messageId}`);
           // Process the header image response
           const imageData = headerImageResponse.data?.GetTerminalMessageImageResult;
           if (imageData && imageData.trim() !== '') {
@@ -196,10 +188,6 @@ export async function GET(
         { status: statusCode },
       );
     } else {
-      console.log(
-        `DEBUG - Image data length:`,
-        soapResponse.data?.GetTerminalMessageImageResult?.length || 0,
-      );
       // Process the successful response directly
       return processImageResponse(soapResponse);
     }

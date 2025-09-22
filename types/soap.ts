@@ -56,6 +56,10 @@ export interface GetAllTerminalMessageLiteResponse {
   GetAllTerminalMessageLiteResult: TrmMessageLite[];
 }
 
+export interface GetOneTerminalMessageLiteResponse {
+  GetOneTerminalMessageLiteResult: TrmMessageLite | null;
+}
+
 export interface GetTerminalMessageImageRequest {
   loginguid: string;
   messageId: number;

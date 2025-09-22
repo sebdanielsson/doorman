@@ -13,6 +13,7 @@ import type {
   TrmMessageLite,
   GetAllTerminalMessageLiteResponse,
   GetTerminalMessageImageResponse,
+  GetOneTerminalMessageLiteResponse,
 } from '@/types/soap';
 import type { LoginCredentials } from '@/types/auth';
 
@@ -82,6 +83,190 @@ export function formatGetAllTerminalMessageLiteRequest(loginguid: string): strin
 }
 
 /**
+ * Format GetOneTerminalMessageLite request into SOAP XML
+ */
+export function formatGetOneTerminalMessageLiteRequest(
+  loginguid: string,
+  messageId: number,
+): string {
+  if (!loginguid || loginguid.trim() === '') {
+    throw new Error('loginguid is required');
+  }
+
+  return `<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <GetOneTerminalMessageLite xmlns="http://www.rco.se/Api/Mobile">
+      <loginguid xsi:type="xsd:string">${escapeXml(loginguid)}</loginguid>
+      <messageId xsi:type="xsd:int">${messageId}</messageId>
+    </GetOneTerminalMessageLite>
+  </soap:Body>
+</soap:Envelope>`;
+}
+
+/**
+ * Get headers for GetOneTerminalMessageLite SOAP request
+ */
+export function getGetOneTerminalMessageLiteHeaders(): SoapHeaders {
+  return {
+    'Content-Type': 'text/xml; charset=utf-8',
+    SOAPAction: '"http://www.rco.se/Api/Mobile/GetOneTerminalMessageLite"',
+  };
+}
+
+/**
+ * Parse GetOneTerminalMessageLite SOAP response XML
+ */
+export function parseGetOneTerminalMessageLiteResponse(
+  xml: string,
+): SoapResponse<GetOneTerminalMessageLiteResponse> {
+  try {
+    console.debug('parseGetOneTerminalMessageLiteResponse - incoming XML length:', xml.length);
+    const fault = parseSoapFault(xml);
+    if (fault) {
+      return { success: false, fault, rawResponse: xml };
+    }
+
+    // Try to find a TrmMessageLite element first (namespaced or not)
+    let messageXml: string | null = null;
+    const trmMatch = xml.match(
+      /<(?:(?:\w+:)?)TrmMessageLite[\s\S]*?<\/(?:(?:\w+:)?)TrmMessageLite>/i,
+    );
+    if (trmMatch) {
+      messageXml = trmMatch[0];
+    } else {
+      // Fallback: find GetOneTerminalMessageLiteResult wrapper and treat its inner XML as the message
+      const resultMatch = xml.match(
+        /<(?:(?:\w+:)?)GetOneTerminalMessageLiteResult[\s\S]*?<\/(?:(?:\w+:)?)GetOneTerminalMessageLiteResult>/i,
+      );
+      if (resultMatch) {
+        // Strip the outer tag and use inner content
+        const outer = resultMatch[0];
+        // remove the opening tag
+        const inner = outer
+          .replace(/^<(?:(?:\w+:)?)GetOneTerminalMessageLiteResult[^>]*>/i, '')
+          .replace(/<\/(?:(?:\w+:)?)GetOneTerminalMessageLiteResult>$/i, '');
+        messageXml = inner;
+      }
+    }
+
+    if (!messageXml) {
+      // No message found, return null result
+      return {
+        success: true,
+        data: { GetOneTerminalMessageLiteResult: null },
+        rawResponse: xml,
+      };
+    }
+
+    const messageId = extractXmlValue(messageXml, 'MessageId');
+    const contentType = extractXmlValue(messageXml, 'ContentType');
+    const createdDate = extractXmlValue(messageXml, 'CreatedDate');
+    const messageHeader = extractXmlValue(messageXml, 'MessageHeader');
+    const relatedMessageId = extractXmlValue(messageXml, 'RelatedMessageId');
+    const hasImage = extractXmlValue(messageXml, 'HasImage');
+    const isHeader = extractXmlValue(messageXml, 'IsHeader');
+    const relatedContentType = extractXmlValue(messageXml, 'RelatedContentType');
+
+    const textMessageMatches = messageXml.matchAll(/<string>([^<]*)<\/string>/g);
+    const textMessages: string[] = [];
+    for (const m of textMessageMatches) {
+      textMessages.push(m[1] || '');
+    }
+
+    const message = {
+      MessageId: parseInt(messageId || '0', 10),
+      ContentType: parseInt(contentType || '0', 10),
+      CreatedDate: createdDate || '',
+      MessageHeader: messageHeader || '',
+      RelatedMessageId: parseInt(relatedMessageId || '0', 10),
+      TextMessage: textMessages,
+      HasImage: hasImage === 'true',
+      IsHeader: isHeader === 'true',
+      RelatedContentType: parseInt(relatedContentType || '0', 10),
+    };
+
+    console.debug('parseGetOneTerminalMessageLiteResponse - parsed message:', {
+      MessageId: message.MessageId,
+      TextMessageCount: message.TextMessage.length,
+      MessageHeader: message.MessageHeader,
+      HasImage: message.HasImage,
+    });
+
+    return {
+      success: true,
+      data: { GetOneTerminalMessageLiteResult: message },
+      rawResponse: xml,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      fault: {
+        faultCode: 'Client',
+        faultString: 'Failed to parse GetOneTerminalMessageLite response',
+        detail: error instanceof Error ? error.message : 'Unknown error',
+      },
+      rawResponse: xml,
+    };
+  }
+}
+
+/**
+ * Make GetOneTerminalMessageLite SOAP request
+ */
+export async function getOneTerminalMessageLite(
+  loginguid: string,
+  messageId: number,
+  serverUrl?: string,
+): Promise<SoapResponse<GetOneTerminalMessageLiteResponse>> {
+  if (!loginguid || loginguid.trim() === '') {
+    throw new Error('loginguid is required');
+  }
+
+  const endpoint = serverUrl || process.env.NEXT_PUBLIC_SOAP_ENDPOINT || '';
+  if (!endpoint) {
+    throw new Error('SOAP endpoint is required');
+  }
+
+  try {
+    const xml = formatGetOneTerminalMessageLiteRequest(loginguid, messageId);
+    const headers = getGetOneTerminalMessageLiteHeaders();
+    console.debug('getOneTerminalMessageLite - POST', { endpoint, messageId });
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers,
+      body: xml,
+    });
+
+    if (!response.ok) {
+      return {
+        success: false,
+        fault: {
+          faultCode: 'HTTP',
+          faultString: `HTTP ${response.status}: ${response.statusText}`,
+        },
+        rawResponse: await response.text(),
+      };
+    }
+
+    const responseXml = await response.text();
+    console.debug('getOneTerminalMessageLite - response length:', responseXml.length);
+    return parseGetOneTerminalMessageLiteResponse(responseXml);
+  } catch (error) {
+    return {
+      success: false,
+      fault: {
+        faultCode: 'Client',
+        faultString: 'Network error',
+        detail: error instanceof Error ? error.message : 'Unknown error',
+      },
+      rawResponse: '',
+    };
+  }
+}
+
+/**
  * Parse GetAllTerminalMessageLite SOAP response XML
  */
 export function parseGetAllTerminalMessageLiteResponse(
@@ -117,10 +302,40 @@ export function parseGetAllTerminalMessageLiteResponse(
         const relatedContentType = extractXmlValue(messageXml, 'RelatedContentType');
 
         // Extract TextMessage array
-        const textMessageMatches = messageXml.matchAll(/<string>([^<]*)<\/string>/g);
+        // Extract TextMessage array: elements named <string> possibly with namespace prefix
         const textMessages: string[] = [];
-        for (const textMatch of textMessageMatches) {
-          textMessages.push(textMatch[1] || '');
+        const stringRegex = /<(?:(?:\w+:)?)string\b[^>]*>([\s\S]*?)<\/(?:(?:\w+:)?)string>/gi;
+        for (const m of messageXml.matchAll(stringRegex)) {
+          let val = m[1] || '';
+          const cdata = val.match(/<!\[CDATA\[([\s\S]*?)\]\]>/i);
+          if (cdata) val = cdata[1];
+          val = val.trim();
+          if (val.length > 0) textMessages.push(val);
+        }
+
+        // Fallback: if none found, attempt to extract from a <TextMessage> element containing <string/> children or raw text
+        if (textMessages.length === 0) {
+          // Match a container element named TextMessage (namespace tolerant)
+          const textMessageContainer = messageXml.match(
+            /<(?:(?:\\w+:)?)TextMessage[\s\S]*?>([\s\S]*?)<\/(?:(?:\\w+:)?)TextMessage>/i,
+          );
+          if (textMessageContainer) {
+            const inner = textMessageContainer[1];
+            // Extract nested string elements
+            for (const m of inner.matchAll(stringRegex)) {
+              let val = m[1] || '';
+              const cdata = val.match(/<!\[CDATA\[([\s\S]*?)\]\]>/i);
+              if (cdata) val = cdata[1];
+              val = val.trim();
+              if (val.length > 0) textMessages.push(val);
+            }
+
+            // If still empty, use inner text nodes by stripping tags
+            if (textMessages.length === 0) {
+              const plain = inner.replace(/<[^>]*>/g, '').trim();
+              if (plain.length > 0) textMessages.push(plain);
+            }
+          }
         }
 
         const message: TrmMessageLite = {
@@ -228,9 +443,24 @@ export async function getAllTerminalMessageLite(
  * Extract XML element value safely
  */
 function extractXmlValue(xml: string, elementName: string): string {
-  const regex = new RegExp(`<${elementName}>([^<]*)<\/${elementName}>`, 'i');
+  // Match element with optional namespace prefix, capture inner content (including possible CDATA)
+  const regex = new RegExp(
+    `<(?:(?:\\w+:)?)${elementName}\\b[^>]*>([\\s\\S]*?)<\\/(?:(?:\\w+:)?)${elementName}>`,
+    'i',
+  );
   const match = xml.match(regex);
-  return match ? match[1] : '';
+  if (!match) return '';
+  let inner = match[1] || '';
+
+  // Handle CDATA sections
+  const cdataMatch = inner.match(/<!\[CDATA\[([\s\S]*?)\]\]>/i);
+  if (cdataMatch) {
+    inner = cdataMatch[1];
+  }
+
+  // Strip surrounding whitespace and any XML tags that may have been included
+  inner = inner.trim();
+  return inner;
 }
 
 /**
@@ -666,6 +896,7 @@ export const soapClient = {
   login,
   logout,
   getAllTerminalMessageLite,
+  getOneTerminalMessageLite,
   getTerminalMessageImage,
   isHealthy,
   parseLoginResponse,

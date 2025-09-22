@@ -96,7 +96,6 @@ function HeaderImage({ announcementId, title }: { announcementId: number; title:
           setImageError(true);
         }}
         onLoad={() => {
-          console.log(`Header image loaded for announcement ${announcementId}`);
           setImageLoaded(true);
         }}
       />
