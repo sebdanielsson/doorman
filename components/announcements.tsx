@@ -25,6 +25,9 @@ import type {
   AnnouncementsApiResponse,
   AttachmentInfo,
 } from '@/types/announcements';
+import { Button } from '@/components/ui/button';
+import Link from 'next/dist/client/link';
+import { File } from 'lucide-react';
 
 // Custom hook for resize observer
 function useResizeObserver(ref: React.RefObject<HTMLDivElement | null>) {
@@ -142,36 +145,30 @@ function PDFOrImageViewer({
   // If we detected it's a PDF or image failed to load, show PDF viewer
   if (contentType === 'pdf' || imageError) {
     return (
-      <div className="overflow-hidden rounded-lg border bg-white shadow-sm">
-        <div className="flex items-center gap-2 border-b bg-gray-50 p-4">
-          <span className="text-lg">📄</span>
-          <span className="font-medium text-gray-700">Bifogad fil</span>
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-auto rounded bg-red-600 px-3 py-1 text-sm text-white transition-colors hover:bg-red-700"
-          >
-            Öppna i ny flik
-          </a>
+      <div className="overflow-hidden rounded-lg border shadow-sm">
+        <div className="flex items-center gap-2 border-b p-4">
+          <File />
+          <span className="font-medium">Bifogad fil</span>
+          <Button asChild className="ml-auto">
+            <Link href={url} target="_blank" rel="noopener noreferrer">
+              Öppna i ny flik
+            </Link>
+          </Button>
         </div>
-        <div className="bg-white">
+        <div className="">
           <object
             data={url}
             type="application/pdf"
-            className="h-96 w-full bg-white"
+            className="h-96 w-full"
             title={`Attachment for ${title}`}
           >
             <div className="p-4 text-center">
               <p className="mb-2 text-gray-600">PDF kan inte visas i denna webbläsare.</p>
-              <a
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block rounded bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700"
-              >
-                Öppna PDF i ny flik
-              </a>
+              <Button asChild className="ml-auto">
+                <Link href={url} target="_blank" rel="noopener noreferrer">
+                  Öppna PDF i ny flik
+                </Link>
+              </Button>
             </div>
           </object>
         </div>
@@ -361,34 +358,6 @@ export function Announcements() {
                 className="text-sm leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: announcement.sanitizedContent }}
               />
-
-              {/* Display image if announcement has one - with fallback for auth errors */}
-              {announcement.hasImage && (
-                <div className="mt-4">
-                  <Image
-                    src={`/api/announcements/${announcement.id}/image`}
-                    alt={`Bild för ${announcement.title}`}
-                    width={600}
-                    height={400}
-                    className="h-auto max-w-full rounded-lg border"
-                    onError={(e) => {
-                      // Hide the image container if it fails to load (likely auth error)
-                      const container = (e.target as HTMLElement).closest('div');
-                      if (container) {
-                        container.style.display = 'none';
-                      }
-                      console.warn(
-                        `Failed to load image for announcement ${announcement.id} - likely authentication or missing image`,
-                      );
-                    }}
-                    onLoad={() => {
-                      console.log(`Successfully loaded image for announcement ${announcement.id}`);
-                    }}
-                    // Add unoptimized to handle potential server issues
-                    unoptimized
-                  />
-                </div>
-              )}
 
               {/* Display attachments if any */}
               {announcement.attachments && announcement.attachments.length > 0 && (
