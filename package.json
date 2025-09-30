@@ -29,7 +29,7 @@
     "@radix-ui/react-switch": "^1.2.5",
     "@radix-ui/react-toast": "^1.2.14",
     "@radix-ui/react-visually-hidden": "^1.2.3",
-    "@types/jsdom": "^21.1.7",
+    "@types/jsdom": "^27.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
