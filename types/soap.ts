@@ -135,3 +135,25 @@ export const SOAP_HEADERS = {
 } as const;
 
 export const SOAP_ENDPOINT = 'https://cshub.epr-apps.com/S0144BrfAsen/api/mobile/visionmobile.asmx';
+
+// Booking Types
+export interface BookUserBooking {
+  BookIndex: number; // Unique booking identifier
+  BookDate: string; // Date of the booking
+  BookTime: string; // Time of the booking
+  BookPass: string; // Booking pass information (time slot name)
+  BookMachineGroupName: string; // Name of the machine group
+  BookMachineGroup: string; // Machine group identifier
+  BookMachineGroupType: string; // Type of machine group
+  BookUnit: string; // Unit identifier
+  BookUnitName: string; // Unit name
+  CanDelete: boolean; // Whether the booking can be deleted
+}
+
+export interface GetBookUserBookingCountResponse {
+  GetBookUserBookingCountResult: string; // Count as string
+}
+
+export interface GetBookUserBookingsResponse {
+  GetBookUserBookingsResult: BookUserBooking[];
+}

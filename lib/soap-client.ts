@@ -14,6 +14,8 @@ import type {
   GetAllTerminalMessageLiteResponse,
   GetTerminalMessageImageResponse,
   GetOneTerminalMessageLiteResponse,
+  BookUserBooking,
+  GetBookUserBookingsResponse,
 } from '@/types/soap';
 import type { LoginCredentials } from '@/types/auth';
 
@@ -896,6 +898,191 @@ function parseSoapFault(xml: string): SoapFault | null {
 }
 
 /**
+ * Format GetBookUserBookingCount request into SOAP XML
+ */
+export function formatGetBookUserBookingCountRequest(loginguid: string): string {
+  if (!loginguid || loginguid.trim() === '') {
+    throw new Error('loginguid is required');
+  }
+
+  return `<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <GetBookUserBookingCount xmlns="http://www.rco.se/Api/Mobile">
+      <loginguid xsi:type="xsd:string">${escapeXml(loginguid)}</loginguid>
+    </GetBookUserBookingCount>
+  </soap:Body>
+</soap:Envelope>`;
+}
+
+/**
+ * Get headers for GetBookUserBookingCount SOAP request
+ */
+export function getGetBookUserBookingCountHeaders(): SoapHeaders {
+  return {
+    'Content-Type': 'text/xml; charset=utf-8',
+    SOAPAction: '"http://www.rco.se/Api/Mobile/GetBookUserBookingCount"',
+  };
+}
+
+/**
+ * Format GetBookUserBookings request into SOAP XML
+ */
+export function formatGetBookUserBookingsRequest(loginguid: string, bookindex: number): string {
+  if (!loginguid || loginguid.trim() === '') {
+    throw new Error('loginguid is required');
+  }
+
+  return `<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <GetBookUserBookings xmlns="http://www.rco.se/Api/Mobile">
+      <loginguid xsi:type="xsd:string">${escapeXml(loginguid)}</loginguid>
+      <bookindex xsi:type="xsd:long">${bookindex}</bookindex>
+    </GetBookUserBookings>
+  </soap:Body>
+</soap:Envelope>`;
+}
+
+/**
+ * Get headers for GetBookUserBookings SOAP request
+ */
+export function getGetBookUserBookingsHeaders(): SoapHeaders {
+  return {
+    'Content-Type': 'text/xml; charset=utf-8',
+    SOAPAction: '"http://www.rco.se/Api/Mobile/GetBookUserBookings"',
+  };
+}
+
+/**
+ * Parse GetBookUserBookings SOAP response XML
+ */
+export function parseGetBookUserBookingsResponse(
+  xml: string,
+): SoapResponse<GetBookUserBookingsResponse> {
+  try {
+    const fault = parseSoapFault(xml);
+    if (fault) {
+      return {
+        success: false,
+        fault,
+        rawResponse: xml,
+      };
+    }
+
+    // Extract all BookUserBooking elements
+    const bookings: BookUserBooking[] = [];
+    const bookingMatches = xml.matchAll(/<BookUserBooking>[\s\S]*?<\/BookUserBooking>/g);
+
+    for (const match of bookingMatches) {
+      const bookingXml = match[0];
+
+      try {
+        const bookIndex = extractXmlValue(bookingXml, 'BookIndex');
+        const bookDate = extractXmlValue(bookingXml, 'BookDate');
+        const bookTime = extractXmlValue(bookingXml, 'BookTime');
+        const bookPass = extractXmlValue(bookingXml, 'BookPass');
+        const bookMachineGroupName = extractXmlValue(bookingXml, 'BookMachineGroupName');
+        const bookMachineGroup = extractXmlValue(bookingXml, 'BookMachineGroup');
+        const bookMachineGroupType = extractXmlValue(bookingXml, 'BookMachineGroupType');
+        const bookUnit = extractXmlValue(bookingXml, 'BookUnit');
+        const bookUnitName = extractXmlValue(bookingXml, 'BookUnitName');
+        const canDelete = extractXmlValue(bookingXml, 'CanDelete');
+
+        const booking: BookUserBooking = {
+          BookIndex: parseInt(bookIndex, 10),
+          BookDate: bookDate,
+          BookTime: bookTime,
+          BookPass: bookPass,
+          BookMachineGroupName: bookMachineGroupName,
+          BookMachineGroup: bookMachineGroup,
+          BookMachineGroupType: bookMachineGroupType,
+          BookUnit: bookUnit,
+          BookUnitName: bookUnitName,
+          CanDelete: canDelete === 'true',
+        };
+
+        bookings.push(booking);
+      } catch (parseError) {
+        console.error('Failed to parse booking element:', parseError);
+        // Continue parsing other bookings
+      }
+    }
+
+    return {
+      success: true,
+      data: {
+        GetBookUserBookingsResult: bookings,
+      },
+      rawResponse: xml,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      fault: {
+        faultCode: 'Client',
+        faultString: 'Failed to parse GetBookUserBookings response',
+        detail: error instanceof Error ? error.message : 'Unknown error',
+      },
+      rawResponse: xml,
+    };
+  }
+}
+
+/**
+ * Make GetBookUserBookings SOAP request
+ */
+export async function getBookUserBookings(
+  loginguid: string,
+  bookindex: number,
+  serverUrl?: string,
+): Promise<SoapResponse<GetBookUserBookingsResponse>> {
+  if (!loginguid || loginguid.trim() === '') {
+    throw new Error('loginguid is required');
+  }
+
+  const endpoint = serverUrl || process.env.NEXT_PUBLIC_SOAP_ENDPOINT || '';
+  if (!endpoint) {
+    throw new Error('SOAP endpoint is required');
+  }
+
+  try {
+    const xml = formatGetBookUserBookingsRequest(loginguid, bookindex);
+    const headers = getGetBookUserBookingsHeaders();
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers,
+      body: xml,
+    });
+
+    if (!response.ok) {
+      return {
+        success: false,
+        fault: {
+          faultCode: 'HTTP',
+          faultString: `HTTP ${response.status}: ${response.statusText}`,
+        },
+        rawResponse: await response.text(),
+      };
+    }
+
+    const responseXml = await response.text();
+    return parseGetBookUserBookingsResponse(responseXml);
+  } catch (error) {
+    return {
+      success: false,
+      fault: {
+        faultCode: 'Client',
+        faultString: 'Network error',
+        detail: error instanceof Error ? error.message : 'Unknown error',
+      },
+      rawResponse: '',
+    };
+  }
+}
+
+/**
  * Unified SOAP client object for easier importing and testing
  */
 export const soapClient = {
@@ -904,19 +1091,23 @@ export const soapClient = {
   getAllTerminalMessageLite,
   getOneTerminalMessageLite,
   getTerminalMessageImage,
+  getBookUserBookings,
   isHealthy,
   parseLoginResponse,
   parseLogoutResponse,
   parseGetAllTerminalMessageLiteResponse,
   parseGetTerminalMessageImageResponse,
+  parseGetBookUserBookingsResponse,
   getLoginHeaders,
   getLogoutHeaders,
   getGetAllTerminalMessageLiteHeaders,
   getGetTerminalMessageImageHeaders,
+  getGetBookUserBookingsHeaders,
   formatLoginRequest,
   formatLogoutRequest,
   formatGetAllTerminalMessageLiteRequest,
   formatGetTerminalMessageImageRequest,
+  formatGetBookUserBookingsRequest,
   parseSoapFault,
   extractSystemnameFromUrl,
 };
