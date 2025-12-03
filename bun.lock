@@ -29,9 +29,9 @@
         "lucide-react": "^0.555.0",
         "next": "16.0.6",
         "next-themes": "^0.4.6",
-        "react": "19.2.0",
+        "react": "19.2.1",
         "react-aria": "^3.41.1",
-        "react-dom": "19.2.0",
+        "react-dom": "19.2.1",
         "react-hook-form": "^7.60.0",
         "tailwind-merge": "^3.3.1",
         "tailwindcss-animate": "^1.0.7",
@@ -1580,11 +1580,11 @@
 
     "queue-microtask": ["queue-microtask@1.2.3", "", {}, "sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A=="],
 
-    "react": ["react@19.2.0", "", {}, "sha512-tmbWg6W31tQLeB5cdIBOicJDJRR2KzXsV7uSK9iNfLWQ5bIZfxuPEHp7M8wiHyHnn0DD1i7w3Zmin0FtkrwoCQ=="],
+    "react": ["react@19.2.1", "", {}, "sha512-DGrYcCWK7tvYMnWh79yrPHt+vdx9tY+1gPZa7nJQtO/p8bLTDaHp4dzwEhQB7pZ4Xe3ok4XKuEPrVuc+wlpkmw=="],
 
     "react-aria": ["react-aria@3.43.1", "", { "dependencies": { "@internationalized/string": "^3.2.7", "@react-aria/breadcrumbs": "^3.5.28", "@react-aria/button": "^3.14.1", "@react-aria/calendar": "^3.9.1", "@react-aria/checkbox": "^3.16.1", "@react-aria/color": "^3.1.1", "@react-aria/combobox": "^3.13.2", "@react-aria/datepicker": "^3.15.1", "@react-aria/dialog": "^3.5.30", "@react-aria/disclosure": "^3.0.8", "@react-aria/dnd": "^3.11.2", "@react-aria/focus": "^3.21.1", "@react-aria/gridlist": "^3.14.0", "@react-aria/i18n": "^3.12.12", "@react-aria/interactions": "^3.25.5", "@react-aria/label": "^3.7.21", "@react-aria/landmark": "^3.0.6", "@react-aria/link": "^3.8.5", "@react-aria/listbox": "^3.14.8", "@react-aria/menu": "^3.19.2", "@react-aria/meter": "^3.4.26", "@react-aria/numberfield": "^3.12.1", "@react-aria/overlays": "^3.29.1", "@react-aria/progress": "^3.4.26", "@react-aria/radio": "^3.12.1", "@react-aria/searchfield": "^3.8.8", "@react-aria/select": "^3.16.2", "@react-aria/selection": "^3.25.1", "@react-aria/separator": "^3.4.12", "@react-aria/slider": "^3.8.1", "@react-aria/ssr": "^3.9.10", "@react-aria/switch": "^3.7.7", "@react-aria/table": "^3.17.7", "@react-aria/tabs": "^3.10.7", "@react-aria/tag": "^3.7.1", "@react-aria/textfield": "^3.18.1", "@react-aria/toast": "^3.0.7", "@react-aria/tooltip": "^3.8.7", "@react-aria/tree": "^3.1.3", "@react-aria/utils": "^3.30.1", "@react-aria/visually-hidden": "^3.8.27", "@react-types/shared": "^3.32.0" }, "peerDependencies": { "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1", "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0 || ^19.0.0-rc.1" } }, "sha512-/PmZGiw+Ya/YtzXmiLW4ALD4SMuDnbwhMaVh33VCduTl8vVujIUzUTIi5g4C+YHLDs/Z4edsN3aQsPMqFfg1xA=="],
 
-    "react-dom": ["react-dom@19.2.0", "", { "dependencies": { "scheduler": "^0.27.0" }, "peerDependencies": { "react": "^19.2.0" } }, "sha512-UlbRu4cAiGaIewkPyiRGJk0imDN2T3JjieT6spoL2UeSf5od4n5LB/mQ4ejmxhCFT1tYe8IvaFulzynWovsEFQ=="],
+    "react-dom": ["react-dom@19.2.1", "", { "dependencies": { "scheduler": "^0.27.0" }, "peerDependencies": { "react": "^19.2.1" } }, "sha512-ibrK8llX2a4eOskq1mXKu/TGZj9qzomO+sNfO98M6d9zIPOEhlBkMkBUBLd1vgS0gQsLDBzA+8jJBVXDnfHmJg=="],
 
     "react-hook-form": ["react-hook-form@7.62.0", "", { "peerDependencies": { "react": "^16.8.0 || ^17 || ^18 || ^19" } }, "sha512-7KWFejc98xqG/F4bAxpL41NB3o1nnvQO1RWZT3TqRZYL8RryQETGfEdVnJN2fy1crCiBLLjkRBVK05j24FxJGA=="],
 
