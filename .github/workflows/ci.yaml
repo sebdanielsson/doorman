@@ -24,7 +24,7 @@ jobs:
         run: bun install
 
       - name: Run Prettier
-        run: bun --bun run prettier:check
+        run: bun --bun run format:check
 
       - name: Run ESLint
         run: bun --bun run lint

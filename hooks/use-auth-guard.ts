@@ -94,7 +94,6 @@ export function useCanAccess(): {
 } {
   const { state } = useAuth();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const canAccess = (resource?: string): boolean => {
     // For now, all authenticated users can access all resources
     // This can be extended with role-based access control later

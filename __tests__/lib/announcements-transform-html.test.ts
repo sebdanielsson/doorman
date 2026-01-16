@@ -83,9 +83,7 @@ describe('HTML Content Normalization', () => {
 
     it('should handle empty and invalid input', () => {
       expect(sanitizeContent('')).toBe('');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect(sanitizeContent(null as any)).toBe('');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect(sanitizeContent(undefined as any)).toBe('');
     });
 

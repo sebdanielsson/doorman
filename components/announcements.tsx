@@ -72,7 +72,7 @@ function getVisiblePages(currentPage: number, totalPages: number, maxVisible: nu
 function HeaderImage({ announcementId, title }: { announcementId: number; title: string }) {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [cacheKey] = useState(Date.now() + Math.random());
+  const [cacheKey] = useState(() => Date.now() + Math.random());
 
   if (imageError) {
     return null;
