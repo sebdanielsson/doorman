@@ -6,6 +6,8 @@ on:
     branches:
       - main
   pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -13,24 +15,23 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v6
 
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: '.bun-version'
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
         run: bun install
 
-      - name: Run Prettier
+      - name: Run format check
         run: bun --bun run format:check
 
-      - name: Run ESLint
+      - name: Run lint
         run: bun --bun run lint
 
       - name: Run stylelint
         run: bun --bun run stylelint
 
-      - name: Build website
+      - name: Build project
         run: bun --bun run build
