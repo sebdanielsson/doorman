@@ -1,5 +1,4 @@
 'use client'; // This directive ensures the component is treated as a client component
-
 import { usePathname } from 'next/navigation';
 import { SiteHeader } from '@/components/site-header';
 
