@@ -504,7 +504,7 @@ describe('Component: Announcements Display', () => {
     it('should handle component state changes correctly', () => {
       // Arrange
       let componentState = {
-        announcements: [],
+        announcements: [] as AnnouncementItem[],
         loading: true,
         error: null,
         pagination: { currentPage: 1, totalPages: 0, totalItems: 0, itemsPerPage: 10 },

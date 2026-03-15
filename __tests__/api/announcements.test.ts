@@ -394,7 +394,9 @@ describe('API Route: /api/announcements', () => {
       );
 
       // Mock a POST handler that returns 405
-      const mockPOSTHandler = jest.fn().mockResolvedValue(methodNotAllowedResponse);
+      const mockPOSTHandler = jest
+        .fn<(req: Request) => Promise<Response>>()
+        .mockResolvedValue(methodNotAllowedResponse);
 
       // Act
       const result = await mockPOSTHandler(request);

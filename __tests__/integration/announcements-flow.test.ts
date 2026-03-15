@@ -9,7 +9,7 @@ import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals
 import type { AnnouncementsApiResponse } from '@/types/announcements';
 
 // Mock the API fetch
-global.fetch = jest.fn();
+global.fetch = jest.fn() as jest.Mock<typeof fetch>;
 
 // Mock components that don't exist yet
 const mockComponents = {
@@ -20,7 +20,7 @@ const mockComponents = {
   },
   AnnouncementCard: {
     render: jest.fn(() => 'Announcement Card'),
-    props: {},
+    props: {} as Record<string, any>,
   },
 };
 
@@ -62,7 +62,7 @@ describe('Integration: Announcements Feature', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     // Mock successful authentication
-    (global.fetch as jest.Mock).mockResolvedValue({
+    (global.fetch as jest.Mock<any>).mockResolvedValue({
       ok: true,
       status: 200,
       json: async () => mockApiResponse,
@@ -115,7 +115,7 @@ describe('Integration: Announcements Feature', () => {
         },
       };
 
-      (global.fetch as jest.Mock).mockResolvedValue({
+      (global.fetch as jest.Mock<any>).mockResolvedValue({
         ok: true,
         status: 200,
         json: async () => paginatedResponse,
@@ -163,7 +163,7 @@ describe('Integration: Announcements Feature', () => {
         },
       };
 
-      (global.fetch as jest.Mock).mockResolvedValue({
+      (global.fetch as jest.Mock<any>).mockResolvedValue({
         ok: true,
         status: 200,
         json: async () => filteredResponse,
@@ -189,7 +189,7 @@ describe('Integration: Announcements Feature', () => {
   describe('Error Scenarios', () => {
     it('should handle authentication errors gracefully', async () => {
       // Arrange
-      (global.fetch as jest.Mock).mockResolvedValue({
+      (global.fetch as jest.Mock<any>).mockResolvedValue({
         ok: false,
         status: 401,
         json: async () => ({
@@ -216,7 +216,7 @@ describe('Integration: Announcements Feature', () => {
 
     it('should handle network errors gracefully', async () => {
       // Arrange
-      (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
+      (global.fetch as jest.Mock<any>).mockRejectedValue(new Error('Network error'));
 
       const mockNetworkFailure = async () => {
         try {
@@ -249,7 +249,7 @@ describe('Integration: Announcements Feature', () => {
         },
       };
 
-      (global.fetch as jest.Mock).mockResolvedValue({
+      (global.fetch as jest.Mock<any>).mockResolvedValue({
         ok: true,
         status: 200,
         json: async () => emptyResponse,
@@ -316,7 +316,7 @@ describe('Integration: Announcements Feature', () => {
         },
       };
 
-      (global.fetch as jest.Mock).mockResolvedValue({
+      (global.fetch as jest.Mock<any>).mockResolvedValue({
         ok: true,
         status: 200,
         json: async () => rawApiResponse,
@@ -342,7 +342,7 @@ describe('Integration: Announcements Feature', () => {
     it('should cache API responses to avoid repeated calls', async () => {
       // Arrange
       let callCount = 0;
-      (global.fetch as jest.Mock).mockImplementation(async () => {
+      (global.fetch as jest.Mock<any>).mockImplementation(async () => {
         callCount++;
         return {
           ok: true,
@@ -392,7 +392,7 @@ describe('Integration: Announcements Feature', () => {
   describe('Component Integration', () => {
     it('should pass correct props to announcement components', () => {
       // Arrange
-      const mockAnnouncement = mockApiResponse.data.announcements[0];
+      const mockAnnouncement = mockApiResponse.data!.announcements[0];
 
       // Simulate prop passing
       mockComponents.AnnouncementCard.props = {
@@ -414,10 +414,10 @@ describe('Integration: Announcements Feature', () => {
     it('should handle component state updates correctly', () => {
       // Arrange
       const mockStateUpdate = {
-        announcements: mockApiResponse.data.announcements,
+        announcements: mockApiResponse.data!.announcements,
         loading: false,
         error: null,
-        pagination: mockApiResponse.data.pagination,
+        pagination: mockApiResponse.data!.pagination,
       };
 
       // Act
