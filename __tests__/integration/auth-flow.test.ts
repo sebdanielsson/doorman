@@ -2,15 +2,11 @@ import { describe, test, expect, jest, beforeEach } from '@jest/globals';
 import type { AuthUser, LoginCredentials } from '@/types/auth';
 import type { LoginRequest, LoginResponse, LogoutResponse } from '@/types/soap';
 
-// Mock all dependencies
 const mockSoapClient = {
   login: jest.fn() as jest.MockedFunction<(credentials: LoginRequest) => Promise<LoginResponse>>,
   logout: jest.fn() as jest.MockedFunction<(loginguid: string) => Promise<LogoutResponse>>,
   isHealthy: jest.fn() as jest.MockedFunction<() => Promise<boolean>>,
 };
-jest.mock('../../lib/soap-client', () => ({
-  soapClient: mockSoapClient,
-}));
 
 const mockAuthStorage = {
   storeAuthToken: jest.fn(),
@@ -25,17 +21,24 @@ const mockAuthStorage = {
   hasStoredAuth: jest.fn(),
   refreshTokenExpiry: jest.fn(),
 };
-jest.mock('../../lib/auth-storage', () => ({
-  authStorage: mockAuthStorage,
-}));
 
 describe('Authentication Flow Integration', () => {
   let authClient: any;
 
   beforeEach(async () => {
+    jest.resetModules();
+    jest.clearAllMocks();
+
+    // Re-register mocks after resetting modules
+    jest.unstable_mockModule('../../lib/soap-client', () => ({
+      soapClient: mockSoapClient,
+    }));
+    jest.unstable_mockModule('../../lib/auth-storage', () => ({
+      authStorage: mockAuthStorage,
+    }));
+
     const { authClient: client } = await import('../../lib/auth-client');
     authClient = client;
-    jest.clearAllMocks();
   });
 
   test('should complete successful login flow', async () => {

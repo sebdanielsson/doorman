@@ -7,7 +7,9 @@ const mockCookies = {
   set: jest.fn(),
   remove: jest.fn(),
 };
-jest.mock('js-cookie', () => mockCookies);
+jest.unstable_mockModule('js-cookie', () => ({
+  default: mockCookies,
+}));
 
 describe('Secure Authentication Storage', () => {
   let authStorage: any;

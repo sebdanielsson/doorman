@@ -7,11 +7,9 @@
 import type { TrmMessageLite } from '@/types/soap';
 import type { AnnouncementItem, AnnouncementsList, PaginationInfo } from '@/types/announcements';
 import DOMPurify from 'dompurify';
-import { JSDOM } from 'jsdom';
+import { Window } from 'happy-dom';
 
-// Configure DOMPurify for server-side use
-const window = new JSDOM('').window;
-const purify = DOMPurify(window);
+const purify = DOMPurify(new Window() as any);
 
 /**
  * Content type classification based on message analysis

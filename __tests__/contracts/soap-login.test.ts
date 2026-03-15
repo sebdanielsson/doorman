@@ -6,22 +6,18 @@
  * the client correctly formats requests and parses responses.
  */
 
-import { describe, test, expect, jest } from '@jest/globals';
+import { describe, test, expect } from '@jest/globals';
 import type { LoginRequest, LoginResponse, SoapResponse } from '@/types/soap';
+import * as soapClient from '@/lib/soap-client';
 
 // Define expected interface for soap client
-interface SoapClient {
+interface SoapClientApi {
   formatLoginRequest: (credentials: LoginRequest) => string;
   parseLoginResponse: (xml: string) => SoapResponse<LoginResponse>;
   getLoginHeaders: () => Record<string, string>;
 }
 
-// Mock the soap client module - this will fail until implemented
-jest.mock('@/lib/soap-client', () => ({
-  formatLoginRequest: jest.fn(),
-  parseLoginResponse: jest.fn(),
-  getLoginHeaders: jest.fn(),
-}));
+const client = soapClient as unknown as SoapClientApi;
 
 describe('SOAP Login Contract', () => {
   test('should format login request XML correctly', () => {
@@ -32,11 +28,9 @@ describe('SOAP Login Contract', () => {
       timeout: 30,
     };
 
-    // This will fail until SOAP client is implemented
-    const soapClient = jest.requireActual('@/lib/soap-client') as SoapClient;
-    expect(() => soapClient.formatLoginRequest(credentials)).not.toThrow();
+    expect(() => client.formatLoginRequest(credentials)).not.toThrow();
 
-    const xmlRequest = soapClient.formatLoginRequest(credentials);
+    const xmlRequest = client.formatLoginRequest(credentials);
 
     // Validate XML structure per contract specification
     expect(xmlRequest).toContain('<?xml version="1.0" encoding="utf-8"?>');
@@ -59,11 +53,9 @@ describe('SOAP Login Contract', () => {
   </soap:Body>
 </soap:Envelope>`;
 
-    // This will fail until SOAP client is implemented
-    const soapClient = jest.requireActual('@/lib/soap-client') as SoapClient;
-    expect(() => soapClient.parseLoginResponse(mockSuccessResponse)).not.toThrow();
+    expect(() => client.parseLoginResponse(mockSuccessResponse)).not.toThrow();
 
-    const parsed: SoapResponse<LoginResponse> = soapClient.parseLoginResponse(mockSuccessResponse);
+    const parsed: SoapResponse<LoginResponse> = client.parseLoginResponse(mockSuccessResponse);
 
     expect(parsed.success).toBe(true);
     expect(parsed.data?.LoginResult).toBe('mock-login-guid-123');
@@ -83,9 +75,7 @@ describe('SOAP Login Contract', () => {
   </soap:Body>
 </soap:Envelope>`;
 
-    // This will fail until SOAP client is implemented
-    const soapClient = jest.requireActual('@/lib/soap-client') as SoapClient;
-    const parsed: SoapResponse<LoginResponse> = soapClient.parseLoginResponse(mockFaultResponse);
+    const parsed: SoapResponse<LoginResponse> = client.parseLoginResponse(mockFaultResponse);
 
     expect(parsed.success).toBe(false);
     expect(parsed.data).toBeUndefined();
@@ -96,9 +86,7 @@ describe('SOAP Login Contract', () => {
   });
 
   test('should set correct SOAP headers', () => {
-    // This will fail until SOAP client is implemented
-    const soapClient = jest.requireActual('@/lib/soap-client') as SoapClient;
-    const headers = soapClient.getLoginHeaders();
+    const headers = client.getLoginHeaders();
 
     expect(headers['Content-Type']).toBe('text/xml; charset=utf-8');
     expect(headers['SOAPAction']).toBe('"http://www.rco.se/Api/Mobile/Login"');

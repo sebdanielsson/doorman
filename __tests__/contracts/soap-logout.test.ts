@@ -3,22 +3,18 @@
  * Based on contracts/soap-auth.md specifications
  */
 
-import { describe, test, expect, jest } from '@jest/globals';
+import { describe, test, expect } from '@jest/globals';
 import type { LogoutRequest, LogoutResponse, SoapResponse } from '@/types/soap';
+import * as soapClient from '@/lib/soap-client';
 
 // Define expected interface for soap client
-interface SoapClient {
+interface SoapClientApi {
   formatLogoutRequest: (request: LogoutRequest) => string;
   parseLogoutResponse: (xml: string) => SoapResponse<LogoutResponse>;
   getLogoutHeaders: () => Record<string, string>;
 }
 
-// Mock the soap client module - this will fail until implemented
-jest.mock('@/lib/soap-client', () => ({
-  formatLogoutRequest: jest.fn(),
-  parseLogoutResponse: jest.fn(),
-  getLogoutHeaders: jest.fn(),
-}));
+const client = soapClient as unknown as SoapClientApi;
 
 describe('SOAP Logout Contract', () => {
   test('should format logout request XML correctly', () => {
@@ -26,11 +22,9 @@ describe('SOAP Logout Contract', () => {
       loginguid: 'mock-login-guid-123',
     };
 
-    // This will fail until SOAP client is implemented
-    const soapClient = jest.requireActual('@/lib/soap-client') as SoapClient;
-    expect(() => soapClient.formatLogoutRequest(request)).not.toThrow();
+    expect(() => client.formatLogoutRequest(request)).not.toThrow();
 
-    const xmlRequest = soapClient.formatLogoutRequest(request);
+    const xmlRequest = client.formatLogoutRequest(request);
 
     // Validate XML structure per contract specification
     expect(xmlRequest).toContain('<?xml version="1.0" encoding="utf-8"?>');
@@ -50,12 +44,9 @@ describe('SOAP Logout Contract', () => {
   </soap:Body>
 </soap:Envelope>`;
 
-    // This will fail until SOAP client is implemented
-    const soapClient = jest.requireActual('@/lib/soap-client') as SoapClient;
-    expect(() => soapClient.parseLogoutResponse(mockSuccessResponse)).not.toThrow();
+    expect(() => client.parseLogoutResponse(mockSuccessResponse)).not.toThrow();
 
-    const parsed: SoapResponse<LogoutResponse> =
-      soapClient.parseLogoutResponse(mockSuccessResponse);
+    const parsed: SoapResponse<LogoutResponse> = client.parseLogoutResponse(mockSuccessResponse);
 
     expect(parsed.success).toBe(true);
     expect(parsed.data?.LogoutResult).toBe(true);
@@ -75,9 +66,7 @@ describe('SOAP Logout Contract', () => {
   </soap:Body>
 </soap:Envelope>`;
 
-    // This will fail until SOAP client is implemented
-    const soapClient = jest.requireActual('@/lib/soap-client') as SoapClient;
-    const parsed: SoapResponse<LogoutResponse> = soapClient.parseLogoutResponse(mockFaultResponse);
+    const parsed: SoapResponse<LogoutResponse> = client.parseLogoutResponse(mockFaultResponse);
 
     expect(parsed.success).toBe(false);
     expect(parsed.data).toBeUndefined();
@@ -88,9 +77,7 @@ describe('SOAP Logout Contract', () => {
   });
 
   test('should set correct SOAP headers', () => {
-    // This will fail until SOAP client is implemented
-    const soapClient = jest.requireActual('@/lib/soap-client') as SoapClient;
-    const headers = soapClient.getLogoutHeaders();
+    const headers = client.getLogoutHeaders();
 
     expect(headers['Content-Type']).toBe('text/xml; charset=utf-8');
     expect(headers['SOAPAction']).toBe('"http://www.rco.se/Api/Mobile/Logout"');
