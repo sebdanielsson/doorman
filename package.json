@@ -65,7 +65,7 @@
     "eslint-config-next": "16.2.3",
     "jest": "^30.3.0",
     "jest-environment-node": "^30.3.0",
-    "oxfmt": "^0.44.0",
+    "oxfmt": "^0.45.0",
     "stylelint": "^17.6.0",
     "stylelint-config-html": "^1.1.0",
     "stylelint-config-standard": "^40.0.0",
