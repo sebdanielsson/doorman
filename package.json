@@ -58,7 +58,7 @@
     "@types/jest": "^30.0.0",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^25.5.0",
-    "@types/react": "19.2.14",
+    "@types/react": "19.2.15",
     "@types/react-dom": "19.2.3",
     "baseline-browser-mapping": "^2.10.12",
     "eslint": "^9.39.4",
@@ -75,7 +75,7 @@
     "typescript-eslint": "^8.57.2"
   },
   "overrides": {
-    "@types/react": "19.2.14",
+    "@types/react": "19.2.15",
     "@types/react-dom": "19.2.3"
   },
   "engines": {
