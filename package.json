@@ -52,7 +52,7 @@
     "@dreamsicle.io/stylelint-config-tailwindcss": "^1.2.2",
     "@jest/globals": "^30.3.0",
     "@tailwindcss/webpack": "^4.2.2",
-    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/react": "^16.3.2",
     "@types/dompurify": "^3.2.0",
     "@types/jest": "^30.0.0",
