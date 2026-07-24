@@ -11,6 +11,11 @@ const eslintConfig = defineConfig([
     'build/**',
     'next-env.d.ts',
   ]),
+  {
+    settings: {
+      react: { version: '19' }, // Avoids ESLint 10 auto-detection crash
+    },
+  },
 ]);
 
 export default eslintConfig;
