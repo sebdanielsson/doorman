@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 import { Separator } from '@/components/ui/separator';
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from '@/components/ui/toast';
 import { Booking } from '@/components/booking';
 import AuthGuard from '@/components/auth-guard';
 import { addDays } from 'date-fns';

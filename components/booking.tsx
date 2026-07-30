@@ -11,7 +11,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/components/ui/toast';
 import { DaySchedule, TimeSlot } from '@/types/booking';
 
 interface BookingSlot extends TimeSlot {
@@ -24,11 +24,10 @@ interface BookingProps {
 
 export function Booking({ schedule }: BookingProps) {
   const [selectedSlot, setSelectedSlot] = useState<BookingSlot | null>(null);
-  const { toast } = useToast();
 
   const handleBooking = () => {
     if (selectedSlot) {
-      toast({
+      toast.add({
         title: 'Bokning lyckades',
         description: `Du har bokat: ${new Intl.DateTimeFormat(navigator?.language || 'en-US', { weekday: 'long', day: 'numeric', month: 'long' }).format(selectedSlot.date)} ${selectedSlot.start} - ${selectedSlot.end}.`,
       });
@@ -60,19 +59,17 @@ export function Booking({ schedule }: BookingProps) {
         <div className="overflow-hidde flex h-12 gap-0.5 rounded-md bg-gray-100 dark:bg-zinc-900">
           {day.slots.map((slot, slotIndex) => (
             <Sheet key={slotIndex}>
-              <SheetTrigger asChild>
-                <button
-                  className={`h-full transition-colors ${
-                    slot.isAvailable
-                      ? 'bg-green-300 hover:bg-green-400 dark:bg-green-800 dark:hover:bg-green-600'
-                      : 'cursor-not-allowed bg-red-400 dark:bg-red-900'
-                  }`}
-                  style={{ width: `${calculateSlotWidth(slot, day)}%` }}
-                  onClick={() => slot.isAvailable && setSelectedSlot({ ...slot, date: day.date })}
-                  disabled={!slot.isAvailable}
-                >
-                  <span className="text-[10px] font-bold text-stone-800 sm:text-base dark:text-stone-100">{`${slot.start} - ${slot.end}`}</span>
-                </button>
+              <SheetTrigger
+                className={`h-full transition-colors ${
+                  slot.isAvailable
+                    ? 'bg-green-300 hover:bg-green-400 dark:bg-green-800 dark:hover:bg-green-600'
+                    : 'cursor-not-allowed bg-red-400 dark:bg-red-900'
+                }`}
+                style={{ width: `${calculateSlotWidth(slot, day)}%` }}
+                onClick={() => slot.isAvailable && setSelectedSlot({ ...slot, date: day.date })}
+                disabled={!slot.isAvailable}
+              >
+                <span className="text-[10px] font-bold text-stone-800 sm:text-base dark:text-stone-100">{`${slot.start} - ${slot.end}`}</span>
               </SheetTrigger>
               <SheetContent>
                 <SheetHeader>

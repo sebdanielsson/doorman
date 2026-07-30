@@ -57,16 +57,18 @@ export function UserInfo({ className }: UserInfoProps) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className={`h-8 gap-2 ${className}`}
-          aria-label="User menu"
-        >
-          <User className="h-4 w-4" />
-          <span className="hidden sm:inline-block">{formatDisplayName()}</span>
-        </Button>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="ghost"
+            size="sm"
+            className={`h-8 gap-2 ${className}`}
+            aria-label="User menu"
+          />
+        }
+      >
+        <User className="h-4 w-4" />
+        <span className="hidden sm:inline-block">{formatDisplayName()}</span>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-56">
@@ -81,11 +83,9 @@ export function UserInfo({ className }: UserInfoProps) {
         <DropdownMenuSeparator />
 
         {/* Navigation Items */}
-        <DropdownMenuItem asChild>
-          <a href="/settings" className="flex items-center gap-2">
-            <Settings className="h-4 w-4" />
-            Inställningar
-          </a>
+        <DropdownMenuItem render={<a href="/settings" className="flex items-center gap-2" />}>
+          <Settings className="h-4 w-4" />
+          Inställningar
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />

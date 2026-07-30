@@ -1,19 +1,17 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-import { toast } from '@/hooks/use-toast';
+import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-} from '@/components/ui/form';
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldLabel,
+} from '@/components/ui/field';
 import { Switch } from '@/components/ui/switch';
 
 enum NotificationType {
@@ -46,56 +44,58 @@ export function NotificationsForm() {
   });
 
   function onSubmit(data: NotificationsFormValues) {
-    toast({
+    toast.add({
       title: 'You submitted the following values:',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+      description: JSON.stringify(data, null, 2),
     });
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div>
-          <h3 className="mb-4 text-lg font-medium">Påminnelser</h3>
-          <div className="space-y-4">
-            <FormField
-              control={form.control}
-              name="communication_emails"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">Start av bokning</FormLabel>
-                    <FormDescription>Få en notis när en bokning startar.</FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="marketing_emails"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">Maskin klar</FormLabel>
-                    <FormDescription>Få en notis när en maskin är klar.</FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </div>
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <div>
+        <h3 className="mb-4 text-lg font-medium">Påminnelser</h3>
+        <div className="space-y-4">
+          <Controller
+            control={form.control}
+            name="communication_emails"
+            render={({ field }) => (
+              <Field orientation="horizontal" className="rounded-lg border p-4">
+                <FieldContent>
+                  <FieldLabel htmlFor="notify-booking-start" className="text-base">
+                    Start av bokning
+                  </FieldLabel>
+                  <FieldDescription>Få en notis när en bokning startar.</FieldDescription>
+                </FieldContent>
+                <Switch
+                  id="notify-booking-start"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </Field>
+            )}
+          />
+          <Controller
+            control={form.control}
+            name="marketing_emails"
+            render={({ field }) => (
+              <Field orientation="horizontal" className="rounded-lg border p-4">
+                <FieldContent>
+                  <FieldLabel htmlFor="notify-machine-done" className="text-base">
+                    Maskin klar
+                  </FieldLabel>
+                  <FieldDescription>Få en notis när en maskin är klar.</FieldDescription>
+                </FieldContent>
+                <Switch
+                  id="notify-machine-done"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </Field>
+            )}
+          />
         </div>
-        <Button type="submit">Uppdatera inställningar</Button>
-      </form>
-    </Form>
+      </div>
+      <Button type="submit">Uppdatera inställningar</Button>
+    </form>
   );
 }

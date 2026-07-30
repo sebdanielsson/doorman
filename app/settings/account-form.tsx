@@ -1,18 +1,11 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { toast } from '@/hooks/use-toast';
+import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 
 const accountFormSchema = z.object({
@@ -39,47 +32,49 @@ export function AccountForm() {
   });
 
   function onSubmit(data: AccountFormValues) {
-    toast({
+    toast.add({
       title: 'You submitted the following values:',
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+      description: JSON.stringify(data, null, 2),
     });
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <FieldGroup>
+        <Controller
           control={form.control}
           name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>E-post</FormLabel>
-              <FormControl>
-                <Input placeholder="elon@tesla.com" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="account-email">E-post</FieldLabel>
+              <Input
+                id="account-email"
+                placeholder="elon@tesla.com"
+                aria-invalid={fieldState.invalid}
+                {...field}
+              />
+              <FieldError errors={[fieldState.error]} />
+            </Field>
           )}
         />
-        <FormField
+        <Controller
           control={form.control}
           name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Telefonnummer</FormLabel>
-              <FormControl>
-                <Input placeholder="0701234567" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="account-phone">Telefonnummer</FieldLabel>
+              <Input
+                id="account-phone"
+                placeholder="0701234567"
+                aria-invalid={fieldState.invalid}
+                {...field}
+              />
+              <FieldError errors={[fieldState.error]} />
+            </Field>
           )}
         />
-        <Button type="submit">Uppdatera konto</Button>
-      </form>
-    </Form>
+      </FieldGroup>
+      <Button type="submit">Uppdatera konto</Button>
+    </form>
   );
 }
