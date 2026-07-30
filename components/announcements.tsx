@@ -148,10 +148,11 @@ function PDFOrImageViewer({
         <div className="flex items-center gap-2 border-b p-4">
           <File />
           <span className="font-medium">Bifogad fil</span>
-          <Button asChild className="ml-auto">
-            <Link href={url} target="_blank" rel="noopener noreferrer">
-              Öppna i ny flik
-            </Link>
+          <Button
+            render={<Link href={url} target="_blank" rel="noopener noreferrer" />}
+            className="ml-auto"
+          >
+            Öppna i ny flik
           </Button>
         </div>
         <div className="">
@@ -163,10 +164,11 @@ function PDFOrImageViewer({
           >
             <div className="p-4 text-center">
               <p className="mb-2 text-gray-600">PDF kan inte visas i denna webbläsare.</p>
-              <Button asChild className="ml-auto">
-                <Link href={url} target="_blank" rel="noopener noreferrer">
-                  Öppna PDF i ny flik
-                </Link>
+              <Button
+                render={<Link href={url} target="_blank" rel="noopener noreferrer" />}
+                className="ml-auto"
+              >
+                Öppna PDF i ny flik
               </Button>
             </div>
           </object>
@@ -268,7 +270,7 @@ export function Announcements() {
   if (loading) {
     return (
       <div className="flex flex-col gap-4">
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion multiple={false} className="w-full">
           {Array.from({ length: itemsPerPage }).map((_, i) => {
             const titleWidths = ['w-60', 'w-48', 'w-72', 'w-56', 'w-64'];
             const subtitleWidths = ['w-40'];
@@ -332,7 +334,7 @@ export function Announcements() {
 
   return (
     <div className="flex flex-col gap-4">
-      <Accordion type="single" collapsible className="w-full">
+      <Accordion multiple={false} className="w-full">
         {announcements.map((announcement) => (
           <AccordionItem
             key={announcement.id}

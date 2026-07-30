@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import Link, { LinkProps } from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -25,28 +24,28 @@ export function MobileNav() {
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <VisuallyHidden>
-        <DrawerTitle></DrawerTitle>
-      </VisuallyHidden>
-      <DrawerTrigger asChild>
-        <Button
-          variant="ghost"
-          className="mr-2 -ml-2 h-8 w-8 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 sm:hidden"
+      <DrawerTrigger
+        render={
+          <Button
+            variant="ghost"
+            className="mr-2 -ml-2 h-8 w-8 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 sm:hidden"
+          />
+        }
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth="1.5"
+          stroke="currentColor"
+          className="size-6!"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="size-6!"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
-          </svg>
-          <span className="sr-only">Toggle Menu</span>
-        </Button>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
+        </svg>
+        <span className="sr-only">Toggle Menu</span>
       </DrawerTrigger>
       <DrawerContent className="max-h-[60svh] p-0">
+        <DrawerTitle className="sr-only">Meny</DrawerTitle>
         <div className="overflow-auto p-6">
           <div className="flex flex-col space-y-3">
             {docsConfig.mainNav?.map(
