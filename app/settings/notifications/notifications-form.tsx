@@ -6,12 +6,7 @@ import * as z from 'zod';
 
 import { toast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
-import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldLabel,
-} from '@/components/ui/field';
+import { Field, FieldContent, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { Switch } from '@/components/ui/switch';
 
 enum NotificationType {
