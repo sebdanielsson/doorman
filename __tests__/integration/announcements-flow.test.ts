@@ -5,21 +5,21 @@
  * CRITICAL: This test MUST FAIL until T013-T016 are implemented
  */
 
-import { describe, expect, it, beforeEach, afterEach, jest } from '@jest/globals';
+import { describe, expect, it, beforeEach, afterEach, vi, type Mock } from 'vitest';
 import type { AnnouncementsApiResponse } from '@/types/announcements';
 
 // Mock the API fetch
-global.fetch = jest.fn() as jest.Mock<typeof fetch>;
+global.fetch = vi.fn() as Mock;
 
 // Mock components that don't exist yet
 const mockComponents = {
   AnnouncementsComponent: {
-    render: jest.fn(() => 'Announcements Component'),
-    mount: jest.fn(),
-    unmount: jest.fn(),
+    render: vi.fn(() => 'Announcements Component'),
+    mount: vi.fn(),
+    unmount: vi.fn(),
   },
   AnnouncementCard: {
-    render: jest.fn(() => 'Announcement Card'),
+    render: vi.fn(() => 'Announcement Card'),
     props: {} as Record<string, any>,
   },
 };
@@ -60,9 +60,9 @@ describe('Integration: Announcements Feature', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Mock successful authentication
-    (global.fetch as jest.Mock<any>).mockResolvedValue({
+    (global.fetch as Mock).mockResolvedValue({
       ok: true,
       status: 200,
       json: async () => mockApiResponse,
@@ -70,7 +70,7 @@ describe('Integration: Announcements Feature', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe('Complete User Journey', () => {
@@ -115,7 +115,7 @@ describe('Integration: Announcements Feature', () => {
         },
       };
 
-      (global.fetch as jest.Mock<any>).mockResolvedValue({
+      (global.fetch as Mock).mockResolvedValue({
         ok: true,
         status: 200,
         json: async () => paginatedResponse,
@@ -163,7 +163,7 @@ describe('Integration: Announcements Feature', () => {
         },
       };
 
-      (global.fetch as jest.Mock<any>).mockResolvedValue({
+      (global.fetch as Mock).mockResolvedValue({
         ok: true,
         status: 200,
         json: async () => filteredResponse,
@@ -189,7 +189,7 @@ describe('Integration: Announcements Feature', () => {
   describe('Error Scenarios', () => {
     it('should handle authentication errors gracefully', async () => {
       // Arrange
-      (global.fetch as jest.Mock<any>).mockResolvedValue({
+      (global.fetch as Mock).mockResolvedValue({
         ok: false,
         status: 401,
         json: async () => ({
@@ -216,7 +216,7 @@ describe('Integration: Announcements Feature', () => {
 
     it('should handle network errors gracefully', async () => {
       // Arrange
-      (global.fetch as jest.Mock<any>).mockRejectedValue(new Error('Network error'));
+      (global.fetch as Mock).mockRejectedValue(new Error('Network error'));
 
       const mockNetworkFailure = async () => {
         try {
@@ -249,7 +249,7 @@ describe('Integration: Announcements Feature', () => {
         },
       };
 
-      (global.fetch as jest.Mock<any>).mockResolvedValue({
+      (global.fetch as Mock).mockResolvedValue({
         ok: true,
         status: 200,
         json: async () => emptyResponse,
@@ -316,7 +316,7 @@ describe('Integration: Announcements Feature', () => {
         },
       };
 
-      (global.fetch as jest.Mock<any>).mockResolvedValue({
+      (global.fetch as Mock).mockResolvedValue({
         ok: true,
         status: 200,
         json: async () => rawApiResponse,
@@ -342,7 +342,7 @@ describe('Integration: Announcements Feature', () => {
     it('should cache API responses to avoid repeated calls', async () => {
       // Arrange
       let callCount = 0;
-      (global.fetch as jest.Mock<any>).mockImplementation(async () => {
+      (global.fetch as Mock).mockImplementation(async () => {
         callCount++;
         return {
           ok: true,
@@ -398,7 +398,7 @@ describe('Integration: Announcements Feature', () => {
       mockComponents.AnnouncementCard.props = {
         announcement: mockAnnouncement,
         showImage: mockAnnouncement.hasImage,
-        onImageLoad: jest.fn(),
+        onImageLoad: vi.fn(),
       };
 
       // Act

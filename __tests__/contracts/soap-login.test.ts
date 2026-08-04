@@ -6,41 +6,60 @@
  * the client correctly formats requests and parses responses.
  */
 
-import { describe, test, expect } from '@jest/globals';
-import type { LoginRequest, LoginResponse, SoapResponse } from '@/types/soap';
-import * as soapClient from '@/lib/soap-client';
+import { describe, test, expect } from 'vitest';
+import type { LoginResponse, SoapResponse } from '@/types/soap';
+import type { LoginCredentials } from '@/types/auth';
+import { formatLoginRequest, parseLoginResponse, getLoginHeaders } from '@/lib/soap-client';
 
-// Define expected interface for soap client
-interface SoapClientApi {
-  formatLoginRequest: (credentials: LoginRequest) => string;
-  parseLoginResponse: (xml: string) => SoapResponse<LoginResponse>;
-  getLoginHeaders: () => Record<string, string>;
-}
-
-const client = soapClient as unknown as SoapClientApi;
+const SERVER_URL = 'https://cshub.epr-apps.com/S0144BrfAsen/api/mobile/visionmobile.asmx';
 
 describe('SOAP Login Contract', () => {
   test('should format login request XML correctly', () => {
-    const credentials: LoginRequest = {
-      systemname: 'test-system',
+    const credentials: LoginCredentials = {
+      serverUrl: SERVER_URL,
       username: '001',
-      Password: 'test-password',
+      password: 'test-password',
       timeout: 30,
     };
 
-    expect(() => client.formatLoginRequest(credentials)).not.toThrow();
-
-    const xmlRequest = client.formatLoginRequest(credentials);
+    const xmlRequest = formatLoginRequest(credentials, SERVER_URL);
 
     // Validate XML structure per contract specification
     expect(xmlRequest).toContain('<?xml version="1.0" encoding="utf-8"?>');
     expect(xmlRequest).toContain('<soap:Envelope');
     expect(xmlRequest).toContain('xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"');
-    expect(xmlRequest).toContain('<Login xmlns="http://www.rco.se/Api/Mobile/">');
-    expect(xmlRequest).toContain('<systemname>test-system</systemname>');
-    expect(xmlRequest).toContain('<username>001</username>');
-    expect(xmlRequest).toContain('<Password>test-password</Password>');
-    expect(xmlRequest).toContain('<timeout>30</timeout>');
+    expect(xmlRequest).toContain('<Login xmlns="http://www.rco.se/Api/Mobile">');
+    // systemname is derived from the server URL path, not passed in directly
+    expect(xmlRequest).toContain('<systemname xsi:type="xsd:string">S0144BrfAsen</systemname>');
+    expect(xmlRequest).toContain('<username xsi:type="xsd:string">001</username>');
+    expect(xmlRequest).toContain('<Password xsi:type="xsd:string">test-password</Password>');
+    expect(xmlRequest).toContain('<timeout xsi:type="xsd:int">30</timeout>');
+  });
+
+  test('should escape XML special characters in credentials', () => {
+    const credentials: LoginCredentials = {
+      serverUrl: SERVER_URL,
+      username: '001',
+      password: 'pa<ss&"word"',
+      timeout: 30,
+    };
+
+    const xmlRequest = formatLoginRequest(credentials, SERVER_URL);
+
+    expect(xmlRequest).toContain(
+      '<Password xsi:type="xsd:string">pa&lt;ss&amp;&quot;word&quot;</Password>',
+    );
+  });
+
+  test('should reject a server URL it cannot derive a systemname from', () => {
+    const credentials: LoginCredentials = {
+      serverUrl: 'not-a-url',
+      username: '001',
+      password: 'test-password',
+      timeout: 30,
+    };
+
+    expect(() => formatLoginRequest(credentials, 'not-a-url')).toThrow('Invalid server URL');
   });
 
   test('should parse successful login response correctly', () => {
@@ -53,9 +72,7 @@ describe('SOAP Login Contract', () => {
   </soap:Body>
 </soap:Envelope>`;
 
-    expect(() => client.parseLoginResponse(mockSuccessResponse)).not.toThrow();
-
-    const parsed: SoapResponse<LoginResponse> = client.parseLoginResponse(mockSuccessResponse);
+    const parsed: SoapResponse<LoginResponse> = parseLoginResponse(mockSuccessResponse);
 
     expect(parsed.success).toBe(true);
     expect(parsed.data?.LoginResult).toBe('mock-login-guid-123');
@@ -75,7 +92,7 @@ describe('SOAP Login Contract', () => {
   </soap:Body>
 </soap:Envelope>`;
 
-    const parsed: SoapResponse<LoginResponse> = client.parseLoginResponse(mockFaultResponse);
+    const parsed: SoapResponse<LoginResponse> = parseLoginResponse(mockFaultResponse);
 
     expect(parsed.success).toBe(false);
     expect(parsed.data).toBeUndefined();
@@ -86,7 +103,7 @@ describe('SOAP Login Contract', () => {
   });
 
   test('should set correct SOAP headers', () => {
-    const headers = client.getLoginHeaders();
+    const headers = getLoginHeaders();
 
     expect(headers['Content-Type']).toBe('text/xml; charset=utf-8');
     expect(headers['SOAPAction']).toBe('"http://www.rco.se/Api/Mobile/Login"');

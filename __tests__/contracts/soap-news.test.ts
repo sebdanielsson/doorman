@@ -5,18 +5,18 @@
  * CRITICAL: This test MUST FAIL until T010 is implemented
  */
 
-import { describe, expect, it, beforeEach, jest } from '@jest/globals';
+import { describe, expect, it, beforeEach, vi, type Mock } from 'vitest';
 import type { TrmMessageLite, GetAllTerminalMessageLiteResponse, SoapResponse } from '@/types/soap';
 import { soapClient } from '@/lib/soap-client';
 
 // Mock fetch for controlled testing
-global.fetch = jest.fn() as jest.Mock<typeof fetch>;
+global.fetch = vi.fn() as Mock;
 
 describe('SOAP Contract: GetAllTerminalMessageLite', () => {
   const mockLoginguid = 'test-guid-12345';
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Request Contract', () => {
@@ -32,7 +32,7 @@ describe('SOAP Contract: GetAllTerminalMessageLite', () => {
   </soap:Body>
 </soap:Envelope>`;
 
-      (global.fetch as jest.Mock<any>).mockResolvedValue({
+      (global.fetch as Mock).mockResolvedValue({
         ok: true,
         status: 200,
         text: async () => mockXmlResponse,
@@ -94,7 +94,7 @@ describe('SOAP Contract: GetAllTerminalMessageLite', () => {
   </soap:Body>
 </soap:Envelope>`;
 
-      (global.fetch as jest.Mock<any>).mockResolvedValue({
+      (global.fetch as Mock).mockResolvedValue({
         ok: true,
         status: 200,
         text: async () => mockXmlResponse,
@@ -139,7 +139,7 @@ describe('SOAP Contract: GetAllTerminalMessageLite', () => {
   </soap:Body>
 </soap:Envelope>`;
 
-      (global.fetch as jest.Mock<any>).mockResolvedValue({
+      (global.fetch as Mock).mockResolvedValue({
         ok: true,
         status: 200,
         text: async () => mockXmlResponse,
@@ -170,7 +170,7 @@ describe('SOAP Contract: GetAllTerminalMessageLite', () => {
   </soap:Body>
 </soap:Envelope>`;
 
-      (global.fetch as jest.Mock<any>).mockResolvedValue({
+      (global.fetch as Mock).mockResolvedValue({
         ok: true,
         status: 200,
         text: async () => mockXmlResponse,
@@ -190,7 +190,7 @@ describe('SOAP Contract: GetAllTerminalMessageLite', () => {
 
     it('should handle server errors', async () => {
       // Arrange
-      (global.fetch as jest.Mock<any>).mockResolvedValue({
+      (global.fetch as Mock).mockResolvedValue({
         ok: false,
         status: 500,
         statusText: 'Internal Server Error',
@@ -211,7 +211,7 @@ describe('SOAP Contract: GetAllTerminalMessageLite', () => {
 
     it('should handle network errors', async () => {
       // Arrange
-      (global.fetch as jest.Mock<any>).mockRejectedValue(new Error('Network timeout'));
+      (global.fetch as Mock).mockRejectedValue(new Error('Network timeout'));
 
       // Act
       const result = await soapClient.getAllTerminalMessageLite(
@@ -254,7 +254,7 @@ describe('SOAP Contract: GetAllTerminalMessageLite', () => {
   </soap:Body>
 </soap:Envelope>`;
 
-      (global.fetch as jest.Mock<any>).mockResolvedValue({
+      (global.fetch as Mock).mockResolvedValue({
         ok: true,
         status: 200,
         text: async () => mockXmlResponse,
