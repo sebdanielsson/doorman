@@ -206,51 +206,62 @@ export function Announcements() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
+  // Bumped by "Try again" to re-run the fetch effect for the current page
+  const [reloadKey, setReloadKey] = useState(0);
   const itemsPerPage = 5;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const containerWidth = useResizeObserver(containerRef);
 
-  // Fetch announcements from API
-  const fetchAnnouncements = async (page: number) => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch(`/api/announcements?page=${page}&pageSize=${itemsPerPage}`);
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          setError('Please log in to view announcements');
-          return;
-        }
-        throw new Error(`Failed to fetch announcements: ${response.status}`);
-      }
-
-      const data: AnnouncementsApiResponse = await response.json();
-
-      if (!data.success || !data.data) {
-        throw new Error(data.error || 'Failed to load announcements');
-      }
-
-      setAnnouncements(data.data.announcements);
-      setTotalPages(data.data.pagination.totalPages);
-      setTotalItems(data.data.pagination.totalItems);
-    } catch (err) {
-      console.error('Error fetching announcements:', err);
-      setError(
-        err instanceof Error ? err.message : 'An error occurred while loading announcements',
-      );
-      setAnnouncements([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch announcements on component mount and when page changes
+  // Fetch announcements on mount, when the page changes, and on retry.
+  // The request lives inside the effect so no state is set synchronously from
+  // the effect body; `cancelled` keeps a stale response from overwriting a
+  // newer one when the page changes mid-flight.
   useEffect(() => {
-    fetchAnnouncements(currentPage);
-  }, [currentPage]);
+    let cancelled = false;
+
+    const fetchAnnouncements = async () => {
+      try {
+        const response = await fetch(
+          `/api/announcements?page=${currentPage}&pageSize=${itemsPerPage}`,
+        );
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            if (!cancelled) setError('Please log in to view announcements');
+            return;
+          }
+          throw new Error(`Failed to fetch announcements: ${response.status}`);
+        }
+
+        const data: AnnouncementsApiResponse = await response.json();
+
+        if (!data.success || !data.data) {
+          throw new Error(data.error || 'Failed to load announcements');
+        }
+
+        if (cancelled) return;
+        setAnnouncements(data.data.announcements);
+        setTotalPages(data.data.pagination.totalPages);
+        setTotalItems(data.data.pagination.totalItems);
+      } catch (err) {
+        if (cancelled) return;
+        console.error('Error fetching announcements:', err);
+        setError(
+          err instanceof Error ? err.message : 'An error occurred while loading announcements',
+        );
+        setAnnouncements([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    void fetchAnnouncements();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentPage, reloadKey]);
 
   // Calculate the number of visible pages based on container width
   const maxVisible = Math.max(3, Math.floor((containerWidth - 200) / 40)); // 200px for prev/next, 40px per page link
@@ -262,6 +273,8 @@ export function Announcements() {
   // Handle page changes
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages && page !== currentPage) {
+      setLoading(true);
+      setError(null);
       setCurrentPage(page);
     }
   };
@@ -313,7 +326,11 @@ export function Announcements() {
         <div className="rounded-md border border-red-200 bg-red-50 p-4">
           <p className="text-sm text-red-700">{error}</p>
           <button
-            onClick={() => fetchAnnouncements(currentPage)}
+            onClick={() => {
+              setLoading(true);
+              setError(null);
+              setReloadKey((key) => key + 1);
+            }}
             className="mt-2 text-sm text-red-600 underline hover:text-red-800"
           >
             Try again
