@@ -32,7 +32,7 @@ jobs:
         run: pnpm run stylelint
 
       - name: Run type check
-        run: pnpm run tsc
+        run: pnpm run typecheck
 
       - name: Build project
         run: pnpm run build
