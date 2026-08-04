@@ -3,7 +3,7 @@
  * Tests the sanitizeContent function for proper HTML handling and attachment detection
  */
 
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import {
   sanitizeContent,
   extractAttachments,

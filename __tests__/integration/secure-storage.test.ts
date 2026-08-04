@@ -1,23 +1,21 @@
-import { describe, test, expect, jest, beforeEach } from '@jest/globals';
-import type { AuthUser } from '@/types/auth';
+import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { authStorage } from '@/lib/auth-storage';
 
-// Mock js-cookie
-const mockCookies = {
-  get: jest.fn(),
-  set: jest.fn(),
-  remove: jest.fn(),
-};
-jest.unstable_mockModule('js-cookie', () => ({
+// Mock js-cookie. `vi.hoisted` keeps the mock object available to the hoisted
+// `vi.mock` factory below.
+const mockCookies = vi.hoisted(() => ({
+  get: vi.fn<(key?: string) => string | undefined>(),
+  set: vi.fn(),
+  remove: vi.fn(),
+}));
+
+vi.mock('js-cookie', () => ({
   default: mockCookies,
 }));
 
 describe('Secure Authentication Storage', () => {
-  let authStorage: any;
-
-  beforeEach(async () => {
-    const { authStorage: storage } = await import('../../lib/auth-storage');
-    authStorage = storage;
-    jest.clearAllMocks();
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
   test('should store auth token with secure settings', () => {

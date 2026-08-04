@@ -2,7 +2,7 @@
  * Integration test for enhanced announcements with attachments and detail links
  */
 
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it } from 'vitest';
 import { transformSoapToAnnouncement } from '@/lib/announcements-transform';
 import type { TrmMessageLite } from '@/types/soap';
 

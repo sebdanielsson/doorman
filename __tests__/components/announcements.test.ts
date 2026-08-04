@@ -5,29 +5,29 @@
  * CRITICAL: This test MUST FAIL until T014 is implemented
  */
 
-import { describe, expect, it, beforeEach, jest } from '@jest/globals';
+import { describe, expect, it, beforeEach, vi } from 'vitest';
 import type { AnnouncementItem, PaginationInfo } from '@/types/announcements';
 
 // Mock components that don't exist yet
 const mockComponents = {
   AnnouncementsSection: {
-    render: jest.fn(() => 'AnnouncementsSection'),
+    render: vi.fn(() => 'AnnouncementsSection'),
     props: {} as any,
   },
   AnnouncementCard: {
-    render: jest.fn(() => 'AnnouncementCard'),
+    render: vi.fn(() => 'AnnouncementCard'),
     props: {} as any,
   },
   AnnouncementsPagination: {
-    render: jest.fn(() => 'AnnouncementsPagination'),
+    render: vi.fn(() => 'AnnouncementsPagination'),
     props: {} as any,
   },
   LoadingSpinner: {
-    render: jest.fn(() => 'LoadingSpinner'),
+    render: vi.fn(() => 'LoadingSpinner'),
     props: {} as any,
   },
   ErrorMessage: {
-    render: jest.fn(() => 'ErrorMessage'),
+    render: vi.fn(() => 'ErrorMessage'),
     props: {} as any,
   },
 };
@@ -64,7 +64,7 @@ describe('Component: Announcements Display', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('AnnouncementsSection Component', () => {
@@ -75,8 +75,8 @@ describe('Component: Announcements Display', () => {
         loading: false,
         error: null,
         pagination: mockPagination,
-        onPageChange: jest.fn(),
-        onRefresh: jest.fn(),
+        onPageChange: vi.fn(),
+        onRefresh: vi.fn(),
       };
 
       // Act
@@ -96,8 +96,8 @@ describe('Component: Announcements Display', () => {
         loading: true,
         error: null,
         pagination: { currentPage: 1, totalPages: 0, totalItems: 0, itemsPerPage: 10 },
-        onPageChange: jest.fn(),
-        onRefresh: jest.fn(),
+        onPageChange: vi.fn(),
+        onRefresh: vi.fn(),
       };
 
       // Act
@@ -116,8 +116,8 @@ describe('Component: Announcements Display', () => {
         loading: false,
         error: 'Failed to load announcements',
         pagination: { currentPage: 1, totalPages: 0, totalItems: 0, itemsPerPage: 10 },
-        onPageChange: jest.fn(),
-        onRefresh: jest.fn(),
+        onPageChange: vi.fn(),
+        onRefresh: vi.fn(),
       };
 
       // Act
@@ -136,8 +136,8 @@ describe('Component: Announcements Display', () => {
         loading: false,
         error: null,
         pagination: { currentPage: 1, totalPages: 0, totalItems: 0, itemsPerPage: 10 },
-        onPageChange: jest.fn(),
-        onRefresh: jest.fn(),
+        onPageChange: vi.fn(),
+        onRefresh: vi.fn(),
       };
 
       // Act
@@ -151,14 +151,14 @@ describe('Component: Announcements Display', () => {
 
     it('should call onPageChange when pagination is used', () => {
       // Arrange
-      const mockOnPageChange = jest.fn();
+      const mockOnPageChange = vi.fn();
       mockComponents.AnnouncementsSection.props = {
         announcements: mockAnnouncements,
         loading: false,
         error: null,
         pagination: mockPagination,
         onPageChange: mockOnPageChange,
-        onRefresh: jest.fn(),
+        onRefresh: vi.fn(),
       };
 
       // Act - Simulate page change
@@ -170,13 +170,13 @@ describe('Component: Announcements Display', () => {
 
     it('should call onRefresh when refresh is triggered', () => {
       // Arrange
-      const mockOnRefresh = jest.fn();
+      const mockOnRefresh = vi.fn();
       mockComponents.AnnouncementsSection.props = {
         announcements: mockAnnouncements,
         loading: false,
         error: null,
         pagination: mockPagination,
-        onPageChange: jest.fn(),
+        onPageChange: vi.fn(),
         onRefresh: mockOnRefresh,
       };
 
@@ -195,7 +195,7 @@ describe('Component: Announcements Display', () => {
       mockComponents.AnnouncementCard.props = {
         announcement,
         showImage: true,
-        onImageLoad: jest.fn(),
+        onImageLoad: vi.fn(),
         className: 'test-class',
       };
 
@@ -217,7 +217,7 @@ describe('Component: Announcements Display', () => {
       mockComponents.AnnouncementCard.props = {
         announcement,
         showImage: false,
-        onImageLoad: jest.fn(),
+        onImageLoad: vi.fn(),
       };
 
       // Act
@@ -231,7 +231,7 @@ describe('Component: Announcements Display', () => {
 
     it('should call onImageLoad when image loads', () => {
       // Arrange
-      const mockOnImageLoad = jest.fn();
+      const mockOnImageLoad = vi.fn();
       const announcement = mockAnnouncements[0];
       mockComponents.AnnouncementCard.props = {
         announcement,
@@ -261,7 +261,7 @@ describe('Component: Announcements Display', () => {
       mockComponents.AnnouncementCard.props = {
         announcement: dangerousAnnouncement,
         showImage: false,
-        onImageLoad: jest.fn(),
+        onImageLoad: vi.fn(),
       };
 
       // Act
@@ -281,7 +281,7 @@ describe('Component: Announcements Display', () => {
       mockComponents.AnnouncementCard.props = {
         announcement,
         showImage: false,
-        onImageLoad: jest.fn(),
+        onImageLoad: vi.fn(),
       };
 
       // Act
@@ -302,7 +302,7 @@ describe('Component: Announcements Display', () => {
       mockComponents.AnnouncementsPagination.props = {
         currentPage: 1,
         totalPages: 3,
-        onPageChange: jest.fn(),
+        onPageChange: vi.fn(),
         disabled: false,
       };
 
@@ -317,7 +317,7 @@ describe('Component: Announcements Display', () => {
 
     it('should handle page navigation', () => {
       // Arrange
-      const mockOnPageChange = jest.fn();
+      const mockOnPageChange = vi.fn();
       mockComponents.AnnouncementsPagination.props = {
         currentPage: 2,
         totalPages: 5,
@@ -340,7 +340,7 @@ describe('Component: Announcements Display', () => {
       mockComponents.AnnouncementsPagination.props = {
         currentPage: 1,
         totalPages: 3,
-        onPageChange: jest.fn(),
+        onPageChange: vi.fn(),
         disabled: true,
       };
 
@@ -357,7 +357,7 @@ describe('Component: Announcements Display', () => {
       mockComponents.AnnouncementsPagination.props = {
         currentPage: 1,
         totalPages: 1,
-        onPageChange: jest.fn(),
+        onPageChange: vi.fn(),
         disabled: false,
       };
 
@@ -409,7 +409,7 @@ describe('Component: Announcements Display', () => {
       // Arrange
       mockComponents.ErrorMessage.props = {
         error: 'Failed to load announcements',
-        onRetry: jest.fn(),
+        onRetry: vi.fn(),
         retryLabel: 'Try Again',
       };
 
@@ -424,7 +424,7 @@ describe('Component: Announcements Display', () => {
 
     it('should call onRetry when retry is clicked', () => {
       // Arrange
-      const mockOnRetry = jest.fn();
+      const mockOnRetry = vi.fn();
       mockComponents.ErrorMessage.props = {
         error: 'Network error',
         onRetry: mockOnRetry,
@@ -473,7 +473,7 @@ describe('Component: Announcements Display', () => {
         mockComponents.AnnouncementCard.props = {
           announcement,
           showImage: announcement.hasImage,
-          onImageLoad: jest.fn(),
+          onImageLoad: vi.fn(),
         };
       });
 
@@ -481,7 +481,7 @@ describe('Component: Announcements Display', () => {
       mockComponents.AnnouncementsPagination.props = {
         currentPage: parentProps.pagination.currentPage,
         totalPages: parentProps.pagination.totalPages,
-        onPageChange: jest.fn(),
+        onPageChange: vi.fn(),
         disabled: parentProps.loading,
       };
 

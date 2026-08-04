@@ -3,7 +3,7 @@
  * Based on contracts/soap-auth.md specifications
  */
 
-import { describe, test, expect } from '@jest/globals';
+import { describe, test, expect } from 'vitest';
 import type { LogoutRequest, LogoutResponse, SoapResponse } from '@/types/soap';
 import * as soapClient from '@/lib/soap-client';
 

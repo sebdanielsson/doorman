@@ -5,23 +5,23 @@
  * CRITICAL: This test MUST FAIL until T011 is implemented
  */
 
-import { describe, expect, it, beforeEach, jest } from '@jest/globals';
+import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import type { AnnouncementsApiResponse } from '@/types/announcements';
 
 // Mock the route handler that doesn't exist yet
 const mockRouteHandler = {
-  GET: jest.fn<(request: NextRequest) => Promise<Response>>(),
+  GET: vi.fn<(request: NextRequest) => Promise<Response>>(),
 };
 
 // Mock auth context
 const mockAuthContext = {
-  getLoginGuid: jest.fn<() => string | null>(),
+  getLoginGuid: vi.fn<() => string | null>(),
 };
 
 describe('API Route: /api/announcements', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Authentication', () => {
@@ -394,7 +394,7 @@ describe('API Route: /api/announcements', () => {
       );
 
       // Mock a POST handler that returns 405
-      const mockPOSTHandler = jest
+      const mockPOSTHandler = vi
         .fn<(req: Request) => Promise<Response>>()
         .mockResolvedValue(methodNotAllowedResponse);
 

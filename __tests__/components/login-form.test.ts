@@ -1,31 +1,31 @@
-import { describe, test, expect, jest, beforeEach } from '@jest/globals';
+import { describe, test, expect, vi, beforeEach } from 'vitest';
 
 // Mock React and testing utilities
-const mockUseForm = jest.fn();
-const mockRender = jest.fn();
-const mockFireEvent = jest.fn();
+const mockUseForm = vi.fn();
+const mockRender = vi.fn();
+const mockFireEvent = vi.fn();
 
-jest.mock('react-hook-form', () => ({
+vi.mock('react-hook-form', () => ({
   useForm: mockUseForm,
 }));
 
-jest.mock('@testing-library/react', () => ({
+vi.mock('@testing-library/react', () => ({
   render: mockRender,
   fireEvent: mockFireEvent,
   screen: {
-    getByLabelText: jest.fn(),
-    getByRole: jest.fn(),
-    getByText: jest.fn(),
+    getByLabelText: vi.fn(),
+    getByRole: vi.fn(),
+    getByText: vi.fn(),
   },
 }));
 
 describe('Login Form Component', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     mockUseForm.mockReturnValue({
-      register: jest.fn(),
-      handleSubmit: jest.fn(),
+      register: vi.fn(),
+      handleSubmit: vi.fn(),
       formState: { errors: {} },
     });
   });

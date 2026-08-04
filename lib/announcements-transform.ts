@@ -7,9 +7,12 @@
 import type { TrmMessageLite } from '@/types/soap';
 import type { AnnouncementItem, AnnouncementsList, PaginationInfo } from '@/types/announcements';
 import DOMPurify from 'dompurify';
-import { Window } from 'happy-dom';
+import { JSDOM } from 'jsdom';
 
-const purify = DOMPurify(new Window() as any);
+// DOMPurify needs a real DOM implementation. jsdom is the backend DOMPurify
+// supports and tests against; happy-dom silently mis-sanitizes (it drops the
+// leading text node and lets <script>/<iframe> through).
+const purify = DOMPurify(new JSDOM('').window);
 
 /**
  * Content type classification based on message analysis
