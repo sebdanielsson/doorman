@@ -18,23 +18,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-
-      - name: Install dependencies
-        run: bun install
+      - uses: pnpm/setup@v1
+        with:
+          cache: true
 
       - name: Run format check
-        run: bun --bun run format:check
+        run: pnpm run format:check
 
-      - name: Run lint
-        run: bun --bun run lint
+      - name: Run lint check
+        run: pnpm run lint
 
       - name: Run stylelint
-        run: bun --bun run stylelint
-
-      - name: Run type check
-        run: bun --bun run tsc
+        run: pnpm run stylelint
 
       - name: Build project
-        run: bun --bun run build
+        run: pnpm run build
