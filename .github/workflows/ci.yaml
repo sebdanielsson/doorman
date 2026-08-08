@@ -13,6 +13,8 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout repository

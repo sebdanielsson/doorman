@@ -330,9 +330,15 @@ export function parseGetAllTerminalMessageLiteResponse(
               if (val.length > 0) textMessages.push(val);
             }
 
-            // If still empty, use inner text nodes by stripping tags
+            // If still empty, use inner text nodes by stripping tags (repeat until stable)
             if (textMessages.length === 0) {
-              const plain = inner.replace(/<[^>]*>/g, '').trim();
+              let stripped = inner;
+              let prev: string;
+              do {
+                prev = stripped;
+                stripped = stripped.replace(/<[^>]*>/g, '');
+              } while (stripped !== prev);
+              const plain = stripped.trim();
               if (plain.length > 0) textMessages.push(plain);
             }
           }
