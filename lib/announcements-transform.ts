@@ -295,12 +295,13 @@ export function sanitizeContent(content: string): string {
   }
 
   // First, decode HTML entities that might have been encoded
+  // &amp; must be decoded last to avoid double-unescaping (e.g. &amp;lt; → &lt; → <)
   const decodedContent = content
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
     .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, '&');
 
   // Then, normalize malformed HTML tags
   const normalizedContent = decodedContent
@@ -396,8 +397,14 @@ export function extractPreviewText(content: string, maxLength: number = 150): st
     return '';
   }
 
-  // Remove HTML tags
-  const plainText = content.replace(/<[^>]*>/g, '').trim();
+  // Remove HTML tags (repeat until stable to handle nested/malformed tags)
+  let plainText = content;
+  let prev: string;
+  do {
+    prev = plainText;
+    plainText = plainText.replace(/<[^>]*>/g, '');
+  } while (plainText !== prev);
+  plainText = plainText.trim();
 
   if (plainText.length <= maxLength) {
     return plainText;
