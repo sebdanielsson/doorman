@@ -12,7 +12,58 @@ import { JSDOM } from 'jsdom';
 // DOMPurify needs a real DOM implementation. jsdom is the backend DOMPurify
 // supports and tests against; happy-dom silently mis-sanitizes (it drops the
 // leading text node and lets <script>/<iframe> through).
-const purify = DOMPurify(new JSDOM('').window);
+const domWindow = new JSDOM('').window;
+const purify = DOMPurify(domWindow);
+
+// Links are opened in a new tab, so they must not get access to the opener.
+// Done as a hook rather than a regex pass over the sanitized markup: rewriting
+// serialized HTML with a regex re-introduces the parsing bugs sanitizing was
+// meant to avoid.
+purify.addHook('afterSanitizeAttributes', (node) => {
+  if (node.nodeName === 'A') {
+    node.setAttribute('target', '_blank');
+    node.setAttribute('rel', 'noopener noreferrer');
+  }
+});
+
+const HTML_ENTITIES: Record<string, string> = {
+  '&lt;': '<',
+  '&gt;': '>',
+  '&quot;': '"',
+  '&#39;': "'",
+  '&apos;': "'",
+  '&nbsp;': ' ',
+  '&amp;': '&',
+};
+
+/**
+ * Decode the HTML entities this feed is known to double-encode.
+ *
+ * Single pass on purpose. Chained `.replace()` calls decode `&amp;` while other
+ * entities are still encoded, so `&amp;quot;` — a literal `&quot;` the sender
+ * escaped — becomes `&quot;` and then `"`, turning inert text into markup.
+ */
+function decodeHtmlEntities(content: string): string {
+  return content.replace(/&(?:lt|gt|quot|#39|apos|nbsp|amp);/g, (entity) => HTML_ENTITIES[entity]);
+}
+
+/**
+ * Reduce an HTML fragment to its text content.
+ *
+ * Sanitize first, then read `textContent`: a `/<[^>]*>/g` strip leaves the body
+ * of comments and CDATA sections behind, and mishandles `>` inside attribute
+ * values.
+ */
+function htmlToPlainText(html: string): string {
+  const template = domWindow.document.createElement('template');
+  template.innerHTML = purify.sanitize(html, {
+    ALLOWED_TAGS: [],
+    ALLOWED_ATTR: [],
+    KEEP_CONTENT: true,
+  });
+
+  return template.content.textContent ?? '';
+}
 
 /**
  * Content type classification based on message analysis
@@ -295,13 +346,7 @@ export function sanitizeContent(content: string): string {
   }
 
   // First, decode HTML entities that might have been encoded
-  // &amp; must be decoded last to avoid double-unescaping (e.g. &amp;lt; → &lt; → <)
-  const decodedContent = content
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&amp;/g, '&');
+  const decodedContent = decodeHtmlEntities(content);
 
   // Then, normalize malformed HTML tags
   const normalizedContent = decodedContent
@@ -309,26 +354,20 @@ export function sanitizeContent(content: string): string {
     .replace(/<\/br>/gi, '<br>')
     // Fix self-closing break tags without slash: <br> to <br/>
     .replace(/<br(?![/>])/gi, '<br/>')
-    // Normalize common HTML entities
-    .replace(/&nbsp;/g, ' ')
     // Fix common malformed tags
     .replace(/<\/p>/gi, '</p>')
     .replace(/<p(?![/>])/gi, '<p>')
     // Clean up excessive whitespace around HTML tags
     .replace(/\s*<br\s*\/?>\s*/gi, '<br/>');
 
-  const sanitized = purify.sanitize(normalizedContent, {
+  // target/rel are added by the afterSanitizeAttributes hook, so they have to
+  // be allowed through here.
+  return purify.sanitize(normalizedContent, {
     ALLOWED_TAGS: ['b', 'i', 'u', 'strong', 'em', 'br', 'p', 'ul', 'ol', 'li', 'a'],
-    ALLOWED_ATTR: ['href'],
+    ALLOWED_ATTR: ['href', 'target', 'rel'],
     KEEP_CONTENT: true,
     ALLOW_DATA_ATTR: false,
   });
-
-  // Post-process to add security attributes to links
-  return sanitized.replace(
-    /<a\s+href="([^"]*)"([^>]*)>/gi,
-    '<a href="$1" target="_blank" rel="noopener noreferrer"$2>',
-  );
 }
 
 /**
@@ -397,14 +436,8 @@ export function extractPreviewText(content: string, maxLength: number = 150): st
     return '';
   }
 
-  // Remove HTML tags (repeat until stable to handle nested/malformed tags)
-  let plainText = content;
-  let prev: string;
-  do {
-    prev = plainText;
-    plainText = plainText.replace(/<[^>]*>/g, '');
-  } while (plainText !== prev);
-  plainText = plainText.trim();
+  // Remove HTML tags
+  const plainText = htmlToPlainText(content).trim();
 
   if (plainText.length <= maxLength) {
     return plainText;

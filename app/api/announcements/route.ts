@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { soapClient } from '@/lib/soap-client';
+import { validateSoapEndpoint } from '@/lib/soap-endpoint';
 import { sanitizeContent } from '@/lib/announcements-transform';
 import type { AnnouncementsApiResponse, AnnouncementItem } from '@/types/announcements';
 import type { TrmMessageLite } from '@/types/soap';
@@ -20,7 +21,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // 1. Authentication check
     const cookieStore = await cookies();
     const loginGuid = cookieStore.get('loginGuid')?.value;
-    const soapEndpoint = cookieStore.get('soapEndpoint')?.value;
 
     if (!loginGuid) {
       return NextResponse.json(
@@ -32,7 +32,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    if (!soapEndpoint) {
+    // Re-validate the stored endpoint before using it as a request target, so
+    // a tampered or stale cookie cannot redirect these calls.
+    let soapEndpoint: string;
+    try {
+      soapEndpoint = validateSoapEndpoint(cookieStore.get('soapEndpoint')?.value ?? '');
+    } catch {
       return NextResponse.json(
         {
           success: false,

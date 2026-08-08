@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { loginCredentialsSchema } from '@/lib/auth-validation';
 import { extractSystemnameFromUrl, formatLoginRequest } from '@/lib/soap-client';
+import { InvalidSoapEndpointError, validateSoapEndpoint } from '@/lib/soap-endpoint';
 import { LoginCredentials } from '@/types/auth';
 
 export async function POST(request: NextRequest) {
@@ -16,7 +17,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { serverUrl, username, password } = validation.data;
+    const { username, password } = validation.data;
+
+    // The user chooses their own server, so this URL is untrusted input. Accept
+    // only public https VisionMobile endpoints, and use the canonical form
+    // returned here for the outgoing request.
+    let serverUrl: string;
+    try {
+      serverUrl = validateSoapEndpoint(validation.data.serverUrl);
+    } catch (error) {
+      return NextResponse.json(
+        {
+          error: 'Invalid server URL',
+          message:
+            error instanceof InvalidSoapEndpointError ? error.message : 'Server URL is not usable',
+        },
+        { status: 400 },
+      );
+    }
 
     // Extract systemname from URL
     const systemname = extractSystemnameFromUrl(serverUrl);
@@ -59,7 +77,6 @@ export async function POST(request: NextRequest) {
             process.env.NODE_ENV === 'development'
               ? {
                   serverUrl,
-                  soapRequest: soapXml,
                   responseStatus: soapResponse.status,
                   responseBody: errorText,
                 }
@@ -97,7 +114,6 @@ export async function POST(request: NextRequest) {
             process.env.NODE_ENV === 'development'
               ? {
                   serverUrl,
-                  soapRequest: soapXml,
                   responseStatus: soapResponse.status,
                   responseBody: responseText,
                 }
@@ -127,7 +143,6 @@ export async function POST(request: NextRequest) {
                   systemname,
                   responseStatus: soapResponse.status,
                   responseBody: responseText,
-                  soapRequest: soapXml,
                 }
               : undefined,
         },
