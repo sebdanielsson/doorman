@@ -7,8 +7,15 @@
  * like so it cannot be aimed at the server's own network:
  *
  *   - https only, on the default port, with no embedded credentials
- *   - the host must be a public, dotted DNS name or public IP literal
+ *   - the host must be a public, dotted DNS name or public IPv4 literal
  *   - the path must be a VisionMobile API endpoint
+ *
+ * IPv6 literals are refused outright. Deciding whether one is publicly routable
+ * means handling ::ffff:0:0/96, 6to4 (2002::/16), NAT64 (64:ff9b::/96), Teredo
+ * (2001::/32) and IPv4-compatible forms as well as the obvious loopback and
+ * unique-local ranges — each an encoding of an address that may well be
+ * internal. A real service is reachable by name, so nothing is lost by
+ * rejecting the literal form; hostnames that resolve over IPv6 are unaffected.
  *
  * Caveat: this validates the URL, not the address it ultimately resolves to. A
  * public hostname with a private A record (or a DNS rebind between this check
@@ -65,36 +72,16 @@ function isPrivateIpv4(hostname: string): boolean {
 }
 
 /**
- * True for IPv6 literals that are loopback, unique-local, link-local, or an
- * IPv4-mapped form of a non-public IPv4 address. `URL` keeps the brackets on
- * `hostname` for IPv6 literals.
+ * True for an IPv6 literal in any form. `URL` keeps the brackets on `hostname`,
+ * so the bracket test identifies the literal form on its own.
+ *
+ * Rejected wholesale rather than range-checked — see the module header. Note
+ * that range-checking these by string prefix would not work anyway: `URL`
+ * rewrites `[::ffff:127.0.0.1]` to `[::ffff:7f00:1]`, so a dotted-quad tail
+ * never survives parsing.
  */
-function isPrivateIpv6(hostname: string): boolean {
-  if (!hostname.startsWith('[') || !hostname.endsWith(']')) {
-    return false;
-  }
-
-  const address = hostname.slice(1, -1).toLowerCase();
-
-  if (address === '::1' || address === '::') {
-    return true;
-  }
-
-  // IPv4-mapped (::ffff:127.0.0.1) and IPv4-compatible (::127.0.0.1) forms.
-  const embeddedIpv4 = address.slice(address.lastIndexOf(':') + 1);
-  if (IPV4.test(embeddedIpv4)) {
-    return isPrivateIpv4(embeddedIpv4);
-  }
-
-  return (
-    address.startsWith('fc') || // fc00::/7 unique-local
-    address.startsWith('fd') ||
-    address.startsWith('fe8') || // fe80::/10 link-local
-    address.startsWith('fe9') ||
-    address.startsWith('fea') ||
-    address.startsWith('feb') ||
-    address.startsWith('ff') // ff00::/8 multicast
-  );
+function isIpv6Literal(hostname: string): boolean {
+  return hostname.startsWith('[') && hostname.endsWith(']');
 }
 
 function isBlockedHost(hostname: string): boolean {
@@ -102,10 +89,13 @@ function isBlockedHost(hostname: string): boolean {
     return true;
   }
 
-  if (isPrivateIpv6(hostname)) {
+  if (isIpv6Literal(hostname)) {
     return true;
   }
 
+  // `URL` canonicalises octal, hex and short-form IPv4 ("0177.0.0.1",
+  // "2130706433", "127.1") to dotted-quad before this runs, so matching the
+  // dotted form here is sufficient.
   if (IPV4.test(hostname)) {
     return isPrivateIpv4(hostname);
   }
