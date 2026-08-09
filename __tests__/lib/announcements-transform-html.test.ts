@@ -81,6 +81,16 @@ describe('HTML Content Normalization', () => {
       expect(result).toContain('Safe content<br');
     });
 
+    it('should not decode an escaped entity twice', () => {
+      // "&amp;quot;" is the sender escaping the literal text "&quot;". Decoding
+      // must stop there. Decoding "&amp;" before "&quot;" — as chained
+      // replaces do — turns that literal text into a real quote character.
+      const result = sanitizeContent('Skriv &amp;quot;tvättstuga&amp;quot; i formuläret');
+
+      expect(result).toContain('&quot;tvättstuga&quot;');
+      expect(result).not.toContain('"tvättstuga"');
+    });
+
     it('should handle empty and invalid input', () => {
       expect(sanitizeContent('')).toBe('');
       expect(sanitizeContent(null as any)).toBe('');

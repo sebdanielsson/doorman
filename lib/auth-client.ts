@@ -35,7 +35,8 @@ export async function login(credentials: LoginCredentials): Promise<AuthUser> {
         console.log('Server URL:', errorData.debug.serverUrl);
         console.log('Username:', errorData.debug.username);
         console.log('Systemname:', errorData.debug.systemname);
-        console.log('SOAP Request:', errorData.debug.soapRequest);
+        // The SOAP request body is deliberately not logged: it carries the
+        // user's password.
         console.log('Response Status:', errorData.debug.responseStatus);
         console.log('Response Body:', errorData.debug.responseBody);
         console.groupEnd();

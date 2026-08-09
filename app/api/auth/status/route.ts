@@ -13,16 +13,13 @@ export async function GET(request: NextRequest) {
 
     // In a real implementation, you might want to validate the token
     // against the SOAP service or decode it to get user information
-    // For now, we'll just check if the token exists
-
+    // For now, we'll just check if the token exists.
+    //
+    // The token itself is never echoed back: it lives in an HttpOnly cookie
+    // precisely so that client-side script cannot read it.
     return NextResponse.json({
       isAuthenticated: true,
-      user: {
-        // We don't have user details stored in the token
-        // In a production app, you might want to store these in the session
-        // or make another API call to get user profile
-        token: authToken,
-      },
+      user: {},
     });
   } catch (error) {
     console.error('Auth status API error:', error);

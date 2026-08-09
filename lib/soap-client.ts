@@ -332,13 +332,7 @@ export function parseGetAllTerminalMessageLiteResponse(
 
             // If still empty, use inner text nodes by stripping tags (repeat until stable)
             if (textMessages.length === 0) {
-              let stripped = inner;
-              let prev: string;
-              do {
-                prev = stripped;
-                stripped = stripped.replace(/<[^>]*>/g, '');
-              } while (stripped !== prev);
-              const plain = stripped.trim();
+              const plain = stripMarkup(inner).trim();
               if (plain.length > 0) textMessages.push(plain);
             }
           }
@@ -863,9 +857,32 @@ export async function getTerminalMessageImage(
 // Helper functions
 
 /**
+ * Strip markup from an XML fragment, leaving the text nodes.
+ *
+ * Comments and CDATA sections are consumed as whole units — a plain
+ * `/<[^>]*>/` strips the `<!--` and `-->` delimiters and leaves the commented-
+ * out body behind as if it were content.
+ *
+ * Repeated until stable because one pass is not a fixed point: removing the
+ * inner tag from `<scr<string>ipt>` splices the remainder back into `<script>`.
+ */
+function stripMarkup(fragment: string): string {
+  const MARKUP = /<!--[\s\S]*?(?:-->|$)|<!\[CDATA\[[\s\S]*?(?:\]\]>|$)|<[^>]*(?:>|$)/g;
+
+  let stripped = fragment;
+  let previous: string;
+  do {
+    previous = stripped;
+    stripped = stripped.replace(MARKUP, '');
+  } while (stripped !== previous);
+
+  return stripped;
+}
+
+/**
  * Escape XML special characters
  */
-function escapeXml(str: string): string {
+export function escapeXml(str: string): string {
   return str
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')

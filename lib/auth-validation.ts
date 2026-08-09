@@ -5,6 +5,7 @@
  */
 
 import { z } from 'zod';
+import { isValidSoapEndpoint } from './soap-endpoint';
 
 // Login credentials validation schema
 export const loginCredentialsSchema = z.object({
@@ -13,10 +14,7 @@ export const loginCredentialsSchema = z.object({
     .min(1, 'Server URL is required')
     .max(255, 'Server URL is too long')
     .url('Please enter a valid server URL')
-    .refine(
-      (url) => url.includes('api/mobile/visionmobile.asmx'),
-      'Server URL must point to a VisionMobile API endpoint',
-    ),
+    .refine(isValidSoapEndpoint, 'Server URL must be a public https VisionMobile API endpoint'),
 
   username: z
     .string()
