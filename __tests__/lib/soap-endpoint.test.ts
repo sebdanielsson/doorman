@@ -9,6 +9,7 @@ import {
   isValidSoapEndpoint,
   validateSoapEndpoint,
 } from '@/lib/soap-endpoint';
+import { extractSystemnameFromUrl } from '@/lib/soap-client';
 
 const VALID = 'https://cshub.epr-apps.com/S0144BrfAsen/api/mobile/visionmobile.asmx';
 
@@ -25,6 +26,15 @@ describe('validateSoapEndpoint', () => {
   it('accepts nested path segments', () => {
     const nested = 'https://example.com/a/b/c/api/mobile/visionmobile.asmx';
     expect(validateSoapEndpoint(nested)).toBe(nested);
+  });
+
+  it('requires a systemname segment before the api path', () => {
+    // extractSystemnameFromUrl() reads the segment preceding "api" back out to
+    // build the SOAP envelope. With no such segment it reports "api" as the
+    // systemname, so this shape must not be accepted as valid.
+    expect(() => validateSoapEndpoint('https://example.com/api/mobile/visionmobile.asmx')).toThrow(
+      InvalidSoapEndpointError,
+    );
   });
 
   it('canonicalises host case and drops query and fragment', () => {
@@ -116,6 +126,19 @@ describe('validateSoapEndpoint', () => {
   it('rejects empty and malformed input', () => {
     expect(() => validateSoapEndpoint('')).toThrow(InvalidSoapEndpointError);
     expect(() => validateSoapEndpoint('not a url')).toThrow(InvalidSoapEndpointError);
+  });
+});
+
+describe('accepted endpoints yield a usable systemname', () => {
+  // The validator is what stands between user input and the SOAP envelope, so
+  // anything it accepts must carry a systemname the client can actually read.
+  it.each([
+    ['https://cshub.epr-apps.com/S0144BrfAsen/api/mobile/visionmobile.asmx', 'S0144BrfAsen'],
+    ['https://example.com/a/b/c/api/mobile/visionmobile.asmx', 'c'],
+    ['https://example.com/api-host/api/mobile/visionmobile.asmx', 'api-host'],
+  ])('%s -> %s', (url, expected) => {
+    expect(validateSoapEndpoint(url)).toBe(url);
+    expect(extractSystemnameFromUrl(url)).toBe(expected);
   });
 });
 

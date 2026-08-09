@@ -23,8 +23,14 @@
  * the socket layer, which `fetch` does not expose.
  */
 
-/** Path of a VisionMobile endpoint, with up to four leading path segments. */
-const ENDPOINT_PATH = /^(?:\/[\w.~-]{1,64}){0,4}\/api\/mobile\/visionmobile\.asmx$/i;
+/**
+ * Path of a VisionMobile endpoint: one to four leading segments, then the API
+ * path. At least one leading segment is required because the first of them is
+ * the systemname, which `extractSystemnameFromUrl()` reads back out to build
+ * the SOAP envelope — given "/api/mobile/visionmobile.asmx" it has no segment
+ * to find and falls back to reporting "api" as the systemname.
+ */
+const ENDPOINT_PATH = /^(?:\/[\w.~-]{1,64}){1,4}\/api\/mobile\/visionmobile\.asmx$/i;
 
 const BLOCKED_HOSTNAMES = new Set(['localhost', 'metadata.google.internal']);
 
