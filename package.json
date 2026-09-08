@@ -52,7 +52,7 @@
     "eslint": "^10.0.0",
     "eslint-config-next": "16.3.4",
     "jiti": "^2.6.1",
-    "oxfmt": "^0.66.0",
+    "oxfmt": "^0.67.0",
     "stylelint": "^17.6.0",
     "stylelint-config-html": "^2.0.0",
     "stylelint-config-standard": "^40.0.0",
