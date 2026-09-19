@@ -9,5 +9,17 @@
       "matchCurrentVersion": "!/^0/",
       "automerge": true
     }
+  ],
+  "customManagers": [
+    {
+      "description": "Update the pnpm version in devEngines.packageManager. Renovate's npm manager only updates the top-level packageManager field, which these repositories no longer set.",
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)package\\.json$/"],
+      "matchStrings": [
+        "\"packageManager\":\\s*\\{\\s*\"name\":\\s*\"pnpm\",\\s*\"version\":\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "depNameTemplate": "pnpm",
+      "datasourceTemplate": "npm"
+    }
   ]
 }
