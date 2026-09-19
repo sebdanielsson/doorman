@@ -76,6 +76,5 @@
       "version": "^24.18.0",
       "onFail": "download"
     }
-  },
-  "packageManager": "pnpm@12.4.2"
+  }
 }
