@@ -51,7 +51,7 @@
     "baseline-browser-mapping": "^2.11.25",
     "eslint": "^10.0.0",
     "eslint-config-next": "16.3.6",
-    "jiti": "^2.6.1",
+    "jiti": "^2.7.0",
     "oxfmt": "^0.70.0",
     "stylelint": "^17.6.0",
     "stylelint-config-html": "^2.0.0",
