@@ -255,7 +255,7 @@ importers:
         specifier: ^5.0.0
         version: 5.0.1(vitest@5.0.1)
       baseline-browser-mapping:
-        specifier: ^2.10.12
+        specifier: ^2.11.25
         version: 2.11.25
       eslint:
         specifier: ^10.0.0
