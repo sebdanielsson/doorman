@@ -228,7 +228,7 @@ importers:
         specifier: ^1.2.2
         version: 1.2.2(stylelint@17.15.0(supports-color@10.2.2)(typescript@6.0.3))
       '@tailwindcss/webpack':
-        specifier: ^4.2.2
+        specifier: ^4.3.3
         version: 4.3.3
       '@testing-library/jest-dom':
         specifier: ^7.0.0
@@ -282,7 +282,7 @@ importers:
         specifier: ^40.0.0
         version: 40.0.0(stylelint@17.15.0(supports-color@10.2.2)(typescript@6.0.3))
       tailwindcss:
-        specifier: ^4.2.2
+        specifier: ^4.3.3
         version: 4.3.3
       typescript:
         specifier: ~6.0.3
