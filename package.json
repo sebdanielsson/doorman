@@ -39,8 +39,8 @@
   "devDependencies": {
     "@dreamsicle.io/stylelint-config-tailwindcss": "^1.2.2",
     "@tailwindcss/webpack": "^4.3.3",
-    "@testing-library/jest-dom": "^7.0.0",
-    "@testing-library/react": "^16.3.2",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
     "@types/js-cookie": "^3.0.6",
     "@types/jsdom": "^30.0.0",
     "@types/node": "^26.6.2",
