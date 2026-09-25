@@ -273,7 +273,7 @@ importers:
         specifier: ^0.70.0
         version: 0.70.0
       stylelint:
-        specifier: ^17.6.0
+        specifier: ^17.15.0
         version: 17.15.0(supports-color@10.2.2)(typescript@6.0.3)
       stylelint-config-html:
         specifier: ^2.0.0
