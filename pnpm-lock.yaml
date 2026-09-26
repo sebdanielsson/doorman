@@ -209,16 +209,16 @@ importers:
         specifier: 19.3.0
         version: 19.3.0(react@19.3.0)
       react-hook-form:
-        specifier: ^7.72.0
+        specifier: ^7.88.0
         version: 7.88.0(react@19.3.0)
       shadcn:
-        specifier: ^4.16.0
+        specifier: ^4.21.0
         version: 4.21.0(supports-color@10.2.2)(typescript@6.0.3)
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
       zod:
-        specifier: ^4.3.6
+        specifier: ^4.6.5
         version: 4.6.5
     devDependencies:
       '@dreamsicle.io/stylelint-config-tailwindcss':
