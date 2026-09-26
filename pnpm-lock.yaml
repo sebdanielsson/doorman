@@ -185,7 +185,7 @@ importers:
         specifier: ^3.3.1
         version: 3.4.15
       js-cookie:
-        specifier: ^3.0.5
+        specifier: ^3.0.8
         version: 3.0.8
       jsdom:
         specifier: ^30.0.1
